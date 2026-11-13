@@ -31,6 +31,10 @@
   - 배포판은 `RIMKET_RELEASE`, 1.7용은 `RW17` 컴파일 기호를 씁니다.
 - 배포 zip: `Tools/build_release.sh`
 
+## 라이선스
+
+소스 코드는 [GNU AGPL-3.0](LICENSE)으로 공개합니다(배틀 엔진 일부가 AGPL-3.0인 PokeRogue를 참고·이식). 그림·소리·데이터는 각 출처의 권리를 따르며 이 라이선스에 포함되지 않습니다.
+
 ## 출처
 
 [CREDITS.md](CREDITS.md)를 참고하세요. PokeRogue, pokerogue-assets, Generation 9 Pack, pokefirered, PokeAPI, Smogon 통계 등 여러 공개 자료를 사용했습니다.
