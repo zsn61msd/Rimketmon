@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- 배틀 BGM: 끝나면 처음으로 되돌아 반복. 파일은 Sounds/Rimket/BattleWild.ogg (교체/삭제 가능) -->
+  <SoundDef>
+    <defName>Rimket_BattleBGM</defName>
+    <context>Any</context>
+    <sustain>True</sustain>
+    <priorityMode>PrioritizeNearest</priorityMode>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Rimket/BattleWild</clipPath>
+          </li>
+        </grains>
+        <volumeRange>60~60</volumeRange>
+        <sustainLoop>True</sustainLoop>
+        <sustainAttack>0.3</sustainAttack>
+        <sustainRelease>0.6</sustainRelease>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Rimket_Victory</defName>
+    <context>Any</context>
+    <sustain>True</sustain>
+    <priorityMode>PrioritizeNearest</priorityMode>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>Rimket/BattleVictory</clipPath></li>
+        </grains>
+        <volumeRange>60~60</volumeRange>
+        <sustainLoop>False</sustainLoop>
+        <sustainAttack>0.1</sustainAttack>
+        <sustainRelease>0.3</sustainRelease>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Rimket_Enter</defName>
+    <context>Any</context>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>Rimket/Enter</clipPath></li>
+        </grains>
+        <volumeRange>70~70</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Rimket_HitNormal</defName>
+    <context>Any</context>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>Rimket/HitNormal</clipPath></li>
+        </grains>
+        <volumeRange>70~70</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Rimket_HitSuper</defName>
+    <context>Any</context>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>Rimket/HitSuper</clipPath></li>
+        </grains>
+        <volumeRange>70~70</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Rimket_HitWeak</defName>
+    <context>Any</context>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>Rimket/HitWeak</clipPath></li>
+        </grains>
+        <volumeRange>70~70</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

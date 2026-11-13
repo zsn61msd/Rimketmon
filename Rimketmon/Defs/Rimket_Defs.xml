@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- 가상현실 신경 과부하: 뇌에 가해지는 전용 피해. 출혈 없음, 방어구 무시 -->
+  <DamageDef>
+    <defName>RimketNeuralOverload</defName>
+    <label>neural overload</label>
+    <workerClass>DamageWorker_AddInjury</workerClass>
+    <externalViolence>false</externalViolence>
+    <hasForcefulImpact>false</hasForcefulImpact>
+    <makesBlood>false</makesBlood>
+    <canInterruptJobs>false</canInterruptJobs>
+    <harmsHealth>true</harmsHealth>
+    <deathMessage>{0}의 뇌가 가상현실 신경 과부하로 파괴되었다.</deathMessage>
+    <hediff>RimketNeuralInjury</hediff>
+    <impactSoundType>Blunt</impactSoundType>
+  </DamageDef>
+
+  <HediffDef ParentName="InjuryBase">
+    <defName>RimketNeuralInjury</defName>
+    <label>neural overload</label>
+    <labelNoun>a neural overload injury</labelNoun>
+    <description>림볼의 가상현실 전투 중 신경계에 가해진 과부하 손상.</description>
+    <comps>
+      <li Class="HediffCompProperties_TendDuration">
+        <labelTendedWell>treated</labelTendedWell>
+        <labelTendedWellInner>treated</labelTendedWellInner>
+        <labelSolidTendedWell>treated</labelSolidTendedWell>
+      </li>
+      <li Class="HediffCompProperties_GetsPermanent">
+        <permanentLabel>neural scar</permanentLabel>
+        <instantlyPermanentLabel>permanent neural damage</instantlyPermanentLabel>
+      </li>
+    </comps>
+    <injuryProps>
+      <painPerSeverity>0.01</painPerSeverity>
+      <averagePainPerSeverityPermanent>0.005</averagePainPerSeverityPermanent>
+      <bleedRate>0</bleedRate>
+      <canMerge>true</canMerge>
+      <destroyedLabel>Destroyed</destroyedLabel>
+      <destroyedOutLabel>Destroyed</destroyedOutLabel>
+    </injuryProps>
+  </HediffDef>
+
+  <!-- 림볼 4종: 야성이 높은 동물일수록 높은 등급이 필요하다 -->
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimketBall</defName>
+    <label>몬스터볼</label>
+    <description>림켓몬을 붙잡는 볼.</description>
+    <graphicData>
+      <texPath>Things/RimketBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>10</stackLimit>
+    <statBases>
+            <Mass>0.4</Mass>
+      <MarketValue>60</MarketValue>
+    </statBases>
+    <tradeability>All</tradeability>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimketGreatBall</defName>
+    <label>슈퍼볼</label>
+    <description>림켓몬을 붙잡는 볼.</description>
+    <graphicData>
+      <texPath>Things/RimketGreatBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>10</stackLimit>
+    <statBases>
+            <Mass>0.4</Mass>
+      <MarketValue>160</MarketValue>
+    </statBases>
+    <tradeability>All</tradeability>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimketUltraBall</defName>
+    <label>하이퍼볼</label>
+    <description>림켓몬을 붙잡는 볼.</description>
+    <graphicData>
+      <texPath>Things/RimketUltraBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>10</stackLimit>
+    <statBases>
+            <Mass>0.4</Mass>
+      <MarketValue>480</MarketValue>
+    </statBases>
+    <tradeability>All</tradeability>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimketMasterBall</defName>
+    <label>마스터볼</label>
+    <description>전투 없이 곧바로 붙잡는 볼.</description>
+    <graphicData>
+      <texPath>Things/RimketMasterBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>10</stackLimit>
+    <statBases>
+            <Mass>0.4</Mass>
+      <MarketValue>1600</MarketValue>
+    </statBases>
+    <tradeability>All</tradeability>
+  </ThingDef>
+
+
+
+  <!-- ===================== 림켓링크 (두뇌 임플란트) ===================== -->
+  <HediffDef>
+    <defName>RimketLinkImplant</defName>
+    <label>림켓링크</label>
+    <labelNoun>a rimketlink</labelNoun>
+    <description>림켓몬과 의식을 잇는 두뇌 임플란트.</description>
+    <hediffClass>Hediff_Implant</hediffClass>
+    <defaultLabelColor>(0.55, 0.8, 1.0)</defaultLabelColor>
+    <isBad>false</isBad>
+    <priceImpact>true</priceImpact>
+    <countsAsAddedPartOrImplant>true</countsAsAddedPartOrImplant>
+  </HediffDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimketLink</defName>
+    <label>림켓링크</label>
+    <description>림켓몬과 의식을 잇는 두뇌 임플란트.</description>
+    <graphicData>
+      <texPath>Things/RimketLink</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>1</stackLimit>
+    <statBases>
+      <Mass>0.1</Mass>
+      <MarketValue>1500</MarketValue>
+    </statBases>
+    <tradeability>None</tradeability>
+    <comps>
+      <li Class="CompProperties_Usable">
+        <compClass>CompUsable</compClass>
+        <useJob>UseItem</useJob>
+        <useLabel>림켓링크 설치</useLabel>
+        <useDuration>600</useDuration>
+        <showUseGizmo>true</showUseGizmo>
+      </li>
+      <li Class="CompProperties_UseEffectInstallImplant">
+        <compClass>Rimketmon.CompUseEffect_RimketLink</compClass>
+        <hediffDef>RimketLinkImplant</hediffDef>
+        <bodyPart>Brain</bodyPart>
+        <allowNonColonists>false</allowNonColonists>
+      </li>
+      <li Class="CompProperties_UseEffectDestroySelf" />
+    </comps>
+  </ThingDef>
+
+  <!-- 림켓링크 신호 퀘스트용 빈 퀘스트 스크립트(무작위로 뽑히지 않음). 퀘스트가 끝날 때 림월드가 root를 읽기 때문에 필요 -->
+  <QuestScriptDef>
+    <defName>RimketLinkSignal</defName>
+    <rootSelectionWeight>0</rootSelectionWeight>
+    <isRootSpecial>true</isRootSpecial>
+    <root Class="QuestNode_Sequence"><nodes /></root>
+  </QuestScriptDef>
+
+  <!-- ???: 어둠의 림켓몬 배틀과 같은 이벤트. 챔피언 배지가 있어야 나오고, 목숨을 걸지 않는다 -->
+  <IncidentDef>
+    <defName>RimketMystery</defName>
+    <label>???</label>
+    <category>Misc</category>
+    <targetTags><li>Map_PlayerHome</li></targetTags>
+    <workerClass>Rimketmon.IncidentWorker_RimketMystery</workerClass>
+    <baseChance>0.6</baseChance>
+    <earliestDay>6</earliestDay>
+    <minRefireDays>20</minRefireDays>
+  </IncidentDef>
+
+  <!-- ===================== 몬스터볼 연구 ===================== -->
+  <ResearchTabDef>
+    <defName>RimketBallTab</defName>
+    <label>몬스터볼</label>
+  </ResearchTabDef>
+
+  <ResearchProjectDef>
+    <defName>RimketBallMonster</defName>
+    <label>몬스터볼</label>
+    <description>림켓몬을 붙잡는 기본 볼.</description>
+    <tab>RimketBallTab</tab>
+    <baseCost>600</baseCost>
+    <techLevel>Medieval</techLevel>
+    <prerequisites><li>Smithing</li></prerequisites>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>0.50</researchViewY>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>RimketBallGreat</defName>
+    <label>슈퍼볼</label>
+    <description>림켓몬을 붙잡는 볼.</description>
+    <tab>RimketBallTab</tab>
+    <baseCost>1500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites>
+      <li>RimketBallMonster</li>
+      <li>Machining</li>
+    </prerequisites>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>0.50</researchViewY>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>RimketBallUltra</defName>
+    <label>하이퍼볼</label>
+    <description>림켓몬을 붙잡는 고성능 볼.</description>
+    <tab>RimketBallTab</tab>
+    <baseCost>3500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites>
+      <li>RimketBallGreat</li>
+      <li>Fabrication</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities><li>MultiAnalyzer</li></requiredResearchFacilities>
+    <researchViewX>2.00</researchViewX>
+    <researchViewY>0.50</researchViewY>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>RimketBallMaster</defName>
+    <label>마스터볼</label>
+    <description>전투 없이 곧바로 붙잡는 볼.</description>
+    <tab>RimketBallTab</tab>
+    <baseCost>7000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <prerequisites>
+      <li>RimketBallUltra</li>
+      <li>AdvancedFabrication</li>
+    </prerequisites>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities><li>MultiAnalyzer</li></requiredResearchFacilities>
+    <requiredAnalyzed><li>RimketMasterBlueprint</li></requiredAnalyzed>
+    <researchViewX>3.00</researchViewX>
+    <researchViewY>0.50</researchViewY>
+  </ResearchProjectDef>
+
+  <!-- 마스터볼 설계도: 제작·거래·일반 생성 경로 없음(특수 경로로만 얻는다). 2개를 해석하면 마스터볼 연구가 열린다 -->
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimketMasterBlueprint</defName>
+    <label>마스터볼 설계도</label>
+    <description>마스터볼의 설계도.</description>
+    <graphicData>
+      <texPath>Things/RimketBlueprint</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <thingCategories><li>Manufactured</li></thingCategories>
+    <stackLimit>1</stackLimit>
+    <statBases>
+      <Mass>0.1</Mass>
+      <MarketValue>0</MarketValue>
+    </statBases>
+    <tradeability>None</tradeability>
+    <comps>
+      <li Class="CompProperties_CompAnalyzableUnlockResearch">
+        <analysisID>7200401</analysisID>
+        <analysisRequiredRange>2~2</analysisRequiredRange>
+        <analysisDurationHours>2</analysisDurationHours>
+        <activateLabelString>설계도 해석</activateLabelString>
+        <activateDescString>마스터볼 설계도를 해석한다.</activateDescString>
+        <activateTexPath>Things/RimketBlueprint</activateTexPath>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ===================== 제작 ===================== -->
+  <RecipeDef>
+    <defName>Make_RimketBall</defName>
+    <label>몬스터볼 제작</label>
+    <description>몬스터볼을 만든다.</description>
+    <jobString>몬스터볼을(를) 만드는 중.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <workAmount>3000</workAmount>
+    <ingredients>
+      <li><filter><thingDefs><li>WoodLog</li></thingDefs></filter><count>10</count></li>
+      <li><filter><thingDefs><li>Steel</li></thingDefs></filter><count>10</count></li>
+      <li><filter><categories><li>StoneChunks</li></categories></filter><count>1</count></li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs><li>WoodLog</li><li>Steel</li></thingDefs>
+      <categories><li>StoneChunks</li></categories>
+    </fixedIngredientFilter>
+    <products><RimketBall>1</RimketBall></products>
+    <skillRequirements><Crafting>4</Crafting></skillRequirements>
+    <workSkill>Crafting</workSkill>
+    <recipeUsers><li>FueledSmithy</li><li>ElectricSmithy</li></recipeUsers>
+    <researchPrerequisite>RimketBallMonster</researchPrerequisite>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>Make_RimketGreatBall</defName>
+    <label>슈퍼볼 제작</label>
+    <description>슈퍼볼을 만든다.</description>
+    <jobString>슈퍼볼을(를) 만드는 중.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <workAmount>5000</workAmount>
+    <ingredients>
+      <li><filter><thingDefs><li>WoodLog</li></thingDefs></filter><count>10</count></li>
+      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>1</count></li>
+      <li><filter><categories><li>StoneChunks</li></categories></filter><count>1</count></li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs><li>WoodLog</li><li>ComponentIndustrial</li></thingDefs>
+      <categories><li>StoneChunks</li></categories>
+    </fixedIngredientFilter>
+    <products><RimketGreatBall>1</RimketGreatBall></products>
+    <skillRequirements><Crafting>6</Crafting></skillRequirements>
+    <workSkill>Crafting</workSkill>
+    <recipeUsers><li>TableMachining</li></recipeUsers>
+    <researchPrerequisite>RimketBallGreat</researchPrerequisite>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>Make_RimketUltraBall</defName>
+    <label>하이퍼볼 제작</label>
+    <description>하이퍼볼을 만든다.</description>
+    <jobString>하이퍼볼을(를) 만드는 중.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <workAmount>8000</workAmount>
+    <ingredients>
+      <li><filter><thingDefs><li>WoodLog</li></thingDefs></filter><count>10</count></li>
+      <li><filter><thingDefs><li>ComponentSpacer</li></thingDefs></filter><count>1</count></li>
+      <li><filter><categories><li>StoneChunks</li></categories></filter><count>1</count></li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs><li>WoodLog</li><li>ComponentSpacer</li></thingDefs>
+      <categories><li>StoneChunks</li></categories>
+    </fixedIngredientFilter>
+    <products><RimketUltraBall>1</RimketUltraBall></products>
+    <skillRequirements><Crafting>8</Crafting></skillRequirements>
+    <workSkill>Crafting</workSkill>
+    <recipeUsers><li>FabricationBench</li></recipeUsers>
+    <researchPrerequisite>RimketBallUltra</researchPrerequisite>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>Make_RimketMasterBall</defName>
+    <label>마스터볼 제작</label>
+    <description>마스터볼을 만든다.</description>
+    <jobString>마스터볼을(를) 만드는 중.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <workAmount>14000</workAmount>
+    <ingredients>
+      <li><filter><thingDefs><li>WoodLog</li></thingDefs></filter><count>10</count></li>
+      <li><filter><thingDefs><li>AIPersonaCore</li></thingDefs></filter><count>1</count></li>
+      <li><filter><categories><li>StoneChunks</li></categories></filter><count>1</count></li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs><li>WoodLog</li><li>AIPersonaCore</li></thingDefs>
+      <categories><li>StoneChunks</li></categories>
+    </fixedIngredientFilter>
+    <products><RimketMasterBall>1</RimketMasterBall></products>
+    <skillRequirements><Crafting>10</Crafting></skillRequirements>
+    <workSkill>Crafting</workSkill>
+    <recipeUsers><li>FabricationBench</li></recipeUsers>
+    <researchPrerequisite>RimketBallMaster</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- 던져진 림볼: 땅에 떨어지면 효과가 터지고 배틀이 시작된다 -->
+  <ThingDef ParentName="BaseBullet">
+    <defName>RimketBallProjectile</defName>
+    <label>몬스터볼</label>
+    <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
+    <graphicData>
+      <texPath>Things/RimketBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.7,0.7)</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Bomb</damageDef>
+      <damageAmountBase>0</damageAmountBase>
+      <speed>16</speed>
+      <arcHeightFactor>0.6</arcHeightFactor>
+    </projectile>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RimketGreatBallProjectile</defName>
+    <label>슈퍼볼</label>
+    <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
+    <graphicData>
+      <texPath>Things/RimketGreatBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.7,0.7)</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Bomb</damageDef>
+      <damageAmountBase>0</damageAmountBase>
+      <speed>16</speed>
+      <arcHeightFactor>0.6</arcHeightFactor>
+    </projectile>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RimketUltraBallProjectile</defName>
+    <label>하이퍼볼</label>
+    <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
+    <graphicData>
+      <texPath>Things/RimketUltraBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.7,0.7)</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Bomb</damageDef>
+      <damageAmountBase>0</damageAmountBase>
+      <speed>16</speed>
+      <arcHeightFactor>0.6</arcHeightFactor>
+    </projectile>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>RimketMasterBallProjectile</defName>
+    <label>마스터볼</label>
+    <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
+    <graphicData>
+      <texPath>Things/RimketMasterBall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.7,0.7)</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Bomb</damageDef>
+      <damageAmountBase>0</damageAmountBase>
+      <speed>16</speed>
+      <arcHeightFactor>0.6</arcHeightFactor>
+    </projectile>
+  </ThingDef>
+
+  <!-- 림볼 던지기: 소지품에 림볼이 있고 초능력 레벨 ≥ 1이고 림켓링크가 있는 정착민에게 C#(RimketAbilityGranter)이 부여/회수한다 -->
+  <AbilityDef>
+    <defName>RimketThrow</defName>
+    <label>림볼 던지기</label>
+    <description>림볼을 던져 배틀을 시작한다.</description>
+    <iconPath>UI/Rimket/ThrowIcon</iconPath>
+    <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <hostile>false</hostile>
+    <cooldownTicksRange>60</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <label>림볼 던지기</label>
+      <violent>false</violent>
+      <range>12.9</range>
+      <warmupTime>0.6</warmupTime>
+      <requireLineOfSight>true</requireLineOfSight>
+      <targetParams>
+        <canTargetPawns>true</canTargetPawns>
+        <canTargetAnimals>true</canTargetAnimals>
+        <canTargetHumans>false</canTargetHumans>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetSelf>false</canTargetSelf>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="Rimketmon.CompProperties_AbilityRimketThrow" />
+    </comps>
+  </AbilityDef>
+
+  <AbilityDef>
+    <defName>RimketThrowMaster</defName>
+    <label>마스터볼 던지기</label>
+    <description>마스터볼을 던져 곧바로 붙잡는다.</description>
+    <iconPath>Things/RimketMasterBall</iconPath>
+    <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <hostile>false</hostile>
+    <cooldownTicksRange>60</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <label>마스터볼 던지기</label>
+      <violent>false</violent>
+      <range>12.9</range>
+      <warmupTime>0.6</warmupTime>
+      <requireLineOfSight>true</requireLineOfSight>
+      <targetParams>
+        <canTargetPawns>true</canTargetPawns>
+        <canTargetAnimals>true</canTargetAnimals>
+        <canTargetHumans>true</canTargetHumans>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetSelf>false</canTargetSelf>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="Rimketmon.CompProperties_AbilityRimketThrow"><master>true</master></li>
+    </comps>
+  </AbilityDef>
+
+  <!-- 포켓몬의 몸: 동물 몸이 없는 림켓몬(포켓몬 종족)을 지도에 꺼낼 때 쓰는 투명한 동물. 겉모습은 모드가 종족별 걷는 그림으로 따로 그린다.
+       야생에 나오지 않고(바이옴 없음), 거래·포획·티어 대상에서도 빠진다. -->
+  <ThingDef ParentName="AnimalThingBase">
+    <defName>RimketPokemonBody</defName>
+    <label>림켓몬</label>
+    <description>볼에서 나온 림켓몬의 모습. 겉모습일 뿐이라 다치거나 사라져도 림켓몬 본체에는 영향이 없다.</description>
+    <statBases>
+      <MoveSpeed>5.0</MoveSpeed>
+      <MarketValue>0</MarketValue>
+      <ComfyTemperatureMin>-100</ComfyTemperatureMin>
+      <ComfyTemperatureMax>100</ComfyTemperatureMax>
+      <Wildness>0</Wildness>
+    </statBases>
+    <tools>
+      <li>
+        <label>head</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>2</power>
+        <cooldownTime>2</cooldownTime>
+        <linkedBodyPartsGroup>HeadAttackTool</linkedBodyPartsGroup>
+        <ensureLinkedBodyPartsGroupAlwaysUsable>true</ensureLinkedBodyPartsGroupAlwaysUsable>
+      </li>
+    </tools>
+    <race>
+      <body>QuadrupedAnimalWithPawsAndTail</body>
+      <baseBodySize>0.5</baseBodySize>
+      <baseHungerRate>0.01</baseHungerRate>
+      <baseHealthScale>1</baseHealthScale>
+      <foodType>VegetarianRoughAnimal</foodType>
+      <leatherDef>Leather_Light</leatherDef>
+      <trainability>None</trainability>
+      <petness>0</petness>
+      <lifeExpectancy>100</lifeExpectancy>
+      <lifeStageAges>
+        <li>
+          <def>AnimalAdult</def>
+          <minAge>0</minAge>
+        </li>
+      </lifeStageAges>
+      <soundMeleeHitPawn>Pawn_Melee_SmallScratch_HitPawn</soundMeleeHitPawn>
+      <soundMeleeHitBuilding>Pawn_Melee_SmallScratch_HitBuilding</soundMeleeHitBuilding>
+      <soundMeleeMiss>Pawn_Melee_SmallScratch_Miss</soundMeleeMiss>
+    </race>
+  </ThingDef>
+
+  <PawnKindDef ParentName="AnimalKindBase">
+    <defName>RimketPokemonBody</defName>
+    <label>림켓몬</label>
+    <race>RimketPokemonBody</race>
+    <combatPower>30</combatPower>
+    <ecoSystemWeight>0</ecoSystemWeight>
+    <lifeStages>
+      <li>
+        <bodyGraphicData>
+          <texPath>Things/RimketBody/Blank</texPath>
+          <drawSize>1</drawSize>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>Things/RimketBody/Blank</texPath>
+          <drawSize>1</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+    </lifeStages>
+  </PawnKindDef>
+
+  <!-- 림켓몬 꺼내기: 가리킨 자리에 볼을 던져 파티 맨 앞 림켓몬을 지도에 꺼낸다(뒤를 따라다닌다). 다시 쓰면 불러들인다. -->
+  <AbilityDef>
+    <defName>RimketSummon</defName>
+    <label>림켓몬 꺼내기</label>
+    <description>가리킨 자리에 볼을 던져 파티 맨 앞의 림켓몬을 꺼낸다. 꺼낸 림켓몬은 뒤를 따라다닌다. 이미 나와 있을 때 쓰면 불러들인다.</description>
+    <iconPath>UI/Rimket/SummonIcon</iconPath>
+    <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <hostile>false</hostile>
+    <cooldownTicksRange>60</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <label>림켓몬 꺼내기</label>
+      <violent>false</violent>
+      <range>5.9</range>
+      <warmupTime>0.4</warmupTime>
+      <requireLineOfSight>true</requireLineOfSight>
+      <targetParams>
+        <canTargetLocations>true</canTargetLocations>
+        <canTargetPawns>false</canTargetPawns>
+        <canTargetAnimals>false</canTargetAnimals>
+        <canTargetHumans>false</canTargetHumans>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetSelf>false</canTargetSelf>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="Rimketmon.CompProperties_AbilityRimketSummon" />
+    </comps>
+  </AbilityDef>
+
+  <!-- 어둠의 림켓몬 배틀: 방문 트레이너가 목숨을 건 6대6 배틀을 신청한다(피할 수 없음, 오자마자 처치하면 배틀 없음) -->
+  <IncidentDef>
+    <defName>RimketDarkChallenge</defName>
+    <label>어둠의 림켓몬 배틀</label>
+    <category>Misc</category>
+    <targetTags><li>Map_PlayerHome</li></targetTags>
+    <workerClass>Rimketmon.IncidentWorker_RimketChallenge</workerClass>
+    <baseChance>0.6</baseChance>
+    <earliestDay>6</earliestDay>
+    <minRefireDays>20</minRefireDays>
+  </IncidentDef>
+
+
+  <!-- 볼에서 풀려난 사람의 무드와 림켓링크 착용자에 대한 마음 -->
+  <ThoughtDef>
+    <defName>RimketOutOfBall</defName>
+    <durationDays>15</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>볼에서 빠져나옴</label>
+        <description>'가라!'라는 목소리가 아직도 생생해… 제발 그만해! 나 지금 제정신 맞아?!</description>
+        <baseMoodEffect>-16</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RimketBallTrauma</defName>
+    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <durationDays>15</durationDays>
+    <stackLimit>1</stackLimit>
+    <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
+    <stages>
+      <li>
+        <label>나를 볼에 가뒀던 사람</label>
+        <baseOpinionOffset>-200</baseOpinionOffset>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>RimketBallBond</defName>
+    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <durationDays>120</durationDays>
+    <stackLimit>1</stackLimit>
+    <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
+    <stages>
+      <li>
+        <label>함께 싸웠던 트레이너</label>
+        <baseOpinionOffset>0</baseOpinionOffset>
+      </li>
+    </stages>
+  </ThoughtDef>
+</Defs>

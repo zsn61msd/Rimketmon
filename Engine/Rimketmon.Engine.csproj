@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <RootNamespace>Rimketmon.Engine</RootNamespace>
+    <AssemblyName>Rimketmon.Engine</AssemblyName>
+    <Nullable>disable</Nullable>
+    <UseAppHost>false</UseAppHost>
+    <!-- 학습 환경·테스트용 빌드에서만 신경망 추론에 SIMD를 쓴다(모드 DLL은 림월드 런타임에 맞춰 일반 코드) -->
+    <DefineConstants>$(DefineConstants);FASTNN</DefineConstants>
+  </PropertyGroup>
+</Project>

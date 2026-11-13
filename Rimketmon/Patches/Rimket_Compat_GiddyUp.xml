@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <!-- Giddy-Up 2: 꺼낸 림켓몬의 몸(코드로 그리는 가짜 몸)은 탈 수 없게. 크기 0.5라 기본값으로도 안 타지지만 설정에서 바꿔도 막는다. -->
+  <Operation Class="PatchOperationFindMod">
+    <mods><li>Giddy-Up 2 - Continued</li><li>Giddy-Up 2</li></mods>
+    <match Class="PatchOperationAddModExtension">
+      <xpath>Defs/ThingDef[defName="RimketPokemonBody"]</xpath>
+      <value><li Class="GiddyUp.NotMountable" /></value>
+    </match>
+  </Operation>
+</Patch>

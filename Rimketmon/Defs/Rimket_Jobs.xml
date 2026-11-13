@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- 통신기에서 어둠의 림켓몬 트레이너들에게 도발 방송 -->
+  <JobDef>
+    <defName>RimketTaunt</defName>
+    <driverClass>Rimketmon.JobDriver_RimketTaunt</driverClass>
+    <reportString>림켓몬 도발 방송 중.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+  </JobDef>
+  <!-- 꺼내 둔 림켓몬과 상호작용(놀아 주기·안아 주기·쓰다듬기·때리기 …) -->
+  <JobDef>
+    <defName>RimketInteract</defName>
+    <driverClass>Rimketmon.JobDriver_RimketInteract</driverClass>
+    <reportString>림켓몬과 교감 중.</reportString>
+    <casualInterruptible>true</casualInterruptible>
+  </JobDef>
+  <!-- 시체의 뇌에서 림켓링크를 뽑아낸다(바이오테크의 메크링크 추출과 같은 방식) -->
+  <JobDef>
+    <defName>RimketExtractLink</defName>
+    <driverClass>Rimketmon.JobDriver_RimketExtractLink</driverClass>
+    <reportString>TargetA에서 림켓링크를 추출하는 중.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+  </JobDef>
+</Defs>

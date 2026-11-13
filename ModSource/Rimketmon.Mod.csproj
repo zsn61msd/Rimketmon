@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <AssemblyName>Rimketmon</AssemblyName>
+    <RootNamespace>Rimketmon</RootNamespace>
+    <Nullable>disable</Nullable>
+    <!-- 본인 림월드 설치 경로로 바꾸세요 -->
+    <RimWorldManaged Condition="'$(RimWorldManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManaged>
+    <OutputPath>..\Rimketmon\1.6\Assemblies\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 순수 C# 엔진 소스를 그대로 포함해서 컴파일한다(별도 DLL 없이 한 어셈블리로 배포) -->
+    <Compile Include="..\Engine\**\*.cs" Exclude="..\Engine\obj\**;..\Engine\bin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 림월드 Managed 폴더의 게임/유니티 어셈블리를 참조한다(복사하지 않음) -->
+    <Reference Include="$(RimWorldManaged)\Assembly-CSharp*.dll;$(RimWorldManaged)\UnityEngine*.dll;$(RimWorldManaged)\com.rlabrecque.steamworks.net.dll">
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
