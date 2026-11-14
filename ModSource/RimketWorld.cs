@@ -295,20 +295,20 @@ namespace Rimketmon
         {
             if (owner == null || owner.Map == null) return;
             var first = Front();
-            if (first == null) { Messages.Message("꺼낼 림켓몬이 없다.", MessageTypeDefOf.RejectInput, false); return; }
-            if (!FollowDraw.CanShow(first)) { Messages.Message(first.Name + "은(는) 지도에 꺼낼 수 있는 모습이 없다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (first == null) { Messages.Message(Lang.Tr("꺼낼 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false); return; }
+            if (!FollowDraw.CanShow(first)) { Messages.Message(Lang.Tr(first.Name + "은(는) 지도에 꺼낼 수 있는 모습이 없다."), MessageTypeDefOf.RejectInput, false); return; }
             if (!cell.InBounds(owner.Map)) cell = owner.Position;
             followOn = true; master = owner; fPos = cell.ToVector3Shifted(); fPosValid = true; fDir = 2;
             BallBurst(cell, owner.Map);
             Cry(first, cell, owner.Map);
-            MoteMaker.ThrowText(fPos, owner.Map, "가라! " + first.Name + "!", Color.white, 2.5f);
+            MoteMaker.ThrowText(fPos, owner.Map, Lang.Tr("가라! " + first.Name + "!"), Color.white, 2.5f);
         }
 
         public void Recall(bool effect = true)
         {
             if (followOn && effect && master != null && master.Spawned && fPosValid)
             {
-                MoteMaker.ThrowText(fPos, master.Map, "돌아와!", Color.white, 2f);
+                MoteMaker.ThrowText(fPos, master.Map, Lang.Tr("돌아와!"), Color.white, 2f);
                 for (int i = 0; i < 3; i++) FleckMaker.ThrowDustPuff(fPos, master.Map, 1.0f);
                 FleckMaker.ThrowLightningGlow(fPos, master.Map, 1.2f);
             }
@@ -509,7 +509,7 @@ namespace Rimketmon
                 if (env.W != Weather.None || env.T != Rimketmon.Engine.Terrain.None) battle.ApplyEnvironment(env.W, env.T);
             }
             var f = new WorldBattle(a, b, sa, sb, battle, s, comp);
-            MoteMaker.ThrowText(a.DrawPos + new Vector3(0f, 0f, 0.8f), map, b.LabelShortCap + ", 승부다!", new Color(1f, 0.9f, 0.4f), 3f);
+            MoteMaker.ThrowText(a.DrawPos + new Vector3(0f, 0f, 0.8f), map, Lang.Tr(b.LabelShortCap + ", 승부다!"), new Color(1f, 0.9f, 0.4f), 3f);
             var go = JobMaker.MakeJob(JobDefOf.Goto, sb); go.locomotionUrgency = LocomotionUrgency.Jog;
             b.jobs.StartJob(go, JobCondition.InterruptForced);
             f.Hold(a, 0);
@@ -558,7 +558,7 @@ namespace Rimketmon
         }
 
         Vector3 Mid { get { return (spot[0].ToVector3Shifted() + spot[1].ToVector3Shifted()) * 0.5f + new Vector3(0f, 0f, 1.6f); } }
-        void Say(string text, Color c) { MoteMaker.ThrowText(Mid, map, text, c, 2.2f); }
+        void Say(string text, Color c) { MoteMaker.ThrowText(Mid, map, Lang.Tr(text), c, 2.2f); }
 
         /// <summary>한 틱 진행. 끝났으면 false.</summary>
         public bool Tick()
@@ -672,11 +672,11 @@ namespace Rimketmon
                     if (body[i] != null && body[i].Spawned)
                     {
                         for (int k = 0; k < 4; k++) FleckMaker.ThrowMicroSparks(body[i].DrawPos, map);
-                        if (e.Value > 0) MoteMaker.ThrowText(body[i].DrawPos + new Vector3(0f, 0f, 0.5f), map, "-" + e.Value, new Color(1f, 0.45f, 0.4f), 1.2f);
+                        if (e.Value > 0) MoteMaker.ThrowText(body[i].DrawPos + new Vector3(0f, 0f, 0.5f), map, Lang.Tr("-" + e.Value), new Color(1f, 0.45f, 0.4f), 1.2f);
                     }
                     break;
                 case BattleEventKind.Heal:
-                    if (body[i] != null && body[i].Spawned && e.Value > 0) MoteMaker.ThrowText(body[i].DrawPos + new Vector3(0f, 0f, 0.5f), map, "+" + e.Value, new Color(0.5f, 1f, 0.55f), 1.2f);
+                    if (body[i] != null && body[i].Spawned && e.Value > 0) MoteMaker.ThrowText(body[i].DrawPos + new Vector3(0f, 0f, 0.5f), map, Lang.Tr("+" + e.Value), new Color(0.5f, 1f, 0.55f), 1.2f);
                     break;
                 case BattleEventKind.MoveUsed:
                     if (!RimketmonMod.Settings.moveAnimations || e.Value == 1 || body[i] == null || body[1 - i] == null) break;

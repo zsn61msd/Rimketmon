@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Make_RimketBall.label>몬스터볼 제작</Make_RimketBall.label>
+  <Make_RimketBall.description>몬스터볼을 만든다.</Make_RimketBall.description>
+  <Make_RimketBall.jobString>몬스터볼을(를) 만드는 중.</Make_RimketBall.jobString>
+  <Make_RimketGreatBall.label>슈퍼볼 제작</Make_RimketGreatBall.label>
+  <Make_RimketGreatBall.description>슈퍼볼을 만든다.</Make_RimketGreatBall.description>
+  <Make_RimketGreatBall.jobString>슈퍼볼을(를) 만드는 중.</Make_RimketGreatBall.jobString>
+  <Make_RimketUltraBall.label>하이퍼볼 제작</Make_RimketUltraBall.label>
+  <Make_RimketUltraBall.description>하이퍼볼을 만든다.</Make_RimketUltraBall.description>
+  <Make_RimketUltraBall.jobString>하이퍼볼을(를) 만드는 중.</Make_RimketUltraBall.jobString>
+  <Make_RimketMasterBall.label>마스터볼 제작</Make_RimketMasterBall.label>
+  <Make_RimketMasterBall.description>마스터볼을 만든다.</Make_RimketMasterBall.description>
+  <Make_RimketMasterBall.jobString>마스터볼을(를) 만드는 중.</Make_RimketMasterBall.jobString>
+</LanguageData>

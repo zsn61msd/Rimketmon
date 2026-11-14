@@ -43,7 +43,7 @@ namespace Rimketmon
         {
             var pc = PartyComponent.Instance; if (pc == null) return;
             pc.huntUnlocked = true; pc.bp += 5000;
-            Messages.Message("사냥이 열렸다(BP +5000).", MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr("사냥이 열렸다(BP +5000)."), MessageTypeDefOf.PositiveEvent, false);
         }
 
         [DebugAction(Cat, "진화 연출 보기: 파티에 파이리 Lv.16 넣고 진화", actionType = DebugActionType.Action, allowedGameStates = AllowedGameStates.PlayingOnMap)]
@@ -60,7 +60,7 @@ namespace Rimketmon
         private static void SpawnChallenger()
         {
             var comp = RimketChallengeComponent.Instance;
-            if (comp == null || comp.pending) { Messages.Message("이미 진행 중인 신청이 있다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (comp == null || comp.pending) { Messages.Message(Lang.Tr("이미 진행 중인 신청이 있다."), MessageTypeDefOf.RejectInput, false); return; }
             comp.Arrive(Find.CurrentMap);
         }
 
@@ -74,14 +74,14 @@ namespace Rimketmon
         private static void SpawnMystery()
         {
             var comp = RimketChallengeComponent.Instance;
-            if (comp == null || comp.pending) { Messages.Message("이미 진행 중인 신청이 있다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (comp == null || comp.pending) { Messages.Message(Lang.Tr("이미 진행 중인 신청이 있다."), MessageTypeDefOf.RejectInput, false); return; }
             comp.Arrive(Find.CurrentMap, true);
         }
 
         [DebugAction(Cat, "림켓링크 퀘스트: 세상에 링크가 있는지 검사", actionType = DebugActionType.Action, allowedGameStates = AllowedGameStates.Playing)]
         private static void CheckLinkExists()
         {
-            Messages.Message("림켓링크가 세상에 " + (RimketLink.ExistsAnywhere() ? "있다" : "없다(곧 퀘스트가 열린다)") + ".", MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr("림켓링크가 세상에 " + (RimketLink.ExistsAnywhere() ? "있다" : "없다(곧 퀘스트가 열린다)") + "."), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "어둠의 배틀: 이벤트 창 바로 띄우기(강제 수락창)", actionType = DebugActionType.Action, allowedGameStates = AllowedGameStates.PlayingOnMap)]
@@ -97,8 +97,8 @@ namespace Rimketmon
             var map = Find.CurrentMap; if (map == null) return;
             var who = map.mapPawns.AllPawnsSpawned.Where(p => p.RaceProps.Humanlike && p.Faction != Faction.OfPlayer && !p.Dead && !p.Downed).OrderBy(p => p.HostileTo(Faction.OfPlayer) ? 1 : 0).FirstOrDefault()
                       ?? map.mapPawns.FreeColonistsSpawned.FirstOrDefault();
-            if (who == null || !BattleFlow.CanVisitorBattle(true)) { Messages.Message("승부를 걸 사람이 없거나 싸울 림켓몬이 없다.", MessageTypeDefOf.RejectInput, false); return; }
-            if (!BattleFlow.CanVisitorBattle()) Messages.Message("(개발자) 실제로는 림켓링크 착용자의 상태 때문에 걸어오지 않는 상황입니다.", MessageTypeDefOf.NeutralEvent, false);
+            if (who == null || !BattleFlow.CanVisitorBattle(true)) { Messages.Message(Lang.Tr("승부를 걸 사람이 없거나 싸울 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false); return; }
+            if (!BattleFlow.CanVisitorBattle()) Messages.Message(Lang.Tr("(개발자) 실제로는 림켓링크 착용자의 상태 때문에 걸어오지 않는 상황입니다."), MessageTypeDefOf.NeutralEvent, false);
             RimketChallengeComponent.VisitorChallenge(who, true);
         }
 
@@ -106,13 +106,13 @@ namespace Rimketmon
         private static void VisitorsFightNow()
         {
             var map = Find.CurrentMap; var comp = RimketWorldComponent.Instance; if (map == null || comp == null) return;
-            if (comp.FightActive) { Messages.Message("이미 진행 중인 승부가 있다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (comp.FightActive) { Messages.Message(Lang.Tr("이미 진행 중인 승부가 있다."), MessageTypeDefOf.RejectInput, false); return; }
             // 방문자(플레이어 소속이 아닌 사람) 둘을 우선하고, 모자라면 정착민으로 채운다(시험용)
             var people = map.mapPawns.AllPawnsSpawned.Where(RimketWorldComponent.Eligible).OrderBy(p => p.Faction == Faction.OfPlayer ? 1 : 0).ThenBy(p => p.HostileTo(Faction.OfPlayer) ? 1 : 0).ToList();
-            if (people.Count < 2) { Messages.Message("승부할 사람이 두 명 필요하다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (people.Count < 2) { Messages.Message(Lang.Tr("승부할 사람이 두 명 필요하다."), MessageTypeDefOf.RejectInput, false); return; }
             var a = people[0]; var b = people.Skip(1).OrderBy(p => p.Position.DistanceTo(a.Position)).First();
-            if (comp.StartFight(a, b)) { CameraJumper.TryJump(a); Messages.Message(a.LabelShortCap + " 대 " + b.LabelShortCap + ": 림켓몬 승부 시작.", a, MessageTypeDefOf.NeutralEvent, false); }
-            else Messages.Message("승부할 자리를 찾지 못했다(가로나 세로로 6칸이 비어 있어야 한다).", MessageTypeDefOf.RejectInput, false);
+            if (comp.StartFight(a, b)) { CameraJumper.TryJump(a); Messages.Message(Lang.Tr(a.LabelShortCap + " 대 " + b.LabelShortCap + ": 림켓몬 승부 시작."), a, MessageTypeDefOf.NeutralEvent, false); }
+            else Messages.Message(Lang.Tr("승부할 자리를 찾지 못했다(가로나 세로로 6칸이 비어 있어야 한다)."), MessageTypeDefOf.RejectInput, false);
         }
 
         [DebugAction(Cat, "림켓링크 퀘스트 생성(수락 대기)", allowedGameStates = AllowedGameStates.PlayingOnMap)]
@@ -121,7 +121,7 @@ namespace Rimketmon
             var pc = PartyComponent.Instance;
             if (pc == null) return;
             pc.DebugOfferLinkQuest();
-            Messages.Message("림켓링크 퀘스트를 만들었다. 퀘스트 탭에서 수락하세요.", MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr("림켓링크 퀘스트를 만들었다. 퀘스트 탭에서 수락하세요."), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "추락한 우주선 즉시 떨어뜨리기(퀘스트 자동 수락)", allowedGameStates = AllowedGameStates.PlayingOnMap)]
@@ -150,7 +150,7 @@ namespace Rimketmon
             var mdef = RimketInventory.BallDef(3);
             if (mdef != null) { var mb = ThingMaker.MakeThing(mdef); mb.stackCount = 5; if (!p.inventory.innerContainer.TryAdd(mb)) mb.Destroy(); }
 
-            if (p.GetPsylinkLevel() < 1 && p.health.hediffSet.GetFirstHediffOfDef(HediffDefOf.PsychicAmplifier) == null)
+            if (ModsConfig.RoyaltyActive && HediffDefOf.PsychicAmplifier != null && p.GetPsylinkLevel() < 1 && p.health.hediffSet.GetFirstHediffOfDef(HediffDefOf.PsychicAmplifier) == null)      // 초능력 부여는 로열티가 있을 때만
             {
                 var brain = p.health.hediffSet.GetBrain();
                 var h = (Hediff_Psylink)HediffMaker.MakeHediff(HediffDefOf.PsychicAmplifier, p, brain);
@@ -169,7 +169,7 @@ namespace Rimketmon
                 if (br != null) p.health.AddHediff(RimketLink.Hediff, br);
             }
             DebugActionsUtility.DustPuffFrom(p);
-            Messages.Message(p.LabelShortCap + ": 림볼 +5, 마스터볼 +5, 초능력 레벨 " + p.GetPsylinkLevel() + " (정신감응력 " + p.GetStatValue(StatDefOf.PsychicSensitivity).ToString("P0") + ")", MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr(p.LabelShortCap + ": 림볼 +5, 마스터볼 +5, 초능력 레벨 " + p.GetPsylinkLevel() + " (정신감응력 " + p.GetStatValue(StatDefOf.PsychicSensitivity).ToString("P0") + ")"), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "동물: 내 파티에 추가(복제)", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
@@ -181,7 +181,7 @@ namespace Rimketmon
             var copy = comp.data.C.Clone();
             copy.FullHeal();
             PartyComponent.Instance.Add(copy);
-            Messages.Message("파티에 추가: " + copy.Name + " (티어 " + copy.TierText + ", Lv." + copy.Level + ") — 현재 " + PartyComponent.Instance.All.Count + "마리", MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr("파티에 추가: " + copy.Name + " (티어 " + copy.TierText + ", Lv." + copy.Level + ") — 현재 " + PartyComponent.Instance.All.Count + "마리"), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "배지 +1 (레벨 상한 +10)", allowedGameStates = AllowedGameStates.PlayingOnMap)]
@@ -189,20 +189,20 @@ namespace Rimketmon
         {
             var party = PartyComponent.Instance;
             party.DebugAddBadge();
-            Messages.Message("배지 " + party.Badges + "개 — 야생 레벨 상한 " + party.LevelCap, MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr("배지 " + party.Badges + "개 — 야생 레벨 상한 " + party.LevelCap), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "파티 비우기", allowedGameStates = AllowedGameStates.PlayingOnMap)]
         private static void ClearParty()
         {
             PartyComponent.Instance.All.Clear();
-            Messages.Message("림켓몬 파티를 비웠다.", MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr("림켓몬 파티를 비웠다."), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "동물: 배틀 즉시 시작(선택/첫 정착민이 던짐)", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
         private static void StartBattle(Pawn animal)
         {
-            if (!BattleFlow.IsValidTarget(animal)) { Messages.Message("야생 동물을 클릭하세요.", MessageTypeDefOf.RejectInput, false); return; }
+            if (!BattleFlow.IsValidTarget(animal)) { Messages.Message(Lang.Tr("야생 동물을 클릭하세요."), MessageTypeDefOf.RejectInput, false); return; }
             Pawn thrower = Find.Selector.SelectedPawns.FirstOrDefault(x => x.IsColonist)
                            ?? animal.Map.mapPawns.FreeColonistsSpawned.FirstOrDefault();
             if (thrower == null) return;
@@ -228,7 +228,7 @@ namespace Rimketmon
             c.SpeciesId = p.def.defName;
             comp.data = new ExposableCreature { C = c };
             var sp = SpeciesCatalog.Get(c.Species);
-            Messages.Message((p.def.label ?? p.def.defName) + " → ?티어 (종족값 " + sp.Bst + ": " + sp.Hp + "/" + sp.Atk + "/" + sp.Def + "/" + sp.SpA + "/" + sp.SpD + "/" + sp.Spe + ", 기술 " + sp.Learnset.Count + "개, 특성 " + sp.Abilities.Count + "개)", MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr((p.def.label ?? p.def.defName) + " → ?티어 (종족값 " + sp.Bst + ": " + sp.Hp + "/" + sp.Atk + "/" + sp.Def + "/" + sp.SpA + "/" + sp.SpD + "/" + sp.Spe + ", 기술 " + sp.Learnset.Count + "개, 특성 " + sp.Abilities.Count + "개)"), MessageTypeDefOf.NeutralEvent, false);
         }
 
         private static void Reroll(Pawn p, int tier, bool forceSixth)
@@ -241,7 +241,7 @@ namespace Rimketmon
             string label = p.def.label ?? p.def.defName;
             var c = SpawnRoller.Roll(p.def.defName, label, tier, (float)p.def.GetStatValueAbstract(StatDefOf.Wildness), PartyComponent.Instance.Stage, new GameRng(), s, p.gender == Gender.Male ? 0 : p.gender == Gender.Female ? 1 : -1);
             comp.data = new ExposableCreature { C = c };
-            Messages.Message(label + " 재굴림 → 티어 " + c.TierText + ", Lv." + c.Level + ", " + TypeChart.KoreanName(c.Type1) + (c.Type2.HasValue ? "/" + TypeChart.KoreanName(c.Type2.Value) : ""), MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr(label + " 재굴림 → 티어 " + c.TierText + ", Lv." + c.Level + ", " + TypeChart.KoreanName(c.Type1) + (c.Type2.HasValue ? "/" + TypeChart.KoreanName(c.Type2.Value) : "")), MessageTypeDefOf.NeutralEvent, false);
         }
     }
 }

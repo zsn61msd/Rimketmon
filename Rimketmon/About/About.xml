@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>림켓몬 (Rimketmon)</name>
+  <name>RimKéMoN</name>
   <author>RimGall</author>
   <packageId>rimgall.rimketmon</packageId>
   <modVersion>0.1.0</modVersion>
@@ -8,28 +8,27 @@
     <li>1.6</li>
     <li>1.7</li>
   </supportedVersions>
-  <description>비공식 팬 모드입니다. Nintendo / Creatures / GAME FREAK / The Pokémon Company와 관계가 없으며, 원작 자료의 권리는 각 권리자에게 있습니다.
+  <description>RimKéMoN turns RimWorld's animals and people into collectible battle monsters.
 
-[출처]
-- 포켓로그(PokeRogue, pagefaultgames): 포켓몬 애니메이션 스프라이트·이로치(pokerogue-assets), 기술 연출, 아레나·UI·볼·트레이너 그림, BGM·효과음·울음소리, 한글/영어 문구, 바이옴 등장표, 관장·사천왕·챔피언 파티
-- Generation 9 Pack v3.3.8 (Eevee Expo, eeveeexpo.com/resources/1101): 종족·기술·특성·도구 수치, 진화 방식, 도구 아이콘, 지도 위 걷는 그림(Followers), 키 데이터
-- Pokémon Feral F Sevii Update Gen9 Korean v0.4: 효과음, 방문자 '!' 말풍선
-- pokefirered (pret 디컴파일): 포켓몬 센터·프렌들리숍 맵·타일·NPC
-- PokeAPI: 한국어 이름(종족·기술·특성·도구)·설명, 도감 분류·설명
-- Bulbagarden Archives: HGSS·Pt 트레이너 애니메이션
-- github.com/coopscollectionbiz-debug/Poke-discord-bot: HGSS·Pt 트레이너 애니메이션 GIF 정리본
-- Smogon 사용률 통계 (github.com/pkmn/smogon): 랭크 상대 파티 구성
-- 포켓몬 챔피언스 규칙·수치 참고: ChampDex, Serebii, Vandal, battlenest.jp
+Link a colonist with the RimketLink, catch the creatures that roam your map, and fight turn-based battles inspired by the main-series games: gyms and the league, a Pokémon Center and mart, ranked battles, hunting runs, paradox battles with gene wedges, and online battles against other players.
+
+Every animal gets its own level, tier, typing, ability and moves, and colonists can fight with stats drawn from their psylink and psychic sensitivity.
+
+This is an unofficial fan mod. It is not affiliated with Nintendo, Creatures, GAME FREAK or The Pokémon Company; all rights to the original material belong to their respective owners.
+
+[Credits]
+- PokeRogue (pagefaultgames): animated Pokémon sprites and shinies (pokerogue-assets), move animations, arenas, UI, balls, trainer art, BGM, sound effects, cries, Korean/English text, biome spawn tables, gym leader / Elite Four / champion teams
+- Generation 9 Pack v3.3.8 (Eevee Expo, eeveeexpo.com/resources/1101): species, move, ability and item data, evolution methods, item icons, overworld follower sprites, height data
+- Pokémon Feral F Sevii Update Gen9 Korean v0.4: door open/close and exclamation sound effects
+- pokefirered (pret decompilation): Pokémon Center and Poké Mart maps, tiles, NPCs, emoticons
+- PokeAPI: Korean names and descriptions (species, moves, abilities, items), Pokédex categories and entries
+- Bulbagarden Archives: HGSS / Pt trainer animations
+- github.com/coopscollectionbiz-debug/Poke-discord-bot: HGSS / Pt trainer animation GIF collection
+- Smogon usage statistics (github.com/pkmn/smogon): ranked opponent teams
+- Pokémon Champions rules and numbers reference: ChampDex, Serebii, Vandal, battlenest.jp
 - RimWorld (Ludeon Studios)
 
-자세한 목록은 모드 폴더의 CREDITS.md를 보세요.</description>
-  <modDependencies>
-    <li>
-      <packageId>Ludeon.RimWorld.Royalty</packageId>
-      <displayName>Royalty</displayName>
-      <steamWorkshopUrl>https://store.steampowered.com/app/1149640/RimWorld__Royalty/</steamWorkshopUrl>
-    </li>
-  </modDependencies>
+See CREDITS.md in the mod folder for the full list.</description>
   <loadAfter>
     <li>Ludeon.RimWorld.Royalty</li>
   </loadAfter>

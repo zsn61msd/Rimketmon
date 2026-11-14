@@ -32,15 +32,15 @@ namespace Rimketmon
         public static void Ask()
         {
             if (Current.Game == null) return;
-            if (Removed) { Messages.Message("이미 제거된 상태입니다. 우하단 몬스터볼 아이콘으로 다시 설치할 수 있습니다.", MessageTypeDefOf.RejectInput, false); return; }
-            var node = new DiaNode("림켓몬을 이 세이브에서 제거합니다.\n\n" +
+            if (Removed) { Messages.Message(Lang.Tr("이미 제거된 상태입니다. 우하단 몬스터볼 아이콘으로 다시 설치할 수 있습니다."), MessageTypeDefOf.RejectInput, false); return; }
+            var node = new DiaNode(Lang.Tr("림켓몬을 이 세이브에서 제거합니다.\n\n" +
                 "· 모드가 만든 물건(볼·림켓링크 등), 건강 상태, 생각, 능력, 퀘스트, 연구 진행, 이벤트를 모두 정리합니다.\n" +
                 "· 진짜 포켓몬(림월드 몸이 없는 림켓몬)은 사라집니다.\n" +
                 "· 볼에 든 림월드 동물·메카·사람은 아래에서 고르세요.\n" +
-                "· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다.");
-            node.options.Add(new DiaOption("동물·메카·사람은 지도로 돌려보내고 제거") { action = () => Execute(true), resolveTree = true });
-            node.options.Add(new DiaOption("전부 없애고 제거") { action = () => Execute(false), resolveTree = true });
-            node.options.Add(new DiaOption("취소") { resolveTree = true });
+                "· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다."));
+            node.options.Add(new DiaOption(Lang.Tr("동물·메카·사람은 지도로 돌려보내고 제거")) { action = () => Execute(true), resolveTree = true });
+            node.options.Add(new DiaOption(Lang.Tr("전부 없애고 제거")) { action = () => Execute(false), resolveTree = true });
+            node.options.Add(new DiaOption(Lang.Tr("취소")) { resolveTree = true });
             Find.WindowStack.Add(new Dialog_NodeTree(node, true, false, "림켓몬 제거"));
         }
 
@@ -55,7 +55,7 @@ namespace Rimketmon
             var rc = RimketRemovalComponent.Instance; if (rc == null) return;
             ResetComponents();
             rc.removed = false;
-            Messages.Message("림켓몬을 다시 설치했다. 몬스터볼 연구부터 시작하세요.", MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr("림켓몬을 다시 설치했다. 몬스터볼 연구부터 시작하세요."), MessageTypeDefOf.PositiveEvent, false);
         }
 
         static bool Ours(Def d) { return d != null && d.modContentPack != null && RimketmonMod.Instance != null && d.modContentPack == RimketmonMod.Instance.Content; }
@@ -115,12 +115,12 @@ namespace Rimketmon
 
                 ResetComponents();
                 var rc = RimketRemovalComponent.Instance; if (rc != null) rc.removed = true;
-                Messages.Message("림켓몬을 제거했다. 돌려보냄 " + kept + " · 사라짐 " + gone + " · 정리한 물건/상태 " + items + ". 우하단 아이콘으로 다시 설치할 수 있다.", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message(Lang.Tr("림켓몬을 제거했다. 돌려보냄 " + kept + " · 사라짐 " + gone + " · 정리한 물건/상태 " + items + ". 우하단 아이콘으로 다시 설치할 수 있다."), MessageTypeDefOf.NeutralEvent, false);
             }
             catch (Exception ex)
             {
                 Log.Error("[림켓몬] 제거 중 오류: " + ex);
-                Messages.Message("제거 중 오류가 났다(로그 확인). 일부만 정리되었을 수 있다.", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("제거 중 오류가 났다(로그 확인). 일부만 정리되었을 수 있다."), MessageTypeDefOf.RejectInput, false);
             }
         }
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -42,6 +44,7 @@ namespace Rimketmon
 
         // ---- 배틀 연출(PokeRogue 설정 참고) ----
         public int language = -1;                   // 0 한국어 / 1 English / -1 아직 안 정함(림월드 언어를 따른다: 한국어면 한국어, 아니면 영어)
+        public string languageCode = "";            // "ko" / "en" / 다른 언어 묶음 코드. 비어 있으면 아직 안 정함
         public bool languageAsked;                  // 처음 몬스터볼 아이콘을 눌렀을 때 언어를 물어봤는가
         private bool speedReset;
         public int gameSpeed = 1;                   // 0 느림 / 1 보통 / 2 빠름 / 3 터보
@@ -115,6 +118,8 @@ namespace Rimketmon
             Scribe_Values.Look(ref rankedTimer, "rankedTimer", true);
             Scribe_Values.Look(ref language, "language", -1);
             Scribe_Values.Look(ref languageAsked, "languageAsked", false);
+            Scribe_Values.Look(ref languageCode, "languageCode", "");
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && string.IsNullOrEmpty(languageCode) && language >= 0) languageCode = language == 1 ? "en" : "ko";      // 예전 설정 옮기기
             Scribe_Values.Look(ref gameSpeed, "gameSpeed", 1);
             Scribe_Values.Look(ref speedReset, "speedReset", false);
             if (Scribe.mode == LoadSaveMode.LoadingVars && !speedReset) { gameSpeed = 1; speedReset = true; }   // 예전에 터보로 저장된 값을 보통(1배속)으로 되돌린다
@@ -173,24 +178,59 @@ namespace Rimketmon
             Shinies.HasTier = PkAnim.HasShinyTier;      // 레어·에픽 이로치 그림이 있는 종만 그 등급이 나온다
         }
 
-        /// <summary>언어를 아직 정하지 않았으면 림월드 언어를 따른다(한국어면 한국어, 그 밖은 전부 영어).</summary>
+        private static bool packsLoaded;
+        /// <summary>모드 폴더의 Languages/&lt;언어&gt;/Rimketmon/ 언어 묶음을 읽는다(한 번).</summary>
+        public static void LoadLanguagePacks()
+        {
+            if (packsLoaded || Instance == null) return;
+            packsLoaded = true;
+            try
+            {
+                int n = Lang.LoadFolder(System.IO.Path.Combine(Instance.Content.RootDir, "Languages"));
+                if (n == 0) Log.Warning("[림켓몬] 언어 묶음(Languages/*/Rimketmon/language.txt)을 찾지 못해 한국어로만 표시합니다.");
+            }
+            catch (System.Exception ex) { Log.Warning("[림켓몬] 언어 묶음 읽기 실패: " + ex.Message); }
+        }
+
+        /// <summary>고를 수 있는 언어: 한국어(원문) + 읽어 들인 언어 묶음.</summary>
+        public static System.Collections.Generic.List<KeyValuePair<string, string>> LanguageChoices()
+        {
+            LoadLanguagePacks();
+            var l = new System.Collections.Generic.List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ko", "한국어") };
+            foreach (var p in Lang.Packs) l.Add(new KeyValuePair<string, string>(p.Code, p.Name));
+            return l;
+        }
+
+        /// <summary>언어를 아직 정하지 않았으면 림월드 언어를 따른다(같은 폴더 이름의 언어 묶음 → 한국어면 한국어 → 그 밖은 영어).</summary>
         public static void ResolveLanguage()
         {
             var s = Settings; if (s == null) return;
-            if (s.language < 0)
+            LoadLanguagePacks();
+            if (string.IsNullOrEmpty(s.languageCode))
             {
-                bool ko = true;
+                string code = "en";
                 try
                 {
                     var al = LanguageDatabase.activeLanguage;
                     string f = al != null ? (al.folderName ?? "") : (Prefs.LangFolderName ?? "");
-                    if (f.Length > 0) ko = f.StartsWith("Korean", System.StringComparison.OrdinalIgnoreCase);
+                    if (f.StartsWith("Korean", System.StringComparison.OrdinalIgnoreCase)) code = "ko";
+                    else
+                    {
+                        var hit = Lang.Packs.FirstOrDefault(p => System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(p.Dir)) == f);
+                        if (hit != null) code = hit.Code;
+                    }
                 }
                 catch (System.Exception) { }
-                Lang.Set(!ko);
+                Lang.Set(code);
                 return;     // 정해진 값은 저장하지 않는다(물어보거나 설정에서 고를 때 저장)
             }
-            Lang.Set(s.language == 1);
+            Lang.Set(s.languageCode);
+        }
+
+        private static void PickLanguage(string code)
+        {
+            var s = Settings; if (s == null) return;
+            s.languageCode = code; s.language = code == "ko" ? 0 : 1; s.languageAsked = true; Lang.Set(code);
         }
 
         /// <summary>처음 몬스터볼 아이콘을 눌렀을 때 한 번만 언어를 묻고, 고른 뒤 then을 실행한다.</summary>
@@ -199,15 +239,17 @@ namespace Rimketmon
             var s = Settings;
             if (s == null || s.languageAsked) return false;
             ResolveLanguage();
-            System.Action<int> pick = v => { s.language = v; s.languageAsked = true; Lang.Set(v == 1); s.Write(); if (then != null) then(); };
+            var choices = LanguageChoices();
+            var opts = new System.Collections.Generic.List<FloatMenuOption>();
+            foreach (var c in choices) { string code = c.Key; opts.Add(new FloatMenuOption(c.Value, () => { PickLanguage(code); s.Write(); if (then != null) then(); })); }
             var dlg = new Dialog_MessageBox("림켓몬에서 쓸 언어를 고르세요.\nChoose the language for Rimketmon.\n\n(나중에 설정에서 바꿀 수 있습니다 / You can change it later in settings.)",
-                "한국어", () => pick(0), "English", () => pick(1));
+                "언어 고르기 / Choose", () => Find.WindowStack.Add(new FloatMenu(opts) { vanishIfMouseDistant = false }));
             dlg.doCloseX = false; dlg.closeOnClickedOutside = false; dlg.closeOnCancel = false;
             Find.WindowStack.Add(dlg);
             return true;
         }
 
-        public override string SettingsCategory() { return "림켓몬"; }
+        public override string SettingsCategory() { return "RimKéMoN"; }
 
         private static void Choice(Listing_Standard l, string label, int value, System.Action<int> set, string[] names)
         {
@@ -243,7 +285,11 @@ namespace Rimketmon
             var l = new Listing_Standard();
             l.Begin(view);
 
-            Choice(l, "언어", s.language < 0 ? (Lang.English ? 1 : 0) : s.language, v => { s.language = v; s.languageAsked = true; Lang.Set(v == 1); }, new[] { "한국어", "English" });
+            {
+                var langs = LanguageChoices();
+                int li = Mathf.Max(0, langs.FindIndex(x => x.Key == Lang.Code));
+                Choice(l, "언어", li, v => PickLanguage(langs[v].Key), langs.Select(x => x.Value).ToArray());
+            }
             l.GapLine();
 
             l.Label(Lang.Tr("■ 규칙"));
@@ -335,8 +381,6 @@ namespace Rimketmon
         public static AbilityDef RimketThrow;
         public static AbilityDef RimketThrowMaster;
         public static AbilityDef RimketSummon;
-        public static SoundDef Rimket_BattleBGM;
-        public static SoundDef Rimket_Victory;
         public static SoundDef Rimket_Enter;
         public static SoundDef Rimket_HitNormal;
         public static SoundDef Rimket_HitSuper;

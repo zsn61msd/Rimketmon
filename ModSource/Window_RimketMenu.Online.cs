@@ -97,9 +97,9 @@ namespace Rimketmon
             }
             if (s.State == OnlineState.Lobby && s.MyReady && Time.frameCount % 30 == 0)
             {
-                if (RimketLink.FindLinkPawn() == null) { s.CancelReady(); Messages.Message("림켓링크 착용자가 없어 대전 준비가 취소되었다.", MessageTypeDefOf.NegativeEvent, false); return; }
+                if (RimketLink.FindLinkPawn() == null) { s.CancelReady(); Messages.Message(Lang.Tr("림켓링크 착용자가 없어 대전 준비가 취소되었다."), MessageTypeDefOf.NegativeEvent, false); return; }
                 string sig = PartySig(pc);
-                if (sig != oPartySig) { s.CancelReady(); Messages.Message("파티가 바뀌어 대전 준비가 취소되었다. 접수원에게 다시 말을 걸어 주세요.", MessageTypeDefOf.CautionInput, false); }
+                if (sig != oPartySig) { s.CancelReady(); Messages.Message(Lang.Tr("파티가 바뀌어 대전 준비가 취소되었다. 접수원에게 다시 말을 걸어 주세요."), MessageTypeDefOf.CautionInput, false); }
             }
         }
 
@@ -187,7 +187,7 @@ namespace Rimketmon
                 g.Box(196f, 2f, 120f, 24f, new Color(0f, 0f, 0f, 0.55f));
                 g.Label("방 코드 " + ol.Code + (ol.IsDouble ? "  (더블)" : "  (싱글)"), 200f, 4f, 7f, Canvas.GoldC, Canvas.WhiteShadow);
                 g.Label("상대를 기다리는 중" + new string('.', (int)(Time.realtimeSinceStartup * 3f) % 4), 200f, 13f, 7f, Canvas.White, Canvas.WhiteShadow);
-                if (Clicked(196f, 2f, 120f, 24f)) { GUIUtility.systemCopyBuffer = ol.Code; Messages.Message("방 코드를 복사했습니다.", MessageTypeDefOf.TaskCompletion, false); }
+                if (Clicked(196f, 2f, 120f, 24f)) { GUIUtility.systemCopyBuffer = ol.Code; Messages.Message(Lang.Tr("방 코드를 복사했습니다."), MessageTypeDefOf.TaskCompletion, false); }
                 return true;      // Esc는 대기실 공통 처리(나갈지 묻기)
             }
             OnlineChat.Draw(g, s, 4f, 2f, 150f);
@@ -390,7 +390,7 @@ namespace Rimketmon
             {
                 g.Label(ol.Code, 160f, 60f, 24f, Canvas.GoldC, Canvas.GoldSh, TextAnchor.UpperCenter);
                 g.Label("상대를 기다리는 중" + new string('.', dots), 160f, 100f, 9f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
-                DrawRankedButton(g, 70f, 116f, 80f, "코드 복사", true, () => { GUIUtility.systemCopyBuffer = ol.Code; Messages.Message("방 코드를 복사했습니다.", MessageTypeDefOf.TaskCompletion, false); });
+                DrawRankedButton(g, 70f, 116f, 80f, "코드 복사", true, () => { GUIUtility.systemCopyBuffer = ol.Code; Messages.Message(Lang.Tr("방 코드를 복사했습니다."), MessageTypeDefOf.TaskCompletion, false); });
                 DrawRankedButton(g, 170f, 116f, 80f, "취소", true, () => OnlineEnter());
             }
             else
@@ -427,7 +427,8 @@ namespace Rimketmon
                 DrawRankedIcon(g, c, 24f, y + 9f, 17f, 17f);
                 g.Label(c.Name + (c.IsUpgraded ? "★" : ""), 38f, y + 2f, 8.5f, Canvas.White, Canvas.WhiteShadow);
                 g.Label("Lv." + OnlineProtocol.BattleLevel, 38f, y + 10f, 6.5f, Canvas.White, Canvas.WhiteShadow);
-                DrawTypeBadges(g, c, 96f, y + 5f, 1f);
+                DrawTypeBadges(g, c, 96f, y + 1.5f, 0.75f);
+                DrawPickItem(g, c, 96f, y + 10.5f, 60f);
                 if (order >= 0) g.Label((order + 1) + "", 168f, y + 2f, 12f, Canvas.GoldC, Canvas.GoldSh, TextAnchor.UpperRight);
                 if (!s.MyPickSent && (Clicked(10f, y, 168f, 18f) || (rCursor == i && AcceptKey()))) { rCursor = i; OnlineTogglePick(mine, i, need); }
             }
@@ -457,6 +458,7 @@ namespace Rimketmon
                 DrawRankedIcon(g, opp[i], cx, cy - 5f, 24f, 24f);
                 g.Label(opp[i].Name, cx, cy + 8f, 6.5f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
                 DrawTypeBadges(g, opp[i], cx - 17f, cy + 14.5f, 0.5f);
+                if (Paradox.HasWedge(opp[i])) Window_RimketBattle.DrawWedgeMark(g, cx - 27f, cy - 17f);      // 쐐기가 박힌 상대
             }
             if (!s.MyPickSent)
             {
@@ -478,7 +480,7 @@ namespace Rimketmon
             if (oPick.Contains(i)) { oPick.Remove(i); RimketAudio.PlaySe("gui_sel_cancel"); return; }
             if (oPick.Count >= need) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }
             var why = RankedRules.ClauseViolation(mine, oPick, i);
-            if (why != null) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(why, MessageTypeDefOf.RejectInput, false); return; }
+            if (why != null) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr(why), MessageTypeDefOf.RejectInput, false); return; }
             oPick.Add(i); RimketAudio.PlaySe("gui_sel_decision");
         }
 
@@ -543,25 +545,25 @@ namespace Rimketmon
         public override void DoWindowContents(Rect r)
         {
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(0f, 0f, r.width, 34f), "온라인 대전 이름");
+            Widgets.Label(new Rect(0f, 0f, r.width, 34f), Lang.Tr("온라인 대전 이름"));
             Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(0f, 36f, r.width, 64f), "상대 화면에 보일 이름입니다(최대 20자). 저장하면 지금 림켓링크 착용자의 모습을 찍어 함께 보냅니다. 옷이나 머리를 바꿨다면 이름을 그대로 두고 저장만 눌러도 겉모습이 갱신됩니다.");
+            Widgets.Label(new Rect(0f, 36f, r.width, 64f), Lang.Tr("상대 화면에 보일 이름입니다(최대 20자). 저장하면 지금 림켓링크 착용자의 모습을 찍어 함께 보냅니다. 옷이나 머리를 바꿨다면 이름을 그대로 두고 저장만 눌러도 겉모습이 갱신됩니다."));
             GUI.SetNextControlName("OnlineNameField");
             name = Widgets.TextField(new Rect(0f, 104f, r.width, 32f), name ?? "", 20);
             if (Event.current.type == EventType.Repaint && GUI.GetNameOfFocusedControl() != "OnlineNameField") GUI.FocusControl("OnlineNameField");
             var pawn = RimketLink.FindLinkPawn() ?? (Find.CurrentMap != null ? Find.CurrentMap.mapPawns.FreeColonists.FirstOrDefault() : null);
-            Widgets.Label(new Rect(0f, 142f, r.width, 24f), pawn != null ? "찍을 모습: " + pawn.LabelShortCap : "찍을 정착민이 없어 그림 없이 저장됩니다.");
+            Widgets.Label(new Rect(0f, 142f, r.width, 24f), Lang.Tr(pawn != null ? "찍을 모습: " + pawn.LabelShortCap : "찍을 정착민이 없어 그림 없이 저장됩니다."));
             bool ok = (name ?? "").Trim().Length > 0;
-            if (Widgets.ButtonText(new Rect(0f, r.height - 38f, r.width / 2f - 6f, 36f), "저장") && ok || (ok && Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter)))
+            if (Widgets.ButtonText(new Rect(0f, r.height - 38f, r.width / 2f - 6f, 36f), Lang.Tr("저장")) && ok || (ok && Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter)))
             {
                 RimketmonMod.Settings.onlineName = name.Trim().Replace("|", " ");
                 string pic = Capture(pawn);
                 RimketmonMod.Settings.onlinePic = pic ?? "";
                 RimketmonMod.Instance.WriteSettings();
-                Messages.Message("온라인 이름을 '" + RimketmonMod.Settings.onlineName + "'(으)로 정했다." + (pic != null ? " 모습도 찍어 두었다." : ""), MessageTypeDefOf.PositiveEvent, false);
+                Messages.Message(Lang.Tr("온라인 이름을 '" + RimketmonMod.Settings.onlineName + "'(으)로 정했다." + (pic != null ? " 모습도 찍어 두었다." : "")), MessageTypeDefOf.PositiveEvent, false);
                 Close();
             }
-            if (Widgets.ButtonText(new Rect(r.width / 2f + 6f, r.height - 38f, r.width / 2f - 6f, 36f), "취소")) Close();
+            if (Widgets.ButtonText(new Rect(r.width / 2f + 6f, r.height - 38f, r.width / 2f - 6f, 36f), Lang.Tr("취소"))) Close();
         }
 
         /// <summary>정착민 초상화(정면)를 64×80 PNG로 찍어 base64로. 실패하면 null(그림 없이 싸운다).</summary>

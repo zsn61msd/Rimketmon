@@ -170,6 +170,15 @@ namespace Rimketmon.Engine
             if (a.IsPerson)
             {
                 list.Add(new BattleAction(ActionKind.BasicAttack));
+                if (a != side.Person)      // 파티의 인간 림켓몬은 교체할 수 있다(직접 나온 정착민만 못 바꾼다)
+                {
+                    var save = side.Active; Focus(side, a);
+                    bool trapped = IsTrapped(side);
+                    side.Active = save;
+                    if (!trapped)
+                        for (int i = 0; i < side.Party.Count; i++)
+                            if (!side.Party[i].IsFainted && !InSlots(side, side.Party[i])) list.Add(new BattleAction(ActionKind.Switch, i));
+                }
                 if (!IsTrainer || CanSurrender) list.Add(new BattleAction(ActionKind.Disconnect));
                 return list;
             }

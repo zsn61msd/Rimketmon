@@ -44,7 +44,7 @@ namespace Rimketmon
         public int NextBattleStage { get { return ChampionNext ? MaxBadges + 1 : Stage; } }
         /// <summary>개발자 모드로 배지/레벨을 바꾸면 켜진다: 다음 진짜 관장 승리 전까지 림켓몬 레벨을 상한으로 강제하지 않는다.</summary>
         public bool levelHold;
-        public void DebugAddBadge() { levelHold = true; if (Badges < MaxBadges) badgeCount = Badges + 1; else championBeaten = true; }
+        public void DebugAddBadge() { int o = Stage; levelHold = true; if (Badges < MaxBadges) badgeCount = Badges + 1; else championBeaten = true; if (Stage != o) OnStageUp(); }
         public void DebugSetBadges(int n) { levelHold = true; badgeCount = Math.Max(0, Math.Min(MaxBadges, n)); beatenLeaders.Clear(); if (badgeCount < MaxBadges) championBeaten = false; }
         public void DebugSetChampion(bool v) { levelHold = true; if (v) badgeCount = MaxBadges; championBeaten = v; }
         /// <summary>개발자 모드: 림켓몬 레벨을 직접 정한다(1~100). 사람도 된다.</summary>
@@ -58,6 +58,24 @@ namespace Rimketmon
         }
         /// <summary>관장전 승리. 이세계(평행세계)의 트레이너라 같은 관장과 다시 싸워도 되므로, 이길 때마다 배지가 1개 늘어난다.</summary>
         public void RecordVictory(string id, bool champion = false)
+        {
+            int oldStage = Stage;
+            RecordVictoryInner(id, champion);
+            if (Stage != oldStage) OnStageUp();
+        }
+
+        /// <summary>배지(단계)가 오르면 맵의 야생동물 레벨대·티어를 새 기준으로 다시 정한다.</summary>
+        private void OnStageUp()
+        {
+            try
+            {
+                int n = CompRimket.RerollWildAnimals();
+                if (n > 0) Messages.Message(Lang.Tr("배지를 얻어 야생 림켓몬 " + n + "마리의 레벨대와 티어가 바뀌었다."), MessageTypeDefOf.NeutralEvent, false);
+            }
+            catch (Exception e) { Log.Warning("[Rimketmon] 야생동물 갱신 실패: " + e.Message); }
+        }
+
+        private void RecordVictoryInner(string id, bool champion)
         {
             levelHold = false;
             if (champion) { if (Badges >= MaxBadges) championBeaten = true; }      // 챔피언은 리그에서만(배지 8개 뒤의 관장 승리는 재대결일 뿐)
@@ -87,6 +105,8 @@ namespace Rimketmon
         private List<ExposableCreature> wedges = new List<ExposableCreature>();
         public List<ExposableCreature> Wedges { get { if (wedges == null) wedges = new List<ExposableCreature>(); return wedges; } }
         public int paradoxWins, paradoxLosses;
+        public ExposableCreature paradoxPending;      // 입장했지만 아직 싸우지 않은 패러독스 상대(창을 닫아도 그대로 → 다시 열어 리롤할 수 없다)
+        public int paradoxRerolls;                    // 이번 상대에서 남은 리롤 횟수
         /// <summary>세레나 튜토리얼을 이미 보여 줬는가(처음 메뉴를 열 때 한 번만 자동으로 켠다).</summary>
         public bool tutorialSeen;
         /// <summary>챔피언 배지 토글: 켜면 맵의 모든 동물 머리 위에 티어를 표시한다.</summary>
@@ -263,7 +283,7 @@ namespace Rimketmon
             var e = new ExposableCreature { C = c };
             DexCatch(c);
             if (all.Count < PartyMax) all.Add(e);
-            else { e.BoxSlot = FirstFreeSlot(); box.Add(e); Messages.Message(c.Name + "은(는) 파티가 가득 차 PC로 보내졌다.", MessageTypeDefOf.NeutralEvent, false); }
+            else { e.BoxSlot = FirstFreeSlot(); box.Add(e); Messages.Message(Lang.Tr(c.Name + "은(는) 파티가 가득 차 PC로 보내졌다."), MessageTypeDefOf.NeutralEvent, false); }
         }
 
 
@@ -283,7 +303,7 @@ namespace Rimketmon
                 if (pos.x < -40f || pos.y < -20f || pos.x > UI.screenWidth + 40f || pos.y > UI.screenHeight + 20f) continue;
                 var c = comp.data.C;
                 SpeciesInfo sp0; string spn = SpeciesCatalog.TryGet(c.Species, out sp0) ? sp0.Name : c.Species;
-                GenMapUI.DrawThingLabel(pos, c.TierText + "티어 " + spn, TierColors[Mathf.Clamp(c.Tier, 0, TierColors.Length - 1)]);
+                GenMapUI.DrawThingLabel(pos, Lang.Tr(c.TierText + "티어 ") + spn, TierColors[Mathf.Clamp(c.Tier, 0, TierColors.Length - 1)]);
             }
             Text.Font = old; Text.Anchor = oldA;
         }
@@ -308,11 +328,12 @@ namespace Rimketmon
             var r = new Rect(x, y, size, size);
 
             bool over = Mouse.IsOver(r);
+            bool noLink = !removed && !RimketLink.AnyLivingLinkedColonist();      // 림켓링크를 단 우리 정착민이 살아 있어야 쓸 수 있다
             // 배경·테두리 없이 회색 볼 모양만 그린다. 마우스를 올리면 밝아진다(림월드 하단 아이콘과 같은 방식).
-            GUI.color = removed ? new Color(0.6f, 0.6f, 0.6f, over ? 0.9f : 0.55f) : over ? new Color(1.15f, 1.15f, 1.15f, 1f) : new Color(0.92f, 0.92f, 0.92f, 1f);      // 제거된 상태면 흐리게   // 그림 자체가 회색+검은 테두리라 색을 입히지 않고 밝기만 바꾼다
+            GUI.color = removed || noLink ? new Color(0.6f, 0.6f, 0.6f, over ? 0.9f : 0.55f) : over ? new Color(1.15f, 1.15f, 1.15f, 1f) : new Color(0.92f, 0.92f, 0.92f, 1f);      // 제거된 상태면 흐리게   // 그림 자체가 회색+검은 테두리라 색을 입히지 않고 밝기만 바꾼다
             GUI.DrawTexture(r, iconTex);
             GUI.color = Color.white;
-            if (over) TooltipHandler.TipRegion(r, removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : "림켓몬\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)");
+            if (over) TooltipHandler.TipRegion(r, Lang.Tr(removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : noLink ? "림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)" : "림켓몬\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)"));
 
             var e = Event.current;
             if (e.type == EventType.MouseDown && over && e.button == 1 && e.clickCount >= 2) { s.iconX = s.iconY = -1f; s.Write(); dragging = false; e.Use(); return; }      // 우클릭 두 번: 기본 위치로
@@ -328,6 +349,12 @@ namespace Rimketmon
             {
                 e.Use();
                 if (removed) { RimketUninstall.AskReinstall(); return; }
+                if (noLink)
+                {
+                    RimketAudio.PlaySe("gui_sel_buzzer");
+                    Messages.Message(Lang.Tr("림켓링크를 두뇌에 설치한 정착민이 살아 있어야 림켓몬 메뉴를 열 수 있습니다. (몬스터볼 연구를 끝내면 열리는 퀘스트로 림켓링크를 얻을 수 있어요.)"), MessageTypeDefOf.RejectInput, false);
+                    return;
+                }
                 if (!RimketmonMod.AskLanguageOnce(() => Find.WindowStack.Add(new Window_RimketMenu())))
                     Find.WindowStack.Add(new Window_RimketMenu());
             }
@@ -388,6 +415,8 @@ namespace Rimketmon
             Scribe_Values.Look(ref showTiers, "showTiers", false);
             Scribe_Values.Look(ref levelHold, "levelHold", false);
             Scribe_Values.Look(ref paradoxWins, "paradoxWins", 0);
+            Scribe_Deep.Look(ref paradoxPending, "paradoxPending");
+            Scribe_Values.Look(ref paradoxRerolls, "paradoxRerolls", 0);
             Scribe_Values.Look(ref paradoxLosses, "paradoxLosses", 0);
             if (wedges == null) wedges = new List<ExposableCreature>();
             if (box == null) box = new List<ExposableCreature>();

@@ -129,10 +129,10 @@ namespace Rimketmon
             {
                 var pc = PartyComponent.Instance;
                 var w = Paradox.Remove(e.C);
-                if (w == null) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message("쐐기를 빼지 못했다.", RimWorld.MessageTypeDefOf.RejectInput, false); return; }
+                if (w == null) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr("쐐기를 빼지 못했다."), RimWorld.MessageTypeDefOf.RejectInput, false); return; }
                 if (pc != null) pc.Wedges.Add(new ExposableCreature { C = w });
                 RimketAudio.PlaySe("upgrade");
-                Messages.Message(e.C.Name + "에게서 유전자 쐐기(" + w.Name + ")를 뺐다. 쐐기는 패러독스 배틀의 쐐기 목록으로 돌아갔다.", RimWorld.MessageTypeDefOf.PositiveEvent, false);
+                Messages.Message(Lang.Tr(e.C.Name + "에게서 유전자 쐐기(" + w.Name + ")를 뺐다. 쐐기는 패러독스 배틀의 쐐기 목록으로 돌아갔다."), RimWorld.MessageTypeDefOf.PositiveEvent, false);
             }, "뺀다");
         }
 
@@ -153,7 +153,7 @@ namespace Rimketmon
                 partyOptions.Add("능력치를 본다");
                 partyOptions.Add("위로 이동");
                 partyOptions.Add("아래로 이동");
-                partyOptions.Add("볼에서 꺼낸다");
+                partyOptions.Add("볼에서 풀어준다");
                 if (e.C.NoEvolve && Evolution.CanEvolveKind(e.C)) partyOptions.Add("진화 멈춤 해제");      // 포켓로그의 '진화 멈춤 해제'
                 if (Paradox.HasWedge(e.C)) partyOptions.Add("쐐기 제거");
             }
@@ -248,7 +248,7 @@ namespace Rimketmon
                 case "능력치를 본다": OpenSummary(); return;
                 case "위로 이동": pc.MoveUp(selected); partyCursor = Math.Max(0, partyCursor - 1); optionsOpen = false; return;
                 case "아래로 이동": pc.MoveDown(selected); partyCursor = Math.Min(Math.Max(0, Math.Min(6, pc.All.Count - page * 6) - 1), partyCursor + 1); optionsOpen = false; return;
-                case "볼에서 꺼낸다":
+                case "볼에서 풀어준다":
                     {
                         var target = selected;
                         optionsOpen = false;

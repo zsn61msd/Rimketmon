@@ -65,9 +65,9 @@ namespace Rimketmon
             Find.WindowStack.Add(new Window_RimketEncounter(visitor, () => BattleFlow.StartVisitorBattle(visitor)));
             return;
 #pragma warning disable 162
-            var node = new DiaNode("<b>" + visitor.LabelShortCap + "</b>와(과) 눈이 마주쳤다!\n\n방문자 " + visitor.LabelShortCap + "이(가) 림켓몬 승부를 걸어왔다.\n\n" +
-                                   "· 림켓몬끼리의 승부입니다(상대 " + RimketmonMod.Settings.visitorFoeCount + "마리).\n· 이기면 상금으로 은을 받습니다.\n· 눈이 마주친 이상 피할 수 없습니다.");
-            node.options.Add(new DiaOption("승부한다!") { action = () => BattleFlow.StartVisitorBattle(visitor), resolveTree = true });
+            var node = new DiaNode(Lang.Tr("<b>" + visitor.LabelShortCap + "</b>와(과) 눈이 마주쳤다!\n\n방문자 " + visitor.LabelShortCap + "이(가) 림켓몬 승부를 걸어왔다.\n\n" +
+                                   "· 림켓몬끼리의 승부입니다(상대 " + RimketmonMod.Settings.visitorFoeCount + "마리).\n· 이기면 상금으로 은을 받습니다.\n· 눈이 마주친 이상 피할 수 없습니다."));
+            node.options.Add(new DiaOption(Lang.Tr("승부한다!")) { action = () => BattleFlow.StartVisitorBattle(visitor), resolveTree = true });
             var dlg = new Dialog_NodeTree(node, false, false, "림켓몬 승부 신청");
             dlg.forcePause = true; dlg.closeOnCancel = false; dlg.closeOnClickedOutside = false; dlg.absorbInputAroundWindow = true;
             Find.WindowStack.Add(dlg);
@@ -128,8 +128,8 @@ namespace Rimketmon
         /// <summary>개발자용: 방문 트레이너를 부르고(없으면) 24시간 뒤의 강제 수락창을 곧바로 띄운다.</summary>
         public void DebugForceNow(Map map)
         {
-            if (!pending && !Arrive(map)) { Messages.Message("트레이너를 부르지 못했다.", MessageTypeDefOf.RejectInput, false); return; }
-            if (Fighters().Count == 0) { Messages.Message("신경 접속이 가능한 정착민이 없다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (!pending && !Arrive(map)) { Messages.Message(Lang.Tr("트레이너를 부르지 못했다."), MessageTypeDefOf.RejectInput, false); return; }
+            if (Fighters().Count == 0) { Messages.Message(Lang.Tr("신경 접속이 가능한 정착민이 없다."), MessageTypeDefOf.RejectInput, false); return; }
             ShowForced();
         }
 
@@ -150,7 +150,7 @@ namespace Rimketmon
             if (map == null) map = Find.AnyPlayerHomeMap;
             tauntArriveTick = -1;
             if (map != null && Arrive(map))
-                Find.LetterStack.ReceiveLetter("도발에 응한 트레이너", "도발 방송을 듣고 어둠의 림켓몬 트레이너 " + trainer.LabelShortCap + "이(가) 찾아왔다.", LetterDefOf.ThreatSmall, trainer);
+                Find.LetterStack.ReceiveLetter(Lang.Tr("도발에 응한 트레이너"), Lang.Tr("도발 방송을 듣고 어둠의 림켓몬 트레이너 " + trainer.LabelShortCap + "이(가) 찾아왔다."), LetterDefOf.ThreatSmall, trainer);
         }
 
         public void Clear()
@@ -206,7 +206,7 @@ namespace Rimketmon
                 else if (p.Spawned) p.DeSpawn();
                 if (!p.Destroyed && !p.Dead) Find.WorldPawns.PassToWorld(p, RimWorld.Planet.PawnDiscardDecideMode.Discard);
                 if (!silent) return;
-                Messages.Message("?????", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message(Lang.Tr("?????"), MessageTypeDefOf.NeutralEvent, false);
             }
             catch (System.Exception ex) { Log.Warning("[림켓몬] ??? 사라짐: " + ex.Message); }
         }
@@ -225,14 +225,14 @@ namespace Rimketmon
             if (pending && trainer != null && !trainer.Dead && !trainer.Destroyed && !trainer.Spawned && mode == ModeApocriton)
             {
                 // 아직 수송포드 안: 신청을 날리지 않고 기다리게 한다
-                Messages.Message("아포크립톤이 아직 내려오는 중이다.", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("아포크립톤이 아직 내려오는 중이다."), MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             if (!pending || trainer == null || trainer.Dead || !trainer.Spawned) { Clear(); return false; }
             var fighters = Fighters();
             if (fighters.Count == 0)
             {
-                Messages.Message("신경 접속 가능한 정착민이 없다.", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("신경 접속 가능한 정착민이 없다."), MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             var fighter = fighters[0];
@@ -248,8 +248,8 @@ namespace Rimketmon
             if (Fighters().Count == 0) return;
             forcedShown = true;
             bool myst = mode == ModeMystery;
-            var node = new DiaNode(myst ? "??????\n\n?????????" : "<color=#ff2a2a><b>" + trainer.LabelShortCap + "이(가) 기다리다 못해 왔다.</b></color>\n\n" + DeathWarning);
-            node.options.Add(new DiaOption(myst ? "?????" : "수락") { action = () => { if (!Accept()) forcedShown = false; }, resolveTree = true });
+            var node = new DiaNode(Lang.Tr(myst ? "??????\n\n?????????" : "<color=#ff2a2a><b>" + trainer.LabelShortCap + "이(가) 기다리다 못해 왔다.</b></color>\n\n" + DeathWarning));
+            node.options.Add(new DiaOption(Lang.Tr(myst ? "?????" : "수락")) { action = () => { if (!Accept()) forcedShown = false; }, resolveTree = true });
             var dlg = new Dialog_NodeTree(node, false, false, myst ? "???" : "어둠의 림켓몬 배틀");
             dlg.forcePause = true;
             dlg.closeOnCancel = false;
@@ -298,7 +298,7 @@ namespace Rimketmon
             letter.Text = "<color=#ff2a2a><b>림켓몬 트레이너 " + p.LabelShortCap + "이(가) 배틀을 신청했다.</b></color>\n\n" + DeathWarning + "\n\n24시간 뒤 강제로 시작된다.";
             letter.lookTargets = p;
             Find.LetterStack.ReceiveLetter(letter);
-            Messages.Message("<color=#ff2a2a>어둠의 림켓몬 배틀 신청! " + p.LabelShortCap + "이(가) 목숨을 건 승부를 걸어왔다.</color>", p, MessageTypeDefOf.ThreatBig, false);
+            Messages.Message(Lang.Tr("<color=#ff2a2a>어둠의 림켓몬 배틀 신청! " + p.LabelShortCap + "이(가) 목숨을 건 승부를 걸어왔다.</color>"), p, MessageTypeDefOf.ThreatBig, false);
             return true;
         }
 
@@ -335,7 +335,7 @@ namespace Rimketmon
             LordMaker.MakeNewLord(null, new LordJob_RimketChallenger(drop), map, new List<Pawn> { p });
             trainer = p; pending = true; arrivedTick = Find.TickManager.TicksGame; forcedShown = false; mode = ModeApocriton;
             SendChallengeLetter(p, "아포크립톤");
-            Messages.Message("<color=#ff2a2a>어둠의 림켓몬 배틀 신청! 수송포드를 타고 아포크립톤이 내려온다.</color>", new TargetInfo(drop, map), MessageTypeDefOf.ThreatBig, false);
+            Messages.Message(Lang.Tr("<color=#ff2a2a>어둠의 림켓몬 배틀 신청! 수송포드를 타고 아포크립톤이 내려온다.</color>"), new TargetInfo(drop, map), MessageTypeDefOf.ThreatBig, false);
             return true;
         }
 
@@ -360,7 +360,7 @@ namespace Rimketmon
             letter.Text = "<color=#ff2a2a><b>??????</b></color>\n\n???? ??? ?????? ???.\n\n?????????";
             letter.lookTargets = p;
             Find.LetterStack.ReceiveLetter(letter);
-            Messages.Message("<color=#ff2a2a>???????</color>", p, MessageTypeDefOf.ThreatBig, false);
+            Messages.Message(Lang.Tr("<color=#ff2a2a>???????</color>"), p, MessageTypeDefOf.ThreatBig, false);
             return true;
         }
     }
@@ -375,15 +375,15 @@ namespace Rimketmon
                 if (comp != null && comp.IsMystery)
                 {
                     // ???: 수락·미루기·위치로 이동이 전부 ?????. 목숨을 걸지 않는다(확인창 없음)
-                    var a = new DiaOption("?????") { action = () => { if (comp.Accept()) Find.LetterStack.RemoveLetter(this); }, resolveTree = true };
+                    var a = new DiaOption(Lang.Tr("?????")) { action = () => { if (comp.Accept()) Find.LetterStack.RemoveLetter(this); }, resolveTree = true };
                     if (RimketChallengeComponent.Fighters().Count == 0) a.Disable("?????");
                     yield return a;
-                    yield return new DiaOption("?????") { resolveTree = true };
+                    yield return new DiaOption(Lang.Tr("?????")) { resolveTree = true };
                     if (lookTargets != null && lookTargets.IsValid)
-                        yield return new DiaOption("?????") { action = () => CameraJumper.TryJumpAndSelect(lookTargets.TryGetPrimaryTarget()), resolveTree = true };
+                        yield return new DiaOption(Lang.Tr("?????")) { action = () => CameraJumper.TryJumpAndSelect(lookTargets.TryGetPrimaryTarget()), resolveTree = true };
                     yield break;
                 }
-                var accept = new DiaOption("수락")
+                var accept = new DiaOption(Lang.Tr("수락"))
                 {
                     action = () => Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
                         RimketChallengeComponent.DeathWarning + "\n\n정말 수락하시겠습니까?",
@@ -392,10 +392,10 @@ namespace Rimketmon
                 };
                 if (comp == null || RimketChallengeComponent.Fighters().Count == 0) accept.Disable("신경 접속이 가능한 정착민이 없다");
                 yield return accept;
-                yield return new DiaOption("미루기") { resolveTree = true };
+                yield return new DiaOption(Lang.Tr("미루기")) { resolveTree = true };
                 // 림월드 기본 편지의 "위치로 이동"과 같은 선택지: 카메라를 트레이너에게 옮긴다
                 if (lookTargets != null && lookTargets.IsValid)
-                    yield return new DiaOption("JumpToLocation".Translate()) { action = () => CameraJumper.TryJumpAndSelect(lookTargets.TryGetPrimaryTarget()), resolveTree = true };
+                    yield return new DiaOption(Lang.Tr("JumpToLocation".Translate())) { action = () => CameraJumper.TryJumpAndSelect(lookTargets.TryGetPrimaryTarget()), resolveTree = true };
             }
         }
     }

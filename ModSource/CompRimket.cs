@@ -46,7 +46,29 @@ namespace Rimketmon
             var creature = SpawnRoller.Roll(pawn.def.defName, label, baseTier,
                 (float)Mathf.Clamp01(pawn.def.GetStatValueAbstract(StatDefOf.Wildness)), badges, new GameRng(), settings, pawn.gender == Gender.Male ? 0 : pawn.gender == Gender.Female ? 1 : -1);
 
+            // 우리 정착지에서 갓 태어난(알에서 깬) 새끼는 Lv.1부터 시작한다
+            if (pawn.Faction != null && pawn.Faction.IsPlayer && pawn.ageTracker != null && pawn.ageTracker.AgeBiologicalTicks < GenDate.TicksPerDay)
+                SpawnRoller.ResetToLevel(creature, 1, settings);
+
             data = new ExposableCreature { C = creature };
+        }
+
+        /// <summary>배지를 얻으면: 지금 맵에 있는 야생동물(소속 없음)만 현재 배지 기준 레벨대·티어로 다시 굴린다. 가축·중립 세력 동물은 그대로.</summary>
+        public static int RerollWildAnimals()
+        {
+            int n = 0;
+            if (Find.Maps == null) return 0;
+            foreach (var map in Find.Maps)
+                foreach (var p in map.mapPawns.AllPawnsSpawned.ToList())
+                {
+                    if (p == null || p.Dead || p.Faction != null || p.RaceProps == null || !p.RaceProps.Animal) continue;
+                    var comp = p.TryGetComp<CompRimket>();
+                    if (comp == null || comp.data == null) continue;
+                    string look = comp.data.C != null ? comp.data.C.Look : null;
+                    comp.data = null; comp.EnsureRolled();
+                    if (comp.data != null) { n++; if (comp.data.C != null && look != null) comp.data.C.Look = look; }      // 겉모습(무늬)은 그대로
+                }
+            return n;
         }
 
         public override void PostExposeData()

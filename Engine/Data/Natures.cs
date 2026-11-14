@@ -25,7 +25,8 @@ namespace Rimketmon.Engine
         public static string Name(int n)
         {
             n = n < 0 || n >= Count ? 0 : n;
-            return Lang.English && EnData.Natures.Length == Count ? EnData.Natures[n] : Ko[n];
+            var tr = Lang.NatureNames;
+            return tr != null && tr.Length == Count ? tr[n] : Ko[n];
         }
 
         /// <summary>stat: 0 공격 1 방어 2 특공 3 특방 4 스피드. 포켓로그 getNatureStatMultiplier.</summary>

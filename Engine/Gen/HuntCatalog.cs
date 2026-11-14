@@ -69,12 +69,17 @@ namespace Rimketmon.Engine
             return new[] { TierWeight[0], TierWeight[1], TierWeight[2] * m, TierWeight[3] * m, TierWeight[4] * m };
         }
 
-        public static string Roll(HuntBiome b, int time, IRng rng, double rareMult = 1.0)
+        public static string Roll(HuntBiome b, int time, IRng rng, double rareMult = 1.0) { int t; return Roll(b, time, rng, out t, rareMult); }
+
+        /// <summary>등장 등급(0 흔함 ~ 4 극히 드묾)도 함께 돌려준다.</summary>
+        public static string Roll(HuntBiome b, int time, IRng rng, out int rolledTier, double rareMult = 1.0)
         {
+            rolledTier = -1;
             var w = Weights(rareMult); double sum = 0; foreach (var x in w) sum += x;
             double v = rng.NextDouble() * sum; int tier = 4;
             for (int t = 0; t < 5; t++) { if (v < w[t]) { tier = t; break; } v -= w[t]; }
             tier = Effective(b, tier, time);
+            rolledTier = tier;
             if (tier < 0) return null;
             var pool = b.Pool(tier, time);
             return PickForm(pool[rng.Next(0, pool.Count)], rng);

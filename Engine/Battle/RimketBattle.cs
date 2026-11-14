@@ -257,7 +257,7 @@ namespace Rimketmon.Engine
         public bool IsTrapped(BattleSide side)
         {
             var f = side.Active;
-            if (f == null || f.IsPerson) return true;
+            if (f == null || (f.IsPerson && f == side.Person)) return true;      // 직접 나온 정착민(최후의 의식)만 못 바꾼다. 파티의 인간 림켓몬은 교체 가능
             if (f.HeldItem == "SHEDSHELL") return false;
             if (f.BindTurns > 0 || f.Trapped) return true;
             var opp = Other(side).Active;
@@ -801,7 +801,7 @@ namespace Rimketmon.Engine
                     int oldMax = w.C.MaxHp; w.C.Level++; w.C.RecalculateStats();
                     if (w.C.Hp > 0) w.C.Hp = Math.Min(w.C.MaxHp, w.C.Hp + Math.Max(0, w.C.MaxHp - oldMax));
                 }
-                if (w.C.Level > from) Add(w.C.Name + "은(는) 레벨 " + w.C.Level + "(으)로 올랐다!");
+                if (w.C.Level > from) { Add(w.C.Name + "은(는) 레벨 " + w.C.Level + "(으)로 올랐다!"); LearnOnLevelUp(w.C, from); }
             }
             if (!ExpShare || IsDouble) return;
             // 학습장치: 싸우지 않은 파티 림켓몬도 같은 경험치를 받는다(쓰러진 림켓몬 제외)
@@ -818,7 +818,18 @@ namespace Rimketmon.Engine
                     int oldMax = c.MaxHp; c.Level++; c.RecalculateStats();
                     if (c.Hp > 0) c.Hp = Math.Min(c.MaxHp, c.Hp + Math.Max(0, c.MaxHp - oldMax));
                 }
-                if (c.Level > from) Add(c.Name + "은(는) 레벨 " + c.Level + "(으)로 올랐다!");
+                if (c.Level > from) { Add(c.Name + "은(는) 레벨 " + c.Level + "(으)로 올랐다!"); LearnOnLevelUp(c, from); }
+            }
+        }
+
+        /// <summary>레벨업으로 배우는 기술: 빈 칸이 있으면 바로 배우고, 다 찼으면 화면에서 무엇을 잊을지 묻도록 사건을 남긴다.</summary>
+        private void LearnOnLevelUp(RimketCreature c, int fromLevel)
+        {
+            foreach (var m in MoveLearn.NewMoves(c, fromLevel, c.Level))
+            {
+                if (MoveLearn.TryAdd(c, m, s.MoveSlots)) { Add(c.Name + "은(는) " + m.Name + "을(를) 배웠다!"); continue; }
+                Add(c.Name + "은(는) " + m.Name + "을(를) 배우고 싶다… 하지만 기술을 " + s.MoveSlots + "개 알고 있다!");
+                Events.Add(new BattleEvent { Kind = BattleEventKind.LearnMove, PlayerSide = true, LogIndex = Log.Count - 1, Learner = c, MoveId = m.Id });
             }
         }
 

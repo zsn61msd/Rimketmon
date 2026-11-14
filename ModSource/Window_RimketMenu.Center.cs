@@ -299,7 +299,7 @@ namespace Rimketmon
             else if (healStage == 1 && t >= HealMe)
             {
                 healStage = 2; machineAnim = false; machineBalls = 0; nurse.Dir = 2;
-                pc.HealAll(); Messages.Message("림켓몬을 모두 회복시켰다!", MessageTypeDefOf.PositiveEvent, false);
+                pc.HealAll(); Messages.Message(Lang.Tr("림켓몬을 모두 회복시켰다!"), MessageTypeDefOf.PositiveEvent, false);
                 Say(() => { nurse.Pat = 3; healT0 = Now; healStage = 3; CenterSet(CS.Heal); }, "기다려 주셔서 감사합니다.", "림켓몬이 모두 건강해졌습니다.");
             }
             else if (healStage == 3 && t >= 0.5f) { nurse.Pat = 0; healStage = 4; Say(ToWalk, "또 오세요!"); }

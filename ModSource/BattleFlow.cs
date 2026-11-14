@@ -61,7 +61,7 @@ namespace Rimketmon
             pc.Add(c);
             if (animal.carryTracker != null && animal.carryTracker.CarriedThing != null) animal.carryTracker.TryDropCarriedThing(animal.Position, ThingPlaceMode.Near, out _);
             PawnRemoval.Remove(animal);
-            Messages.Message(label + "을(를) 림볼에 넣었다. (티어 " + c.TierText + ", Lv." + c.Level + ")", thrower, MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(label + "을(를) 림볼에 넣었다. (티어 " + c.TierText + ", Lv." + c.Level + ")"), thrower, MessageTypeDefOf.PositiveEvent, false);
         }
 
         /// <summary>마스터볼 대상: 동물(야생·우리 것), 또는 사람 폰(적·동맹·중립은 물론 우리 세력 폰도 가능).</summary>
@@ -83,7 +83,7 @@ namespace Rimketmon
             {
                 var comp = target.TryGetComp<CompRimket>();
                 if (comp != null) { comp.EnsureRolled(); }
-                if (comp == null || comp.data == null) { Messages.Message("이 동물은 림켓몬이 될 수 없다.", thrower, MessageTypeDefOf.RejectInput, false); return; }
+                if (comp == null || comp.data == null) { Messages.Message(Lang.Tr("이 동물은 림켓몬이 될 수 없다."), thrower, MessageTypeDefOf.RejectInput, false); return; }
                 var c = comp.data.C;
                 if (RimketMech.IsMech(target)) { c.MechFoe = target.Faction != Faction.OfPlayer; RimketMech.Disconnect(target); }
                 c.FullHeal();
@@ -94,9 +94,10 @@ namespace Rimketmon
                 bool penalty = af != null && af != Faction.OfPlayer && !af.HostileTo(Faction.OfPlayer);
                 if (penalty) af.Notify_MemberCaptured(target, Faction.OfPlayer);      // 우호/중립 세력 동물을 가로채면 호감도가 깎인다
                 pc.Add(c);
+                PawnRemoval.LeaveLord(target);
                 PawnRemoval.Remove(target);
-                if (penalty) Messages.Message(af.Name + "의 동물을 가로채 호감도가 떨어졌다.", thrower, MessageTypeDefOf.NegativeEvent, false);
-                Messages.Message(label + "을(를) 마스터볼로 포획했다! (티어 " + c.TierText + ", Lv." + c.Level + ")", thrower, MessageTypeDefOf.PositiveEvent, false);
+                if (penalty) Messages.Message(Lang.Tr(af.Name + "의 동물을 가로채 호감도가 떨어졌다."), thrower, MessageTypeDefOf.NegativeEvent, false);
+                Messages.Message(Lang.Tr(label + "을(를) 마스터볼로 포획했다! (티어 " + c.TierText + ", Lv." + c.Level + ")"), thrower, MessageTypeDefOf.PositiveEvent, false);
                 return;
             }
 
@@ -105,6 +106,7 @@ namespace Rimketmon
             string name = target.LabelShortCap;
             if (f != null && f != Faction.OfPlayer && !f.HostileTo(Faction.OfPlayer)) f.Notify_MemberCaptured(target, Faction.OfPlayer);
             var stats = ColonistFactory.Create(target, RimketmonMod.Settings.ToEngine());
+            PawnRemoval.LeaveLord(target);      // 교역단 등 무리에서 먼저 뺀다(세계 폰 소유 오류 방지)
             if (target.Spawned) target.DeSpawn();
             if (target.carryTracker != null) target.carryTracker.innerContainer.ClearAndDestroyContents();
             Find.WorldPawns.PassToWorld(target, RimWorld.Planet.PawnDiscardDecideMode.KeepForever);
@@ -114,7 +116,7 @@ pc.CapturedPawns.Add(target);
             var person = kept != null ? kept.C : stats.Level > 0 ? stats.ToCreature() : ColonistCombatant.PersonFor(name, 6, 5, 1);
             person.Name = name; person.PawnId = target.thingIDNumber;
             pc.Add(person);
-            Messages.Message(name + "을(를) 마스터볼로 포획했다! (Lv." + person.Level + ", 능력치 " + person.BaseAtk + " ×6, HP " + person.MaxHp + ")", thrower, MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(name + "을(를) 마스터볼로 포획했다! (Lv." + person.Level + ", 능력치 " + person.BaseAtk + " ×6, HP " + person.MaxHp + ")"), thrower, MessageTypeDefOf.PositiveEvent, false);
         }
 
         /// <summary>림켓링크를 설치한 정착민만 접속할 수 있다(초능력 레벨은 직접 싸울 때 능력치용).</summary>
@@ -141,7 +143,7 @@ pc.CapturedPawns.Add(target);
 
             if (!RimketBattle.CanStart(party, colonist))
             {
-                Messages.Message(thrower.LabelShortCap + "은(는) 신경 접속을 쓸 수 없다.",
+                Messages.Message(Lang.Tr(thrower.LabelShortCap + "은(는) 신경 접속을 쓸 수 없다."),
                                  thrower, MessageTypeDefOf.RejectInput, false);
                 return;
             }
@@ -173,14 +175,14 @@ pc.CapturedPawns.Add(target);
         public static void TryStartGym(Pawn challenger, GymLeader leader, bool alreadyConfirmed = false, bool dev = false, bool leagueMode = false)
         {
             var pc = PartyComponent.Instance;
-            if (!dev && !CanConnect(challenger)) { Messages.Message("림켓링크가 필요하다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (!dev && !CanConnect(challenger)) { Messages.Message(Lang.Tr("림켓링크가 필요하다."), MessageTypeDefOf.RejectInput, false); return; }
 
             var settings = RimketmonMod.Settings.ToEngine();
             // 체육관·챔피언전은 림켓몬끼리의 승부다: 정착민은 직접 싸우지 않고, 져도 다치거나 죽지 않는다
             var colonist = new ColonistCombatant { Name = challenger != null ? challenger.LabelShortCap : "나" };
             var party = pc.ActiveParty();
             party.RemoveAll(p => p.IsFainted);
-            if (party.Count == 0) { Messages.Message("싸울 수 있는 림켓몬이 한 마리 이상 필요하다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (party.Count == 0) { Messages.Message(Lang.Tr("싸울 수 있는 림켓몬이 한 마리 이상 필요하다."), MessageTypeDefOf.RejectInput, false); return; }
 
             bool league = leagueMode && pc.InLeague;      // 체육관 탭과 리그 탭은 따로(배지 8개 뒤에도 관장과 다시 싸울 수 있다)
             bool champion = league && pc.ChampionTurn;
@@ -395,7 +397,7 @@ pc.CapturedPawns.Add(target);
             var colonist = new ColonistCombatant { Name = me != null ? me.LabelShortCap : "나" };      // 정착민은 마지막에 나서지 않는다
             var party = pc.ActiveParty();
             party.RemoveAll(p => p.IsFainted);
-            if (party.Count == 0) { Messages.Message("?????", MessageTypeDefOf.RejectInput, false); return; }
+            if (party.Count == 0) { Messages.Message(Lang.Tr("?????"), MessageTypeDefOf.RejectInput, false); return; }
             var foeParty = BuildMysteryParty(MysteryLevel, new GameRng(), settings);      // 전원 Lv.100 고정
             var battle = RimketBattle.Trainer(new GameRng(), settings, party, colonist, "???", foeParty, null);      // 트레이너 본인도 나서지 않는다
             battle.GymBattle = true;      // 져도 아무 일 없으니 항복도 된다
@@ -415,9 +417,9 @@ pc.CapturedPawns.Add(target);
                     w.Name = "???"; w.PawnId = 0;
                     pc.Wedges.Add(new ExposableCreature { C = w });
                 }
-                Find.LetterStack.ReceiveLetter("???", "??????\n\n??? ??? ????? ????.", LetterDefOf.PositiveEvent);      // 무엇을 얻었는지도 ?로만
+                Find.LetterStack.ReceiveLetter(Lang.Tr("???"), Lang.Tr("??????\n\n??? ??? ????? ????."), LetterDefOf.PositiveEvent);      // 무엇을 얻었는지도 ?로만
             }
-            else Messages.Message("?????", MessageTypeDefOf.NeutralEvent, false);
+            else Messages.Message(Lang.Tr("?????"), MessageTypeDefOf.NeutralEvent, false);
             ClearMysteryPawns();
             if (comp != null) comp.Clear();
             RimketChallengeComponent.MysteryVanish(trainerPawn, false);      // 이기든 지든 흔적 없이 사라진다
@@ -494,7 +496,7 @@ pc.CapturedPawns.Add(target);
                     var t = ThingMaker.MakeThing(ThingDefOf.Silver); t.stackCount = silver;
                     GenPlace.TryPlaceThing(t, anchor != null ? anchor.Position : map.Center, map, ThingPlaceMode.Near);
                 }
-                Find.LetterStack.ReceiveLetter("방문자와의 승부에서 승리", vname + "와(과)의 림켓몬 승부에서 이겼다. 상금으로 은 " + silver + "개를 받았다.", LetterDefOf.PositiveEvent, anchor);
+                Find.LetterStack.ReceiveLetter(Lang.Tr("방문자와의 승부에서 승리"), Lang.Tr(vname + "와(과)의 림켓몬 승부에서 이겼다. 상금으로 은 " + silver + "개를 받았다."), LetterDefOf.PositiveEvent, anchor);
             }
             else
             {
@@ -504,7 +506,7 @@ pc.CapturedPawns.Add(target);
                 {
                     var pcc = PartyComponent.Instance;
                     if (RimketLink.FindLinkPawn() != null || RimketBuild.Dev) Find.WindowStack.Add(Window_RimketMenu.WakeAtCenter());
-                    else if (pcc != null) { pcc.HealAll(); Messages.Message("정신을 차려 보니 림켓몬들이 모두 회복되어 있었다.", MessageTypeDefOf.NeutralEvent, false); }
+                    else if (pcc != null) { pcc.HealAll(); Messages.Message(Lang.Tr("정신을 차려 보니 림켓몬들이 모두 회복되어 있었다."), MessageTypeDefOf.NeutralEvent, false); }
                 }));
             }
         }
@@ -522,7 +524,7 @@ pc.CapturedPawns.Add(target);
                 string rn; RimketChallengeComponent.RewardDef(out rn);
                 if (trainerPawn != null && !trainerPawn.Dead && trainerPawn.Spawned) trainerPawn.Kill(null);
                 if (comp != null) { comp.ApocritonDied(trainerPawn); comp.Clear(); }
-                Find.LetterStack.ReceiveLetter("어둠의 배틀 승리", "아포크립톤을 꺾었다. 쓰러진 자리에 볼과 " + rn + "이(가) 남았다.", LetterDefOf.PositiveEvent, fighter);
+                Find.LetterStack.ReceiveLetter(Lang.Tr("어둠의 배틀 승리"), Lang.Tr("아포크립톤을 꺾었다. 쓰러진 자리에 볼과 " + rn + "이(가) 남았다."), LetterDefOf.PositiveEvent, fighter);
                 return;
             }
             if (r.End == BattleEnd.Victory)
@@ -534,17 +536,18 @@ pc.CapturedPawns.Add(target);
                 string rewardName = applied ? "인공자아핵" : "마스터볼 설계도";
                 if (itemDef != null && map != null)
                     GenPlace.TryPlaceThing(ThingMaker.MakeThing(itemDef), pos, map, ThingPlaceMode.Near);
-                Find.LetterStack.ReceiveLetter("어둠의 배틀 승리", trainerPawn.LabelShortCap + "을(를) 꺾었다. " + rewardName + "을(를) 남겼다.", LetterDefOf.PositiveEvent, fighter);
+                Find.LetterStack.ReceiveLetter(Lang.Tr("어둠의 배틀 승리"), Lang.Tr(trainerPawn.LabelShortCap + "을(를) 꺾었다. " + rewardName + "을(를) 남겼다."), LetterDefOf.PositiveEvent, fighter);
             }
             else if (r.End == BattleEnd.Defeat)
             {
-                Messages.Message(fighter.LabelShortCap + "은(는) " + trainerPawn.LabelShortCap + "에게 패배했다." + (fighter.Dead ? " 목숨을 잃었다." : ""), MessageTypeDefOf.NegativeEvent, false);
+                Messages.Message(Lang.Tr(fighter.LabelShortCap + "은(는) " + trainerPawn.LabelShortCap + "에게 패배했다." + (fighter.Dead ? " 목숨을 잃었다." : "")), MessageTypeDefOf.NegativeEvent, false);
             }
             if (comp != null) comp.Clear();
             if (r.End == BattleEnd.Victory && trainerPawn != null && !trainerPawn.Dead && trainerPawn.Spawned)
                 trainerPawn.Kill(null);                       // 시체로 남는다
             else if (trainerPawn != null && !trainerPawn.Dead && trainerPawn.Spawned)
             {
+                PawnRemoval.LeaveLord(trainerPawn);
                 trainerPawn.DeSpawn();                        // 이긴 쪽(트레이너)은 떠난다
                 Find.WorldPawns.PassToWorld(trainerPawn, RimWorld.Planet.PawnDiscardDecideMode.Discard);
             }
@@ -560,7 +563,7 @@ pc.CapturedPawns.Add(target);
             var colonist = ColonistFactory.Create(thrower, settings);
             var party = PartyComponent.Instance.ActiveParty();
             party.RemoveAll(p => p.IsFainted);
-            if (!RimketBattle.CanStart(party, colonist)) { Messages.Message("싸울 수 없다.", MessageTypeDefOf.RejectInput, false); return; }
+            if (!RimketBattle.CanStart(party, colonist)) { Messages.Message(Lang.Tr("싸울 수 없다."), MessageTypeDefOf.RejectInput, false); return; }
             var wild = SpawnRoller.FromSpecies(sp, Math.Max(1, Math.Min(100, level)), new GameRng(), settings);
             if (animalLook)
             {
@@ -617,7 +620,7 @@ pc.CapturedPawns.Add(target);
             if (pawn == null || pawn.Dead || pawn.skills == null || r.ColonistExp <= 0) return;
             float xp = Math.Min(4000f, r.ColonistExp);
             pawn.skills.Learn(SkillDefOf.Intellectual, xp, true);
-            Messages.Message(pawn.LabelShortCap + "이(가) 직접 싸워 경험치 " + r.ColonistExp + "을(를) 얻었다. (지능 기술 경험치 +" + (int)xp + ")", pawn, MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(pawn.LabelShortCap + "이(가) 직접 싸워 경험치 " + r.ColonistExp + "을(를) 얻었다. (지능 기술 경험치 +" + (int)xp + ")"), pawn, MessageTypeDefOf.PositiveEvent, false);
         }
 
         public static void ResolveWild(RimketBattle battle, Pawn thrower, Pawn target)
@@ -631,7 +634,7 @@ pc.CapturedPawns.Add(target);
                 if (r.Captured)
                 {
                     PartyComponent.Instance.Add(battle.Wild);
-                    Messages.Message(battle.Wild.Name + "을(를) 포획했다! (티어 " + battle.Wild.TierText + ", Lv." + battle.Wild.Level + ")", thrower, MessageTypeDefOf.PositiveEvent, false);
+                    Messages.Message(Lang.Tr(battle.Wild.Name + "을(를) 포획했다! (티어 " + battle.Wild.TierText + ", Lv." + battle.Wild.Level + ")"), thrower, MessageTypeDefOf.PositiveEvent, false);
                     PawnRemoval.Remove(target); // 볼 안으로 들어감
                     return;
                 }
@@ -657,13 +660,13 @@ pc.CapturedPawns.Add(target);
                 if (r.End == BattleEnd.Victory)
                 {
                     pcL.EliteWin();
-                    Find.LetterStack.ReceiveLetter("사천왕 " + leader.Name + " 격파", leader.Name + "에게 이겼다. (사천왕 " + pcL.EliteWins + "/4)\n" +
-                        (pcL.ChampionTurn ? "이제 챔피언이 기다린다." : "다음 사천왕이 기다린다. 지면 처음부터 다시 도전해야 한다."), LetterDefOf.PositiveEvent);
+                    Find.LetterStack.ReceiveLetter(Lang.Tr("사천왕 " + leader.Name + " 격파"), Lang.Tr(leader.Name + "에게 이겼다. (사천왕 " + pcL.EliteWins + "/4)\n" +
+                        (pcL.ChampionTurn ? "이제 챔피언이 기다린다." : "다음 사천왕이 기다린다. 지면 처음부터 다시 도전해야 한다.")), LetterDefOf.PositiveEvent);
                 }
                 else if (r.End == BattleEnd.Defeat)
                 {
                     pcL.LeagueReset();
-                    Messages.Message("사천왕 " + leader.Name + "에게 패배했다. 리그는 처음부터 다시 도전해야 한다.", MessageTypeDefOf.NeutralEvent, false);
+                    Messages.Message(Lang.Tr("사천왕 " + leader.Name + "에게 패배했다. 리그는 처음부터 다시 도전해야 한다."), MessageTypeDefOf.NeutralEvent, false);
                 }
                 return;
             }
@@ -680,27 +683,27 @@ pc.CapturedPawns.Add(target);
                 if (newBadge) { pc.EnsureStarterBp(); pc.bp += BadgeBp; }      // 배지를 얻을 때마다 BP
                 if (champion)
                 {
-                    Find.LetterStack.ReceiveLetter("챔피언 승리!", leader.Name + "을(를) 꺾었다. 레벨 상한 " + pc.LevelCap + (firstChampion ? "\n챔피언 배지 보상: +" + ChampionBp + " BP" : ""), LetterDefOf.PositiveEvent);
+                    Find.LetterStack.ReceiveLetter(Lang.Tr("챔피언 승리!"), Lang.Tr(leader.Name + "을(를) 꺾었다. 레벨 상한 " + pc.LevelCap + (firstChampion ? "\n챔피언 배지 보상: +" + ChampionBp + " BP" : "")), LetterDefOf.PositiveEvent);
                     try { ChampionCeremony.Begin(battle, leader); } catch (Exception ex) { Log.Warning("[림켓몬] 전당 등록: " + ex.Message); }
                 }
                 else if (rematch)
                 {
                     pc.bp += RematchBp;
-                    Messages.Message("진심을 낸 " + leader.Name + "와(과)의 재도전에서 이겼다! +" + RematchBp + " BP", MessageTypeDefOf.PositiveEvent, false);
+                    Messages.Message(Lang.Tr("진심을 낸 " + leader.Name + "와(과)의 재도전에서 이겼다! +" + RematchBp + " BP"), MessageTypeDefOf.PositiveEvent, false);
                 }
                 else if (badgesBefore >= PartyComponent.MaxBadges)
-                    Messages.Message(leader.Name + "와(과)의 재대결에서 이겼다! (배지는 이미 8개)", MessageTypeDefOf.PositiveEvent, false);
+                    Messages.Message(Lang.Tr(leader.Name + "와(과)의 재대결에서 이겼다! (배지는 이미 8개)"), MessageTypeDefOf.PositiveEvent, false);
                 else if (pc.Badges >= PartyComponent.MaxBadges)
-                    Find.LetterStack.ReceiveLetter("배지 8개 달성", leader.Name + "에게 이겼다. 이제 포켓몬 리그에 도전할 수 있다. +" + BadgeBp + " BP\n\n체육관 창 위쪽의 '포켓몬 리그' 탭에서 사천왕 4명과 차례로 싸운 뒤 챔피언에게 도전한다. 도중에 한 번이라도 지면 처음부터 다시(상대도 새로 정해진다). 체육관 탭에서는 관장들과 계속 재대결할 수 있다.", LetterDefOf.PositiveEvent);
+                    Find.LetterStack.ReceiveLetter(Lang.Tr("배지 8개 달성"), Lang.Tr(leader.Name + "에게 이겼다. 이제 포켓몬 리그에 도전할 수 있다. +" + BadgeBp + " BP\n\n체육관 창 위쪽의 '포켓몬 리그' 탭에서 사천왕 4명과 차례로 싸운 뒤 챔피언에게 도전한다. 도중에 한 번이라도 지면 처음부터 다시(상대도 새로 정해진다). 체육관 탭에서는 관장들과 계속 재대결할 수 있다."), LetterDefOf.PositiveEvent);
                 else
-                    Find.LetterStack.ReceiveLetter("배지 획득: " + leader.Name,
-                        leader.Name + "에게 이겼다. 레벨 상한 " + pc.LevelCap + "\n배지 보상: +" + BadgeBp + " BP",
+                    Find.LetterStack.ReceiveLetter(Lang.Tr("배지 획득: " + leader.Name),
+                        Lang.Tr(leader.Name + "에게 이겼다. 레벨 상한 " + pc.LevelCap + "\n배지 보상: +" + BadgeBp + " BP"),
                         LetterDefOf.PositiveEvent);
                 if (!champion && pc.Badges >= 1 && !pc.expShareOwned) Window_RimketSerena.GiftExpShare();      // 첫 배지: 세레나의 학습장치 선물
             }
             else if (r.End == BattleEnd.Defeat)
             {
-                Messages.Message((challenger != null ? challenger.LabelShortCap : "도전자") + "은(는) " + leader.Name + "에게 패배했다. 다시 도전할 수 있다.", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message(Lang.Tr((challenger != null ? challenger.LabelShortCap : "도전자") + "은(는) " + leader.Name + "에게 패배했다. 다시 도전할 수 있다."), MessageTypeDefOf.NeutralEvent, false);
             }
         }
 
@@ -737,7 +740,7 @@ pc.CapturedPawns.Add(target);
                 pawn.health.AddHediff(HediffDefOf.Anesthetic);
 
             if (!pawn.Dead && inj.Any)
-                Messages.Message(pawn.LabelShortCap + "의 뇌에 가상현실 신경 과부하 손상이 남았다.", pawn, MessageTypeDefOf.NegativeEvent, false);
+                Messages.Message(Lang.Tr(pawn.LabelShortCap + "의 뇌에 가상현실 신경 과부하 손상이 남았다."), pawn, MessageTypeDefOf.NegativeEvent, false);
         }
     }
 }

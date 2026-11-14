@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RimWorld;
 using Verse;
+using Rimketmon.Engine;
 using Verse.AI;
 
 namespace Rimketmon
@@ -33,12 +34,12 @@ namespace Rimketmon
             int cost = RimketmonMod.Settings.darkTauntBp;
             string label = "어둠의 림켓몬 도발 방송 (" + cost + " BP)";
             if (!RimketmonMod.Settings.darkChallengeEnabled) yield break;
-            if (pc.Badges < BattleFlow.DarkBadgeMin) { yield return new FloatMenuOption(label + " — 배지 " + BattleFlow.DarkBadgeMin + "개부터", null); yield break; }
-            if (comp.pending || comp.TauntScheduled) { yield return new FloatMenuOption(label + " — 이미 누군가 오고 있다", null); yield break; }
-            if (pc.bp < cost) { yield return new FloatMenuOption(label + " — BP 부족 (" + pc.bp + ")", null); yield break; }
-            if (!console.CanUseCommsNow) { yield return new FloatMenuOption(label + " — 통신기를 쓸 수 없다(전력?)", null); yield break; }
-            if (!pawn.CanReach(console, PathEndMode.InteractionCell, Danger.Some)) { yield return new FloatMenuOption(label + " — 도달할 수 없다", null); yield break; }
-            yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption(label, () =>
+            if (pc.Badges < BattleFlow.DarkBadgeMin) { yield return new FloatMenuOption(Lang.Tr(label + " — 배지 " + BattleFlow.DarkBadgeMin + "개부터"), null); yield break; }
+            if (comp.pending || comp.TauntScheduled) { yield return new FloatMenuOption(Lang.Tr(label + " — 이미 누군가 오고 있다"), null); yield break; }
+            if (pc.bp < cost) { yield return new FloatMenuOption(Lang.Tr(label + " — BP 부족 (" + pc.bp + ")"), null); yield break; }
+            if (!console.CanUseCommsNow) { yield return new FloatMenuOption(Lang.Tr(label + " — 통신기를 쓸 수 없다(전력?)"), null); yield break; }
+            if (!pawn.CanReach(console, PathEndMode.InteractionCell, Danger.Some)) { yield return new FloatMenuOption(Lang.Tr(label + " — 도달할 수 없다"), null); yield break; }
+            yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption(Lang.Tr(label), () =>
             {
                 var job = JobMaker.MakeJob(DefDatabase<JobDef>.GetNamed("RimketTaunt"), console);
                 pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
@@ -63,11 +64,11 @@ namespace Rimketmon
             {
                 var pc = PartyComponent.Instance; var comp = RimketChallengeComponent.Instance;
                 int cost = RimketmonMod.Settings.darkTauntBp;
-                if (pc == null || comp == null || comp.pending || comp.TauntScheduled || !pc.SpendBp(cost)) { Messages.Message("방송을 보내지 못했다.", MessageTypeDefOf.RejectInput, false); return; }
+                if (pc == null || comp == null || comp.pending || comp.TauntScheduled || !pc.SpendBp(cost)) { Messages.Message(Lang.Tr("방송을 보내지 못했다."), MessageTypeDefOf.RejectInput, false); return; }
                 comp.ScheduleTaunt(pawn.Map);
-                Find.LetterStack.ReceiveLetter("도발 방송",
-                    pawn.LabelShortCap + "이(가) 모든 주파수에 도발을 퍼부었다.\n\n\"림켓몬으로 우리를 이길 수 있는 녀석이 있다면 와 봐라!\"\n\n" +
-                    "방송을 들은 어둠의 림켓몬 트레이너 누군가가 몇 시간 안에 찾아올 것이다.", LetterDefOf.NeutralEvent);
+                Find.LetterStack.ReceiveLetter(Lang.Tr("도발 방송"),
+                    Lang.Tr(pawn.LabelShortCap + "이(가) 모든 주파수에 도발을 퍼부었다.\n\n\"림켓몬으로 우리를 이길 수 있는 녀석이 있다면 와 봐라!\"\n\n" +
+                    "방송을 들은 어둠의 림켓몬 트레이너 누군가가 몇 시간 안에 찾아올 것이다."), LetterDefOf.NeutralEvent);
             };
             send.defaultCompleteMode = ToilCompleteMode.Instant;
             yield return send;

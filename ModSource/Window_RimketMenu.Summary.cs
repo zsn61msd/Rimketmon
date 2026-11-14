@@ -359,7 +359,7 @@ namespace Rimketmon
             if (info != null)
             {
                 float yy = 132f;
-                foreach (var ln in WrapItemText(g, Lang.English ? info.DescEn : info.DescKo, 7.5f, 196f)) { g.Label(ln, 112f, yy, 7.5f, new Color(0.85f, 0.85f, 0.9f), Canvas.WhiteShadow); yy += 8.5f; if (yy > 160f) break; }
+                foreach (var ln in WrapItemText(g, ItemCatalog.DescOf(info), 7.5f, 196f)) { g.Label(ln, 112f, yy, 7.5f, new Color(0.85f, 0.85f, 0.9f), Canvas.WhiteShadow); yy += 8.5f; if (yy > 160f) break; }
             }
             if (AcceptKey()) { ApplyItemPick(c, pc); return; }
             if (CancelKey()) itemPick = false;
@@ -382,7 +382,7 @@ namespace Rimketmon
             if (max <= 0)
             {
                 RimketAudio.PlaySe("gui_sel_buzzer");
-                Messages.Message("이상한사탕: " + c.Name + "은(는) 이미 레벨 상한(Lv." + pc.LevelCap + ")이다. 배지를 더 모으면 상한이 오른다.", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("이상한사탕: " + c.Name + "은(는) 이미 레벨 상한(Lv." + pc.LevelCap + ")이다. 배지를 더 모으면 상한이 오른다."), MessageTypeDefOf.RejectInput, false);
                 return;
             }
             candyFor = c; candyN = 1; RimketAudio.PlaySe("gui_sel_decision");
@@ -440,9 +440,12 @@ namespace Rimketmon
             }
             if (used == 0) return;
             RimketAudio.PlaySe("level_up");
-            Messages.Message(c.Name + "에게 이상한사탕 " + used + "개를 먹였다. 레벨 " + from + " → " + c.Level + "!", MessageTypeDefOf.PositiveEvent, false);
-            // 레벨이 올라 진화할 수 있으면 다 먹인 뒤 한 번만 묻는다
-            if (!c.Neutral && c.PawnId == 0 && Evolution.Ready(c, null, pc.ActiveParty()).Any()) Window_RimketEvolution.RunQueue(new List<RimketCreature> { c });
+            Messages.Message(Lang.Tr(c.Name + "에게 이상한사탕 " + used + "개를 먹였다. 레벨 " + from + " → " + c.Level + "!"), MessageTypeDefOf.PositiveEvent, false);
+            // 새로 배우는 기술을 먼저 묻고, 레벨이 올라 진화할 수 있으면 그 뒤에 한 번만 묻는다
+            Dialog_LearnMove.RunLevelUp(c, from, () =>
+            {
+                if (!c.Neutral && c.PawnId == 0 && Evolution.Ready(c, null, pc.ActiveParty()).Any()) Window_RimketEvolution.RunQueue(new List<RimketCreature> { c });
+            });
         }
 
         private void ApplyItemPick(RimketCreature c, PartyComponent pc)
@@ -453,13 +456,13 @@ namespace Rimketmon
             if (id != null && Evolution.IsUseItem(id))      // 진화의 돌: 지니지 않고 쓴다
             {
                 var to = Evolution.ByItem(c, id);
-                if (to == null || !pc.BagTake(id)) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(ItemCatalog.NameOf(id) + ": " + c.Name + "에게는 아무 일도 일어나지 않았다.", MessageTypeDefOf.RejectInput, false); return; }
+                if (to == null || !pc.BagTake(id)) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr(ItemCatalog.NameOf(id) + ": " + c.Name + "에게는 아무 일도 일어나지 않았다."), MessageTypeDefOf.RejectInput, false); return; }
                 Find.WindowStack.Add(new Window_RimketEvolution(c, to, null, id));
                 return;
             }
             if (id == null) { pc.BagAdd(c.Item); c.Item = null; }
             else if (pc.BagTake(id)) { if (c.Item != null) pc.BagAdd(c.Item); c.Item = id; }
-            if (ItemForms.Sync(c)) { SpeciesInfo nf; RimketAudio.PlaySe("upgrade"); Messages.Message(c.Name + "의 모습이 바뀌었다!" + (SpeciesCatalog.TryGet(c.Species, out nf) ? " (" + nf.Name + ")" : ""), MessageTypeDefOf.PositiveEvent, false); }
+            if (ItemForms.Sync(c)) { SpeciesInfo nf; RimketAudio.PlaySe("upgrade"); Messages.Message(Lang.Tr(c.Name + "의 모습이 바뀌었다!" + (SpeciesCatalog.TryGet(c.Species, out nf) ? " (" + nf.Name + ")" : "")), MessageTypeDefOf.PositiveEvent, false); }
             // 지니고 진화하는 도구(금속코트 등): 통신교환 대신 지니는 순간 진화한다
             if (c.Item != null && Evolution.Ready(c, null, pc.ActiveParty()).Any(e => e.Kind == "Hold")) Window_RimketEvolution.RunQueue(new List<RimketCreature> { c });
         }
@@ -472,7 +475,7 @@ namespace Rimketmon
             else
             {
                 g.Tx(ItemCatalog.NameOf(held.Id), px + 8f, py + 13f, 0f, 0f, 11f, Canvas.RedC, Canvas.RedSh);
-                string desc = Lang.English ? held.DescEn : held.DescKo;
+                string desc = ItemCatalog.DescOf(held);
                 float yy = py + 25f;
                 foreach (var ln in WrapItemText(g, desc, 8f, 196f)) { g.Tx(ln, px + 8f, yy, 0f, 0f, 8f, Canvas.AltDark, Canvas.AltDarkSh); yy += 9f; if (yy > py + 52f) break; }
             }

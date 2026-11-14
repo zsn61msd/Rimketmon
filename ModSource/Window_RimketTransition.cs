@@ -2,6 +2,7 @@ using System;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using Rimketmon.Engine;
 
 namespace Rimketmon
 {
@@ -220,7 +221,7 @@ namespace Rimketmon
                 var f = Text.Font; var a = Text.Anchor;
                 Text.Font = GameFont.Medium; Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = Color.white;
-                Widgets.Label(new Rect(r.x + bx + w * 0.03f, by, w * 0.54f, bh), bossTitle);
+                Widgets.Label(new Rect(r.x + bx + w * 0.03f, by, w * 0.54f, bh), Lang.Tr(bossTitle));
                 Text.Font = f; Text.Anchor = a;
             }
 

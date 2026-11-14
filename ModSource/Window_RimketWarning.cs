@@ -43,13 +43,13 @@ namespace Rimketmon
 
             Text.Font = GameFont.Medium;
             GUI.color = new Color(1f, 0.75f, 0.3f);
-            Widgets.Label(new Rect(inRect.x, y, inRect.width, 34f), "⚠ 싸울 림켓몬 없음");
+            Widgets.Label(new Rect(inRect.x, y, inRect.width, 34f), Lang.Tr("⚠ 싸울 림켓몬 없음"));
             GUI.color = Color.white;
             Text.Font = GameFont.Small;
             y += 38f;
 
             Widgets.Label(new Rect(inRect.x, y, inRect.width, 44f),
-                col.Name + "이(가) 직접 싸웁니다.");
+                Lang.Tr(col.Name + "이(가) 직접 싸웁니다."));
             y += 52f;
 
             float half = (inRect.width - 12f) / 2f;
@@ -60,12 +60,12 @@ namespace Rimketmon
             DrawRisk(new Rect(inRect.x, y, inRect.width, 120f));
 
             float bw = (inRect.width - 12f) / 2f;
-            if (Widgets.ButtonText(new Rect(inRect.x, inRect.yMax - 36f, bw, 36f), "취소 (볼은 소모되지 않음)"))
+            if (Widgets.ButtonText(new Rect(inRect.x, inRect.yMax - 36f, bw, 36f), Lang.Tr("취소 (볼은 소모되지 않음)")))
             {
                 Close();
             }
             GUI.color = risk.DeathRate > 0.5 ? new Color(1f, 0.5f, 0.5f) : Color.white;
-            if (Widgets.ButtonText(new Rect(inRect.x + bw + 12f, inRect.yMax - 36f, bw, 36f), "위험을 감수하고 접속"))
+            if (Widgets.ButtonText(new Rect(inRect.x + bw + 12f, inRect.yMax - 36f, bw, 36f), Lang.Tr("위험을 감수하고 접속")))
             {
                 Close();
                 onConfirm();
@@ -120,11 +120,11 @@ namespace Rimketmon
             if (header)
             {
                 Text.Font = GameFont.Small;
-                Widgets.Label(new Rect(area.x, area.y, area.width, h), label + (value.Length > 0 ? ": " + value : ""));
+                Widgets.Label(new Rect(area.x, area.y, area.width, h), Lang.Tr(label + (value.Length > 0 ? ": " + value : "")));
             }
             else
             {
-                Widgets.Label(new Rect(area.x, area.y, area.width * 0.45f, h), label);
+                Widgets.Label(new Rect(area.x, area.y, area.width * 0.45f, h), Lang.Tr(label));
                 Widgets.Label(new Rect(area.x + area.width * 0.45f, area.y, area.width * 0.55f, h), value);
             }
             area.y += h;

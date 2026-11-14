@@ -138,7 +138,7 @@ namespace Rimketmon
                 else if (Training.Apply(trainTarget, dSp, dNature, dMoves, dIv, dAbility) && pc.SpendBp(cost))
                 {
                     RimketAudio.PlaySe("mart_buy_item");
-                    Messages.Message(trainTarget.Name + " 훈련 완료 (" + cost + " BP).", MessageTypeDefOf.PositiveEvent, false);
+                    Messages.Message(Lang.Tr(trainTarget.Name + " 훈련 완료 (" + cost + " BP)."), MessageTypeDefOf.PositiveEvent, false);
                     Array.Copy(trainTarget.Sp, dSp, 6); Array.Copy(trainTarget.Iv, dIv, 6);
                 }
             }

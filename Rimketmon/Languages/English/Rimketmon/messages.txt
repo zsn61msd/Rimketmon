@@ -1,0 +1,761 @@
+# 포켓로그 메시지: 키<TAB>문장  ({{이름}} 자리는 그대로 둔다)
+battle.bossAppeared	{{bossName}} appeared!
+battle.trainerAppeared	{{trainerName}} would like to battle!
+battle.trainerAppearedDouble	{{trainerName}} would like to battle!
+battle.trainerSendOut	{{trainerName}} sent out {{pokemonName}}!
+battle.trainerSendOutDoubles	{{trainerName}} sent out {{pokemonName1}} and {{pokemonName2}}!
+battle.pairTrainerSendOutDoubles	{{trainerName}} sent out {{pokemonName1}} and {{pokemonName2}}!
+battle.singleWildAppeared	A wild {{pokemonName}} appeared!
+battle.multiWildAppeared	A wild {{pokemonName1}} and {{pokemonName2}} appeared!
+battle.playerComeBack	Come back, {{pokemonName}}!
+battle.trainerComeBack	{{trainerName}} withdrew {{pokemonName}}!
+battle.playerGo	Go! {{pokemonName}}!
+battle.trainerGo	{{trainerName}} sent out {{pokemonName}}!
+battle.pokemonDraggedOut	{{pokemonName}} was dragged out!
+battle.switchQuestion	Will you switch {{pokemonName}}?
+battle.trainerDefeated	You defeated {{trainerName}}!
+battle.moneyWon	You got ₽{{moneyAmount}} for winning!
+battle.moneyPickedUp	You picked up ₽{{moneyAmount}}!
+battle.pokemonCaught	Gotcha! {{pokemonName}} was caught!
+battle.pokemonCaughtButChallenge	{{pokemonName}} was caught, but was not added to your party due to a challenge!
+battle.pokemonObtained	You got {{pokemonName}}!
+battle.pokemonBrokeFree	Oh no! The Pokémon broke free!
+battle.pokemonFled	The wild {{pokemonName}} fled!
+battle.playerFled	You fled from the {{pokemonName}}!
+battle.addedAsAStarter	{{pokemonName}} has been added as a starter!
+battle.partyFull	Your party is full. Release a Pokémon to make room for {{pokemonName}}?
+battle.pokemon	Pokémon
+battle.sendOutPokemon	Go! {{pokemonName}}!
+battle.hitResultCriticalHit	A critical hit!
+battle.hitResultExtremelyEffective	It’s extremely effective!
+battle.hitResultSuperEffective	It’s super effective!
+battle.hitResultNotVeryEffective	It’s not very effective…
+battle.hitResultMostlyIneffective	It’s mostly ineffective…
+battle.hitResultNoEffect	It doesn’t affect {{pokemonName}}!
+battle.hitResultImmune	{{pokemonName}} is unaffected!
+battle.hitResultOneHitKo	It’s a one-hit KO!
+battle.attackFailed	But it failed!
+battle.attackMissed	{{pokemonNameWithAffix}} avoided the attack!
+battle.attackHitsCount_one	Hit {{count}} time!
+battle.attackHitsCount_few	Hit {{count}} times!
+battle.attackHitsCount_many	Hit {{count}} times!
+battle.attackHitsCount_other	Hit {{count}} times!
+battle.rewardGain	You received {{modifierName}}!
+battle.rewardGainCount	You received {{count}} {{modifierName}}!
+battle.expGain	{{pokemonName}} gained {{exp}} Exp. Points!
+battle.levelUp	{{pokemonName}} grew to Lv. {{level}}!
+battle.learnMove	{{pokemonName}} learned {{moveName}}!
+battle.learnMovePrompt	{{pokemonName}} wants to learn the move {{moveName}}.
+battle.learnMoveLimitReached	However, {{pokemonName}} already knows four moves.
+battle.learnMoveReplaceQuestion	Should a move be forgotten and replaced with {{moveName}}?
+battle.learnMoveStopTeaching	Stop trying to teach {{moveName}}?
+battle.learnMoveNotLearned	{{pokemonName}} did not learn the move {{moveName}}.
+battle.learnMoveForgetQuestion	Which move should be forgotten?
+battle.learnMoveForgetSuccess	{{pokemonName}} forgot how to use {{moveName}}.
+battle.prevoMovePrompt	{{pokemonName}} got the idea for a new relearn move: {{moveName}}!
+battle.countdownPoof	@d{32}1, @d{15}2, and@d{15}… @d{15}… @d{15}… @d{15}@s{se/pb_bounce_1}Poof!
+battle.learnMoveAnd	And…
+battle.levelCapUp	The level cap has increased to {{levelCap}}!
+battle.moveNotImplemented	{{moveName}} is not yet implemented and cannot be selected.
+battle.moveNoPp	There’s no PP left for this move!
+battle.moveDisabled	{{moveName}} is disabled!
+battle.moveDisabledTorment	{{pokemonNameWithAffix}} can’t use the same move twice in a row due to the torment!
+battle.moveDisabledTaunt	{{pokemonNameWithAffix}} can’t use {{moveName}} after the taunt!
+battle.moveDisabledHealBlock	{{pokemonNameWithAffix}} is prevented from healing, so it can’t use {{moveName}}!
+battle.moveDisabledImprison	{{pokemonNameWithAffix}} can’t use its sealed {{moveName}}!
+battle.moveDisabledConsecutive	You can’t use {{moveName}} twice in a row!
+battle.moveDisabledBelch	{{pokemonNameWithAffix}} hasn’t eaten any held Berries, so it can’t possibly belch!
+battle.moveDisabledNoBerry	It can’t use the move because it doesn’t have a Berry!
+battle.moveDisabledGravity	{{pokemonNameWithAffix}} can’t use {{moveName}} because of gravity!
+battle.canOnlyUseMove	{{pokemonName}} can only use {{moveName}}!
+battle.moveCannotBeSelected	{{moveName}} cannot be selected!
+battle.moveCannotUseChallenge	{{moveName}} cannot be used because of a challenge!
+battle.disableInterruptedMove	{{pokemonNameWithAffix}}’s {{moveName}} is disabled!
+battle.throatChopInterruptedMove	The effects of Throat Chop prevent {{pokemonName}} from using certain moves!
+battle.noPokeballForce	An unseen force prevents the use of Poké Balls!
+battle.noPokeballForceFinalBoss	An overwhelming force prevents the use of Poké Balls!
+battle.noPokeballForceFinalBossCatchable	An overwhelming force prevents the use of Poké Balls!$You need to weaken it first!
+battle.noPokeballTrainer	The Trainer blocked your Poké Ball! Don’t be a thief!
+battle.noPokeballMulti	You can only throw a Poké Ball when there is one Pokémon remaining!
+battle.noPokeballStrong	The target Pokémon is too strong to be caught! You need to weaken it first!
+battle.noPokeballMysteryEncounter	You aren’t able to catch this Pokémon!
+battle.noEscapeForce	An unseen force prevents escape.
+battle.noEscapeTrainer	You can’t run from a Trainer battle!
+battle.noEscapePokemon	{{pokemonName}}’s {{moveName}} prevents {{escapeVerb}}!
+battle.noEscapeSwitch	The Pokémon can’t be switched out!
+battle.noEscapeFlee	The Pokémon can’t escape!
+battle.runAwaySuccess	You got away safely!
+battle.runAwayCannotEscape	You can’t escape!
+battle.escapeVerbSwitch	switching
+battle.escapeVerbFlee	fleeing
+battle.notDisabled	{{pokemonName}}’s {{moveName}} is disabled no more!
+battle.turnEndHpRestore	{{pokemonName}}’s HP was restored.
+battle.hpIsFull	{{pokemonName}}’s HP is full!
+battle.skipItemQuestion	Are you sure you want to skip taking an item?
+battle.itemStackFull	The stack for {{fullItemName}} is full. You will receive {{itemName}} instead.
+battle.eggHatching	Oh?
+battle.eggSkipPrompt_one	{{eggsToHatch}} Egg is ready to hatch. Skip to Egg summary?
+battle.eggSkipPrompt_few	{{eggsToHatch}} Eggs are ready to hatch. Skip to Egg summary?
+battle.eggSkipPrompt_many	{{eggsToHatch}} Eggs are ready to hatch. Skip to Egg summary?
+battle.eggSkipPrompt_other	{{eggsToHatch}} Eggs are ready to hatch. Skip to Egg summary?
+battle.ivScannerUseQuestion	Use IV Scanner on the {{pokemonName}}?
+battle.wildPokemonWithAffix	Wild {{pokemonName}}
+battle.foePokemonWithAffix	Foe {{pokemonName}}
+battle.useMove	{{pokemonNameWithAffix}} used {{moveName}}!
+battle.magicCoatActivated	{{pokemonNameWithAffix}} bounced the {{moveName}} back!
+battle.drainMessage	{{pokemonName}} had its energy drained!
+battle.regainHealth	{{pokemonName}} regained health!
+battle.stealEatBerry	{{pokemonName}} stole and ate {{targetName}}’s {{berryName}}!
+battle.ppHealBerry	{{pokemonNameWithAffix}} restored PP to its move {{moveName}} using its {{berryName}}!
+battle.hpHealBerry	{{pokemonNameWithAffix}} restored its health using its {{berryName}}!
+battle.fainted	{{pokemonNameWithAffix}} fainted!
+battle.statsAnd	and
+battle.stats	Stats
+battle.statRose_one	{{pokemonNameWithAffix}}’s {{stats}} rose!
+battle.statRose_few	{{pokemonNameWithAffix}}’s {{stats}} rose!
+battle.statRose_many	{{pokemonNameWithAffix}}’s {{stats}} rose!
+battle.statRose_other	{{pokemonNameWithAffix}}’s {{stats}} rose!
+battle.statSharplyRose_one	{{pokemonNameWithAffix}}’s {{stats}} rose sharply!
+battle.statSharplyRose_few	{{pokemonNameWithAffix}}’s {{stats}} rose sharply!
+battle.statSharplyRose_many	{{pokemonNameWithAffix}}’s {{stats}} rose sharply!
+battle.statSharplyRose_other	{{pokemonNameWithAffix}}’s {{stats}} rose sharply!
+battle.statRoseDrastically_one	{{pokemonNameWithAffix}}’s {{stats}} rose drastically!
+battle.statRoseDrastically_few	{{pokemonNameWithAffix}}’s {{stats}} rose drastically!
+battle.statRoseDrastically_many	{{pokemonNameWithAffix}}’s {{stats}} rose drastically!
+battle.statRoseDrastically_other	{{pokemonNameWithAffix}}’s {{stats}} rose drastically!
+battle.statWontGoAnyHigher_one	{{pokemonNameWithAffix}}’s {{stats}} won’t go any higher!
+battle.statWontGoAnyHigher_few	{{pokemonNameWithAffix}}’s {{stats}} won’t go any higher!
+battle.statWontGoAnyHigher_many	{{pokemonNameWithAffix}}’s {{stats}} won’t go any higher!
+battle.statWontGoAnyHigher_other	{{pokemonNameWithAffix}}’s {{stats}} won’t go any higher!
+battle.statFell_one	{{pokemonNameWithAffix}}’s {{stats}} fell!
+battle.statFell_few	{{pokemonNameWithAffix}}’s {{stats}} fell!
+battle.statFell_many	{{pokemonNameWithAffix}}’s {{stats}} fell!
+battle.statFell_other	{{pokemonNameWithAffix}}’s {{stats}} fell!
+battle.statHarshlyFell_one	{{pokemonNameWithAffix}}’s {{stats}} harshly fell!
+battle.statHarshlyFell_few	{{pokemonNameWithAffix}}’s {{stats}} harshly fell!
+battle.statHarshlyFell_many	{{pokemonNameWithAffix}}’s {{stats}} harshly fell!
+battle.statHarshlyFell_other	{{pokemonNameWithAffix}}’s {{stats}} harshly fell!
+battle.statSeverelyFell_one	{{pokemonNameWithAffix}}’s {{stats}} severely fell!
+battle.statSeverelyFell_few	{{pokemonNameWithAffix}}’s {{stats}} severely fell!
+battle.statSeverelyFell_many	{{pokemonNameWithAffix}}’s {{stats}} severely fell!
+battle.statSeverelyFell_other	{{pokemonNameWithAffix}}’s {{stats}} severely fell!
+battle.statWontGoAnyLower_one	{{pokemonNameWithAffix}}’s {{stats}} won’t go any lower!
+battle.statWontGoAnyLower_few	{{pokemonNameWithAffix}}’s {{stats}} won’t go any lower!
+battle.statWontGoAnyLower_many	{{pokemonNameWithAffix}}’s {{stats}} won’t go any lower!
+battle.statWontGoAnyLower_other	{{pokemonNameWithAffix}}’s {{stats}} won’t go any lower!
+battle.transformedIntoType	{{pokemonName}} transformed into the {{type}} type!
+battle.retryBattle	Would you like to retry from the start of the battle?
+battle.retryBattleDaily	What would you like to do?
+battle.retryBattleOption	Retry this battle
+battle.retryBiomeOption	Retry current biome
+battle.quitOption	Abandon
+battle.unlockedSomething	{{unlockedThing}} has been unlocked.
+battle.congratulations	Congratulations!
+battle.beatModeFirstTime	{{speciesName}} beat {{gameMode}} Mode for the first time! You received {{newModifier}}!
+battle.ppReduced	It reduced the PP of {{targetName}}’s {{moveName}} by {{reduction}}!
+battle.mysteryEncounterAppeared	What’s this?
+battle.pokemonTerastallized	{{pokemonNameWithAffix}} Terastallized into the {{type}} type!
+move-trigger.hitWithRecoil	{{pokemonName}} was damaged by the recoil!
+move-trigger.cutHpPowerUpMove	{{pokemonName}} cut its own HP to power up its move!
+move-trigger.absorbedElectricity	{{pokemonName}} absorbed electricity!
+move-trigger.switchedStatChanges	{{pokemonName}} switched stat changes with the target!
+move-trigger.switchedTwoStatChanges	{{pokemonName}} switched all changes to its {{firstStat}} and {{secondStat}} with its target!
+move-trigger.switchedStat	{{pokemonName}} switched {{stat}} with its target!
+move-trigger.sharedGuard	{{pokemonName}} shared its guard with the target!
+move-trigger.sharedPower	{{pokemonName}} shared its power with the target!
+move-trigger.shiftedStats	{{pokemonName}} switched its {{statToSwitch}} and {{statToSwitchWith}}!
+move-trigger.goingAllOutForAttack	{{pokemonName}} is going all out for this attack!
+move-trigger.regainedHealth	{{pokemonName}} regained health!
+move-trigger.keptGoingAndCrashed	{{pokemonName}} kept going and crashed!
+move-trigger.fled	{{pokemonName}} fled!
+move-trigger.cannotBeSwitchedOut	{{pokemonName}} can’t be switched out!
+move-trigger.swappedAbilitiesWithTarget	{{pokemonName}} swapped abilities with its target!
+move-trigger.coinsScatteredEverywhere	Coins were scattered everywhere!
+move-trigger.attackedByItem	{{pokemonName}} is about to be attacked by its {{itemName}}!
+move-trigger.whippedUpAWhirlwind	{{pokemonName}} whipped up a whirlwind!
+move-trigger.flewUpHigh	{{pokemonName}} flew up high!
+move-trigger.tookInSunlight	{{pokemonName}} absorbed light!
+move-trigger.dugAHole	{{pokemonName}} burrowed its way under the ground!
+move-trigger.loweredItsHead	{{pokemonName}} tucked in its head!
+move-trigger.isGlowing	{{pokemonName}} became cloaked in a harsh light!
+move-trigger.bellChimed	A bell chimed!
+move-trigger.foresawAnAttack	{{pokemonName}} foresaw an attack!
+move-trigger.isTighteningFocus	{{pokemonName}} is tightening its focus!
+move-trigger.lostFocus	{{pokemonName}} lost its focus and couldn’t move!
+move-trigger.hidUnderwater	{{pokemonName}} hid underwater!
+move-trigger.soothingAromaWaftedThroughArea	A soothing aroma wafted through the area!
+move-trigger.sprangUp	{{pokemonName}} sprang up!
+move-trigger.choseDoomDesireAsDestiny	{{pokemonName}} chose Doom Desire as its destiny!
+move-trigger.vanishedInstantly	{{pokemonName}} vanished instantly!
+move-trigger.tookTargetIntoSky	{{pokemonName}} took {{targetName}} into the sky!
+move-trigger.becameCloakedInFreezingLight	{{pokemonName}} became cloaked in a freezing light!
+move-trigger.becameCloakedInFreezingAir	{{pokemonName}} became cloaked in freezing air!
+move-trigger.isChargingPower	{{pokemonName}} is absorbing power!
+move-trigger.burnedItselfOut	{{pokemonName}} burned itself out!
+move-trigger.startedHeatingUpBeak	{{pokemonName}} started heating up its beak!
+move-trigger.setUpShellTrap	{{pokemonName}} set a shell trap!
+move-trigger.isOverflowingWithSpacePower	{{pokemonName}} is overflowing with space power!
+move-trigger.usedUpAllElectricity	{{pokemonName}} used up all its electricity!
+move-trigger.stoleItem	{{pokemonName}} stole {{targetName}}’s {{itemName}}!
+move-trigger.incineratedItem	{{pokemonName}} incinerated {{targetName}}’s {{itemName}}!
+move-trigger.knockedOffItem	{{pokemonName}} knocked off {{targetName}}’s {{itemName}}!
+move-trigger.tookMoveAttack	{{pokemonName}} took the {{moveName}} attack!
+move-trigger.cutOwnHpAndMaximizedStat	{{pokemonName}} cut its own HP and maximized its {{statName}}!
+move-trigger.copiedStatChanges	{{pokemonName}} copied {{targetName}}’s stat changes!
+move-trigger.magnitudeMessage	Magnitude {{magnitude}}!
+move-trigger.tookAimAtTarget	{{pokemonName}} took aim at {{targetName}}!
+move-trigger.transformedIntoType	{{pokemonName}} transformed into the {{typeName}} type!
+move-trigger.copiedMove	{{pokemonName}} copied {{moveName}}!
+move-trigger.sketchedMove	{{pokemonName}} sketched {{moveName}}!
+move-trigger.acquiredAbility	The {{pokemonName}} acquired {{abilityName}}!
+move-trigger.copiedTargetAbility	{{pokemonName}} copied the {{targetName}}’s {{abilityName}}!
+move-trigger.transformedIntoTarget	{{pokemonName}} transformed into {{targetName}}!
+move-trigger.tryingToTakeFoeDown	{{pokemonName}} is hoping to take its attacker down with it!
+move-trigger.addType	{{typeName}} was added to {{pokemonName}}!
+move-trigger.cannotUseMove	{{pokemonName}} cannot use {{moveName}}!
+move-trigger.healHp	{{pokemonName}} had its HP restored.
+move-trigger.sacrificialFullRestore	{{pokemonName}}’s Healing Wish was granted!
+move-trigger.invertStats	{{pokemonName}}’s stat changes were all reversed!
+move-trigger.resetStats	{{pokemonName}}’s stat changes were eliminated!
+move-trigger.statEliminated	All stat changes were eliminated!
+move-trigger.faintCountdown	{{pokemonName}} will faint in {{turnCount}} turns.
+move-trigger.copyType	{{pokemonName}}’s type became the same as {{targetPokemonName}}’s type!
+move-trigger.suppressAbilities	{{pokemonName}}’s ability was suppressed!
+move-trigger.revivalBlessing	{{pokemonName}} was revived!
+move-trigger.swapArenaTags	{{pokemonName}} swapped the battle effects affecting each side of the field!
+move-trigger.chillyReception	{{pokemonName}} is preparing to tell a chillingly bad joke!
+move-trigger.exposedMove	{{pokemonName}} identified {{targetPokemonName}}!
+move-trigger.safeguard	{{targetName}} is protected by Safeguard!
+move-trigger.restBecameHealthy	{{pokemonName}} slept and restored its HP!
+move-trigger.substituteOnOverlap	{{pokemonName}} already has a substitute!
+move-trigger.substituteNotEnoughHp	But it does not have enough HP left to make a substitute!
+move-trigger.afterYou	{{targetName}} took the kind offer!
+move-trigger.combiningPledge	The two moves have become one! It’s a combined move!
+move-trigger.awaitingPledge	{{userPokemonName}} is waiting for {{allyPokemonName}}’s move…
+move-trigger.corrosiveGasItem	{{pokemonName}} corroded {{targetName}}’s {{itemName}}!
+move-trigger.instructingMove	{{targetPokemonName}} followed {{userPokemonName}}’s instructions!
+move-trigger.lunarDanceRestore	{{pokemonName}} became cloaked in mystical moonlight!
+move-trigger.stealPositiveStats	{{pokemonName}} stole {{targetName}}’s boosted stats!
+move-trigger.naturePowerUse	{{pokemonName}}’s Nature Power turned into {{moveName}}!
+move-trigger.forceLast	{{targetPokemonName}}’s move was postponed!
+move-trigger.splash	But nothing happened!
+move-trigger.fallDown	The {{targetPokemonName}} fell straight down!
+move-trigger.celebrate	Congratulations, {{playerName}}!
+move-trigger.struggle	{{pokemonName}} has no moves left that it can use!
+move-trigger.rageIsBuilding	{{pokemonName}}’s rage is building!
+ability-trigger.blockRecoilDamage	{{pokemonName}}’s {{abilityName}} protected it from recoil!
+ability-trigger.badDreams	{{pokemonName}} is tormented!
+ability-trigger.costar	{{pokemonName}} copied {{allyName}}’s stat changes!
+ability-trigger.iceFaceAvoidedDamage	{{pokemonNameWithAffix}} avoided damage with {{abilityName}}!
+ability-trigger.perishBody	{{pokemonName}}’s {{abilityName}} will faint both Pokémon in 3 turns!
+ability-trigger.poisonHeal	{{pokemonName}}’s {{abilityName}} restored its HP a little!
+ability-trigger.trace	{{pokemonName}} copied {{targetName}}’s {{abilityName}}!
+ability-trigger.windPowerCharged	Being hit by {{moveName}} charged {{pokemonName}} with power!
+ability-trigger.quickDraw	{{pokemonName}} can act faster than normal, thanks to its Quick Draw!
+ability-trigger.illusionBreak	{{pokemonName}}’s illusion wore off!
+ability-trigger.disguiseAvoidedDamage	{{pokemonNameWithAffix}}’s disguise was busted!
+ability-trigger.blockItemTheft	{{pokemonNameWithAffix}}’s {{abilityName}} prevents item theft!
+ability-trigger.typeImmunityHeal	{{pokemonNameWithAffix}}’s {{abilityName}} restored its HP a little!
+ability-trigger.nonSuperEffectiveImmunity	{{pokemonNameWithAffix}} avoided damage with {{abilityName}}!
+ability-trigger.fullHpResistType	{{pokemonNameWithAffix}} made its shell gleam! It’s distorting type matchups!
+ability-trigger.moveImmunity	It doesn’t affect {{pokemonNameWithAffix}}!
+ability-trigger.reverseDrain	{{pokemonNameWithAffix}} sucked up the liquid ooze!
+ability-trigger.postDefendTypeChange	{{pokemonNameWithAffix}}’s {{abilityName}} made it the {{typeName}} type!
+ability-trigger.postDefendContactDamage	{{pokemonNameWithAffix}}’s {{abilityName}} hurt its attacker!
+ability-trigger.postDefendAbilitySwap	{{pokemonNameWithAffix}} swapped abilities with its target!
+ability-trigger.postDefendAbilityGive	{{pokemonNameWithAffix}} gave its target {{abilityName}}!
+ability-trigger.postDefendMoveDisable	{{pokemonNameWithAffix}}’s {{moveName}} was disabled!
+ability-trigger.pokemonTypeChange	{{pokemonNameWithAffix}} transformed into the {{moveType}} type!
+ability-trigger.pokemonTypeChangeRevert	{{pokemonNameWithAffix}} returned to its original type!
+ability-trigger.postAttackStealHeldItem	{{pokemonNameWithAffix}} stole {{defenderName}}’s {{stolenItemType}}!
+ability-trigger.postDefendStealHeldItem	{{pokemonNameWithAffix}} stole {{attackerName}}’s {{stolenItemType}}!
+ability-trigger.copyFaintedAllyAbility	{{pokemonNameWithAffix}}’s {{abilityName}} was taken over!
+ability-trigger.intimidateImmunity	{{pokemonNameWithAffix}}’s {{abilityName}} prevented it from being Intimidated!
+ability-trigger.postSummonAllyHeal	{{pokemonNameWithAffix}} drank down all the matcha that {{pokemonName}} made!
+ability-trigger.postSummonClearAllyStats	{{pokemonNameWithAffix}}’s stat changes were removed!
+ability-trigger.postSummonTransform	{{pokemonNameWithAffix}} transformed into {{targetName}}!
+ability-trigger.protectStat	{{pokemonNameWithAffix}}’s {{abilityName}} prevents lowering its {{statName}}!
+ability-trigger.statusEffectImmunityWithName	{{pokemonNameWithAffix}}’s {{abilityName}} prevents {{statusEffectName}}!
+ability-trigger.statusEffectImmunity	{{pokemonNameWithAffix}}’s {{abilityName}} prevents status problems!
+ability-trigger.battlerTagImmunity	{{pokemonNameWithAffix}}’s {{abilityName}} prevents {{battlerTagName}}!
+ability-trigger.typeImmunityPowerBoost	The power of {{pokemonNameWithAffix}}’s {{typeName}}-type moves rose!
+ability-trigger.forewarn	{{pokemonNameWithAffix}} was forewarned about {{moveName}}!
+ability-trigger.frisk	{{pokemonNameWithAffix}} frisked {{opponentName}}’s {{opponentAbilityName}}!
+ability-trigger.postWeatherLapseHeal	{{pokemonNameWithAffix}}’s {{abilityName}} restored its HP a little!
+ability-trigger.postWeatherLapseDamage	{{pokemonNameWithAffix}} is hurt by its {{abilityName}}!
+ability-trigger.postTurnLootCreateEatenBerry	{{pokemonNameWithAffix}} harvested one {{berryName}}!
+ability-trigger.postTurnHeal	{{pokemonNameWithAffix}}’s {{abilityName}} restored its HP a little!
+ability-trigger.fetchBall	{{pokemonNameWithAffix}} found a {{pokeballName}}!
+ability-trigger.healFromBerryUse	{{pokemonNameWithAffix}}’s {{abilityName}} restored its HP!
+ability-trigger.arenaTrap	{{pokemonNameWithAffix}}’s {{abilityName}} prevents switching!
+ability-trigger.postBattleLoot	{{pokemonNameWithAffix}} picked up {{itemName}}!
+ability-trigger.postFaintContactDamage	{{pokemonNameWithAffix}}’s {{abilityName}} hurt its attacker!
+ability-trigger.postFaintHpDamage	{{pokemonNameWithAffix}}’s {{abilityName}} hurt its attacker!
+ability-trigger.postSummonPressure	{{pokemonNameWithAffix}} is exerting its Pressure!
+ability-trigger.weatherEffectDisappeared	The effects of the weather disappeared.
+ability-trigger.postSummonMoldBreaker	{{pokemonNameWithAffix}} breaks the mold!
+ability-trigger.postSummonAnticipation	{{pokemonNameWithAffix}} shuddered!
+ability-trigger.postSummonTurboblaze	{{pokemonNameWithAffix}} is radiating a blazing aura!
+ability-trigger.postSummonTeravolt	{{pokemonNameWithAffix}} is radiating a bursting aura!
+ability-trigger.postSummonDarkAura	{{pokemonNameWithAffix}} is radiating a Dark Aura!
+ability-trigger.postSummonFairyAura	{{pokemonNameWithAffix}} is radiating a Fairy Aura!
+ability-trigger.postSummonAuraBreak	{{pokemonNameWithAffix}} reversed all other Pokémon’s auras!
+ability-trigger.postSummonNeutralizingGas	{{pokemonNameWithAffix}}’s Neutralizing Gas filled the area!
+ability-trigger.postSummonAsOneGlastrier	{{pokemonNameWithAffix}} has two Abilities!
+ability-trigger.postSummonAsOneSpectrier	{{pokemonNameWithAffix}} has two Abilities!
+ability-trigger.postSummonZeroToHero	{{pokemonNameWithAffix}} underwent a heroic transformation!
+ability-trigger.postSummonVesselOfRuin	{{pokemonNameWithAffix}}’s Vessel of Ruin lowered the {{statName}} of all surrounding Pokémon!
+ability-trigger.postSummonSwordOfRuin	{{pokemonNameWithAffix}}’s Sword of Ruin lowered the {{statName}} of all surrounding Pokémon!
+ability-trigger.postSummonTabletsOfRuin	{{pokemonNameWithAffix}}’s Tablets of Ruin lowered the {{statName}} of all surrounding Pokémon!
+ability-trigger.postSummonBeadsOfRuin	{{pokemonNameWithAffix}}’s Beads of Ruin lowered the {{statName}} of all surrounding Pokémon!
+ability-trigger.preventBerryUse	{{pokemonNameWithAffix}} is too nervous to eat berries!
+battler-tags.trappedDesc	trapping
+battler-tags.flinchedDesc	flinching
+battler-tags.confusedDesc	confusion
+battler-tags.infatuatedDesc	infatuation
+battler-tags.seedDesc	seeding
+battler-tags.nightmareDesc	nightmares
+battler-tags.ingrainDesc	roots
+battler-tags.drowsyDesc	drowsiness
+battler-tags.rechargingLapse	{{pokemonNameWithAffix}} must recharge!
+battler-tags.trappedOnAdd	{{pokemonNameWithAffix}} can no longer escape!
+battler-tags.trappedOnRemove	{{pokemonNameWithAffix}} was freed from {{moveName}}!
+battler-tags.ingrainOnAdd	{{pokemonNameWithAffix}} planted its roots!
+battler-tags.ingrainLapse	{{pokemonNameWithAffix}} absorbed nutrients with its roots!
+battler-tags.noRetreatOnAdd	{{pokemonNameWithAffix}} can no longer escape because it used No Retreat!
+battler-tags.octolockOnAdd	{{pokemonNameWithAffix}} can no longer escape because of Octolock!
+battler-tags.damagingTrapLapse	{{pokemonNameWithAffix}} is hurt by {{moveName}}!
+battler-tags.bindOnAdd	{{pokemonNameWithAffix}} was squeezed by {{sourcePokemonName}}!
+battler-tags.wrapOnAdd	{{pokemonNameWithAffix}} was wrapped by {{sourcePokemonName}}!
+battler-tags.whirlpoolOnAdd	{{pokemonNameWithAffix}} became trapped in the vortex!
+battler-tags.clampOnAdd	{{sourcePokemonName}} clamped down on {{pokemonNameWithAffix}}!
+battler-tags.fireSpinOnAdd	{{pokemonNameWithAffix}} became trapped in the fiery vortex!
+battler-tags.sandTombOnAdd	{{pokemonNameWithAffix}} became trapped by the quicksand!
+battler-tags.magmaStormOnAdd	{{pokemonNameWithAffix}} became trapped by swirling magma!
+battler-tags.snapTrapOnAdd	{{pokemonNameWithAffix}} got trapped by a snap trap!
+battler-tags.thunderCageOnAdd	{{sourcePokemonName}} trapped {{pokemonNameWithAffix}}!
+battler-tags.infestationOnAdd	{{pokemonNameWithAffix}} has been afflicted  with an infestation by {{sourcePokemonName}}!
+battler-tags.flinchedLapse	{{pokemonNameWithAffix}} flinched!
+battler-tags.confusedOnAdd	{{pokemonNameWithAffix}} became confused!
+battler-tags.confusedOnRemove	{{pokemonNameWithAffix}} snapped out of confusion!
+battler-tags.confusedOnOverlap	{{pokemonNameWithAffix}} is already confused!
+battler-tags.confusedLapse	{{pokemonNameWithAffix}} is confused!
+battler-tags.confusedLapseHurtItself	It hurt itself in its confusion!
+battler-tags.destinyBondLapseIsBoss	{{pokemonNameWithAffix}} is unaffected by the effects of Destiny Bond.
+battler-tags.destinyBondLapse	{{pokemonNameWithAffix}} took {{pokemonNameWithAffix2}} down with it!
+battler-tags.laserFocusOnAdd	{{pokemonNameWithAffix}} concentrated intensely!
+battler-tags.healBlockOnAdd	{{pokemonNameWithAffix}} was prevented from healing!
+battler-tags.healBlockOnRemove	{{pokemonNameWithAffix}} is no longer prevented from healing!
+battler-tags.healBlockCannotHeal	{{pokemonNameWithAffix}} was prevented from healing!
+battler-tags.infatuatedOnAdd	{{pokemonNameWithAffix}} fell in love with {{sourcePokemonName}}!
+battler-tags.infatuatedOnOverlap	{{pokemonNameWithAffix}} is already in love!
+battler-tags.infatuatedLapse	{{pokemonNameWithAffix}} is in love with {{sourcePokemonName}}!
+battler-tags.infatuatedLapseImmobilize	{{pokemonNameWithAffix}} is immobilized by love!
+battler-tags.infatuatedOnRemove	{{pokemonNameWithAffix}} got over its infatuation.
+battler-tags.seededOnAdd	{{pokemonNameWithAffix}} was seeded!
+battler-tags.seededLapse	{{pokemonNameWithAffix}}’s health is sapped by Leech Seed!
+battler-tags.seededLapseShed	{{pokemonNameWithAffix}}’s Leech Seed sucked up the liquid ooze!
+battler-tags.nightmareOnAdd	{{pokemonNameWithAffix}} began having a Nightmare!
+battler-tags.nightmareOnOverlap	{{pokemonNameWithAffix}} is already locked in a Nightmare!
+battler-tags.nightmareLapse	{{pokemonNameWithAffix}} is locked in a Nightmare!
+battler-tags.encoreOnAdd	{{pokemonNameWithAffix}} got an Encore!
+battler-tags.encoreOnRemove	{{pokemonNameWithAffix}}’s Encore ended!
+battler-tags.helpingHandOnAdd	{{pokemonNameWithAffix}} is ready to help {{pokemonName}}!
+battler-tags.aquaRingOnAdd	{{pokemonNameWithAffix}} surrounded itself with a veil of water!
+battler-tags.aquaRingLapse	{{moveName}} restored {{pokemonName}}’s HP!
+battler-tags.drowsyOnAdd	{{pokemonNameWithAffix}} grew drowsy!
+battler-tags.protectedOnAdd	{{pokemonNameWithAffix}} protected itself!
+battler-tags.protectedLapse	{{pokemonNameWithAffix}} protected itself!
+battler-tags.enduringOnAdd	{{pokemonNameWithAffix}} braced itself!
+battler-tags.enduringLapse	{{pokemonNameWithAffix}} endured the hit!
+battler-tags.sturdyLapse	{{pokemonNameWithAffix}} endured the hit!
+battler-tags.perishSongLapse	{{pokemonNameWithAffix}}’s perish count fell to {{turnCount}}.
+battler-tags.centerOfAttentionOnAdd	{{pokemonNameWithAffix}} became the center of attention!
+battler-tags.truantLapse	{{pokemonNameWithAffix}} is loafing around!
+battler-tags.slowStartOnAdd	{{pokemonNameWithAffix}} can’t get it going!
+battler-tags.slowStartOnRemove	{{pokemonNameWithAffix}} finally got its act together!
+battler-tags.highestStatBoostOnAdd	{{pokemonNameWithAffix}}’s {{statName}} was heightened!
+battler-tags.highestStatBoostOnRemove	The effects of {{pokemonNameWithAffix}}’s {{abilityName}} wore off!
+battler-tags.magnetRisenOnAdd	{{pokemonNameWithAffix}} levitated with electromagnetism!
+battler-tags.magnetRisenOnRemove	{{pokemonNameWithAffix}}’s electromagnetism wore off!
+battler-tags.critBoostOnAdd	{{pokemonNameWithAffix}} is getting pumped!
+battler-tags.critBoostOnRemove	{{pokemonNameWithAffix}} relaxed.
+battler-tags.saltCuredOnAdd	{{pokemonNameWithAffix}} is being salt cured!
+battler-tags.saltCuredLapse	{{pokemonNameWithAffix}} is hurt by Salt Cure!
+battler-tags.cursedOnAdd	{{pokemonNameWithAffix}} cut its own HP and put a curse on {{pokemonName}}!
+battler-tags.cursedLapse	{{pokemonNameWithAffix}} is afflicted by the Curse!
+battler-tags.stockpilingOnAdd	{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!
+battler-tags.disabledOnAdd	{{pokemonNameWithAffix}}’s {{moveName}} was disabled!
+battler-tags.disabledOnRemove	{{pokemonNameWithAffix}}’s {{moveName}} is no longer disabled!
+battler-tags.tarShotOnAdd	{{pokemonNameWithAffix}} became weaker to fire!
+battler-tags.shedTailOnAdd	{{pokemonNameWithAffix}} shed its tail to create a decoy!
+battler-tags.substituteOnAdd	{{pokemonNameWithAffix}} put in a substitute!
+battler-tags.substituteOnHit	The substitute took damage for {{pokemonNameWithAffix}}!
+battler-tags.substituteOnRemove	{{pokemonNameWithAffix}}’s substitute faded!
+battler-tags.tormentOnAdd	{{pokemonNameWithAffix}} was subjected to torment!
+battler-tags.tauntOnAdd	{{pokemonNameWithAffix}} fell for the taunt!
+battler-tags.tauntOnRemove	{{pokemonNameWithAffix}} shook off the taunt!
+battler-tags.imprisonOnAdd	{{pokemonNameWithAffix}} sealed any moves its target shares with it!
+battler-tags.autotomizeOnAdd	{{pokemonNameWithAffix}} became nimble!
+battler-tags.syrupBombOnAdd	{{pokemonNameWithAffix}} got covered in sticky, candy syrup!
+battler-tags.syrupBombLapse	The sticky syrup slowed down {{pokemonNameWithAffix}}!
+battler-tags.telekinesisOnAdd	{{pokemonNameWithAffix}} was hurled into the air!
+battler-tags.telekinesisOnRemove	{{pokemonNameWithAffix}} was freed from the telekinesis!
+battler-tags.electrifiedOnAdd	{{pokemonNameWithAffix}}’s moves have been electrified!
+battler-tags.powerTrickActive	{{pokemonNameWithAffix}} switched its Attack and Defense!
+battler-tags.powderOnAdd	{{pokemonNameWithAffix}} is covered in powder!
+battler-tags.powderLapse	When the flame touched the powder on the Pokémon, it exploded!
+battler-tags.grudgeOnAdd	{{pokemonNameWithAffix}} wants its target to bear a grudge!
+battler-tags.grudgeLapse	{{pokemonNameWithAffix}} lost all of {{moveName}}’s PP due to the grudge!
+battler-tags.magicCoatOnAdd	{{pokemonNameWithAffix}} shrouded itself with Magic Coat!
+battler-tags.supremeOverlordOnAdd	{{pokemonNameWithAffix}} gained strength from the fallen!
+status-effect.none.name	None
+status-effect.poison.name	Poison
+status-effect.poison.description	poisoning
+status-effect.poison.obtain	{{pokemonNameWithAffix}} was poisoned!
+status-effect.poison.obtainSource	{{pokemonNameWithAffix}} was poisoned by the {{sourceText}}!
+status-effect.poison.activation	{{pokemonNameWithAffix}} is hurt by poison!
+status-effect.poison.overlap	{{pokemonNameWithAffix}} is already poisoned!
+status-effect.poison.heal	{{pokemonNameWithAffix}} was cured of its poison!
+status-effect.toxic.name	Toxic
+status-effect.toxic.description	poisoning
+status-effect.toxic.obtain	{{pokemonNameWithAffix}} was badly poisoned!
+status-effect.toxic.obtainSource	{{pokemonNameWithAffix}} was badly poisoned by the {{sourceText}}!
+status-effect.toxic.activation	{{pokemonNameWithAffix}} is hurt by poison!
+status-effect.toxic.overlap	{{pokemonNameWithAffix}} is already poisoned!
+status-effect.toxic.heal	{{pokemonNameWithAffix}} was cured of its poison!
+status-effect.paralysis.name	Paralysis
+status-effect.paralysis.description	paralysis
+status-effect.paralysis.obtain	{{pokemonNameWithAffix}} was paralyzed, It may be unable to move!
+status-effect.paralysis.obtainSource	{{pokemonNameWithAffix}} was paralyzed by the {{sourceText}}! It may be unable to move!
+status-effect.paralysis.activation	{{pokemonNameWithAffix}} is paralyzed! It can’t move!
+status-effect.paralysis.overlap	{{pokemonNameWithAffix}} is already paralyzed!
+status-effect.paralysis.heal	{{pokemonNameWithAffix}} was healed of paralysis!
+status-effect.sleep.name	Sleep
+status-effect.sleep.description	sleep
+status-effect.sleep.obtain	{{pokemonNameWithAffix}} fell asleep!
+status-effect.sleep.obtainSource	{{pokemonNameWithAffix}} fell asleep from the {{sourceText}}!
+status-effect.sleep.activation	{{pokemonNameWithAffix}} is fast asleep.
+status-effect.sleep.overlap	{{pokemonNameWithAffix}} is already asleep!
+status-effect.sleep.heal	{{pokemonNameWithAffix}} woke up!
+status-effect.freeze.name	Freeze
+status-effect.freeze.description	freezing
+status-effect.freeze.obtain	{{pokemonNameWithAffix}} was frozen solid!
+status-effect.freeze.obtainSource	{{pokemonNameWithAffix}} was frozen solid by the {{sourceText}}!
+status-effect.freeze.activation	{{pokemonNameWithAffix}} is frozen solid!
+status-effect.freeze.overlap	{{pokemonNameWithAffix}} is already frozen!
+status-effect.freeze.heal	{{pokemonNameWithAffix}} was defrosted!
+status-effect.freeze.healByMove	{{pokemonNameWithAffix}}’s {{moveName}} melted the ice!
+status-effect.burn.name	Burn
+status-effect.burn.description	burn
+status-effect.burn.obtain	{{pokemonNameWithAffix}} was burned!
+status-effect.burn.obtainSource	{{pokemonNameWithAffix}} was burned by the {{sourceText}}!
+status-effect.burn.activation	{{pokemonNameWithAffix}} is hurt by its burn!
+status-effect.burn.overlap	{{pokemonNameWithAffix}} is already burned!
+status-effect.burn.heal	{{pokemonNameWithAffix}} was healed of its burn!
+weather.sunnyStartMessage	The sunlight got bright!
+weather.sunnyLapseMessage	The sunlight is strong.
+weather.sunnyClearMessage	The sunlight faded.
+weather.rainStartMessage	A downpour started!
+weather.rainLapseMessage	The downpour continues.
+weather.rainClearMessage	The rain stopped.
+weather.sandstormStartMessage	A sandstorm brewed!
+weather.sandstormLapseMessage	The sandstorm rages.
+weather.sandstormClearMessage	The sandstorm subsided.
+weather.sandstormDamageMessage	{{pokemonNameWithAffix}} is buffeted by the sandstorm!
+weather.hailStartMessage	It started to hail!
+weather.hailLapseMessage	Hail continues to fall.
+weather.hailClearMessage	The hail stopped.
+weather.hailDamageMessage	{{pokemonNameWithAffix}} is pelted by the hail!
+weather.snowStartMessage	It started to snow!
+weather.snowLapseMessage	The snow is falling down.
+weather.snowClearMessage	The snow stopped.
+weather.fogStartMessage	A thick fog emerged!
+weather.fogLapseMessage	The fog continues.
+weather.fogClearMessage	The fog disappeared.
+weather.heavyRainStartMessage	A heavy rain began to fall!
+weather.heavyRainLapseMessage	The heavy downpour continues.
+weather.heavyRainEffectMessage	The Fire-type attack fizzled out in the heavy rain!
+weather.heavyRainContinueMessage	There is no relief from this heavy rain!
+weather.heavyRainClearMessage	The heavy rain has lifted!
+weather.harshSunStartMessage	The sunlight turned extremely harsh!
+weather.harshSunLapseMessage	The sunlight is scorching hot.
+weather.harshSunEffectMessage	The Water-type attack evaporated in the harsh sunlight!
+weather.harshSunContinueMessage	The extremely harsh sunlight was not lessened at all!
+weather.harshSunClearMessage	The harsh sunlight faded.
+weather.strongWindsStartMessage	Mysterious strong winds are protecting Flying-type Pokémon!
+weather.strongWindsLapseMessage	The strong winds blow intensely.
+weather.strongWindsEffectMessage	The mysterious strong winds weakened the attack!
+weather.strongWindsContinueMessage	The mysterious strong winds blow on regardless!
+weather.strongWindsClearMessage	The mysterious strong winds have dissipated!
+weather.defaultEffectMessage	The attack was blocked by the weather effect!
+terrain.misty	Misty
+terrain.mistyStartMessage	Mist swirled around the battlefield!
+terrain.mistyClearMessage	The mist disappeared from the battlefield.
+terrain.mistyBlockMessage	{{pokemonNameWithAffix}} surrounds itself with a protective mist!
+terrain.electric	Electric
+terrain.electricStartMessage	An electric current ran across the battlefield!
+terrain.electricClearMessage	The electricity disappeared from the battlefield.
+terrain.grassy	Grassy
+terrain.grassyStartMessage	Grass grew to cover the battlefield!
+terrain.grassyClearMessage	The grass disappeared from the battlefield.
+terrain.psychic	Psychic
+terrain.psychicStartMessage	The battlefield got weird!
+terrain.psychicClearMessage	The weirdness disappeared from the battlefield!
+terrain.defaultBlockMessage	{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!
+arena-tag.mistOnAdd	Both sides became shrouded in mist!
+arena-tag.mistOnAddPlayer	Your team became shrouded in mist!
+arena-tag.mistOnAddEnemy	The opposing team became shrouded in mist!
+arena-tag.mistOnRemove	Both sides are no longer protected by mist!
+arena-tag.mistOnRemovePlayer	Your team is no longer protected by mist!
+arena-tag.mistOnRemoveEnemy	The opposing team is no longer protected by mist!
+arena-tag.mistApply	{{pokemonNameWithAffix}} is protected by the mist!
+arena-tag.reflectOnAdd	Reflect made both sides stronger against physical moves!
+arena-tag.reflectOnAddPlayer	Reflect made your team stronger against physical moves!
+arena-tag.reflectOnAddEnemy	Reflect made the opposing team stronger against physical moves!
+arena-tag.reflectOnRemove	Both teams’ Reflect wore off!
+arena-tag.reflectOnRemovePlayer	Your team’s Reflect wore off!
+arena-tag.reflectOnRemoveEnemy	The opposing team’s Reflect wore off!
+arena-tag.lightScreenOnAdd	Light Screen made both sides stronger against special moves!
+arena-tag.lightScreenOnAddPlayer	Light Screen made your team stronger against special moves!
+arena-tag.lightScreenOnAddEnemy	Light Screen made the opposing team stronger against special moves!
+arena-tag.lightScreenOnRemove	Both teams’ Light Screen wore off!
+arena-tag.lightScreenOnRemovePlayer	Your team’s Light Screen wore off!
+arena-tag.lightScreenOnRemoveEnemy	The opposing team’s Light Screen wore off!
+arena-tag.auroraVeilOnAdd	Aurora Veil made both sides stronger against Physical and Special moves!
+arena-tag.auroraVeilOnAddPlayer	Aurora Veil made your side stronger against Physical and Special moves!
+arena-tag.auroraVeilOnAddEnemy	Aurora Veil made the opposing side stronger against Physical and Special moves!
+arena-tag.auroraVeilOnRemove	Both teams’ Aurora Veil wore off!
+arena-tag.auroraVeilOnRemovePlayer	Your team’s Aurora Veil wore off!
+arena-tag.auroraVeilOnRemoveEnemy	The opposing team’s Aurora Veil wore off!
+arena-tag.conditionalProtectOnAdd	{{moveName}} protected both sides!
+arena-tag.conditionalProtectOnAddPlayer	{{moveName}} protected your team!
+arena-tag.conditionalProtectOnAddEnemy	{{moveName}} protected the opposing team!
+arena-tag.conditionalProtectApply	{{moveName}} protected {{pokemonNameWithAffix}}!
+arena-tag.matBlockOnAdd	{{pokemonNameWithAffix}} intends to flip up a mat and block incoming attacks!
+arena-tag.matBlockApply	{{attackName}} was blocked by the kicked-up mat!
+arena-tag.noCritOnAdd	The Lucky Chant shielded both teams from critical hits!
+arena-tag.noCritOnAddPlayer	The Lucky Chant shielded your team from critical hits!
+arena-tag.noCritOnAddEnemy	The Lucky Chant shielded the opposing team from critical hits!
+arena-tag.noCritOnRemove	Both teams’ Lucky Chant wore off!
+arena-tag.noCritOnRemovePlayer	Your team’s Lucky Chant wore off!
+arena-tag.noCritOnRemoveEnemy	The opposing team’s Lucky Chant wore off!
+arena-tag.wishTagOnAdd	{{pokemonNameWithAffix}}’s wish came true!
+arena-tag.mudSportOnAdd	Electricity’s power was weakened!
+arena-tag.mudSportOnRemove	The effects of Mud Sport have faded.
+arena-tag.waterSportOnAdd	Fire’s power was weakened!
+arena-tag.waterSportOnRemove	The effects of Water Sport have faded.
+arena-tag.plasmaFistsOnAdd	A deluge of ions showers the battlefield!
+arena-tag.spikesOnAdd	Spikes were scattered on the ground all around both teams!
+arena-tag.spikesOnAddPlayer	Spikes were scattered on the ground all around your team!
+arena-tag.spikesOnAddEnemy	Spikes were scattered on the ground all around the opposing team!
+arena-tag.spikesOnRemove	The spikes disappeared from the ground!
+arena-tag.spikesOnRemovePlayer	The spikes disappeared from the ground around your team!
+arena-tag.spikesOnRemoveEnemy	The spikes disappeared from the ground around the opposing team!
+arena-tag.spikesActivateTrap	{{pokemonNameWithAffix}} was hurt by the spikes!
+arena-tag.toxicSpikesOnAdd	Poison spikes were scattered on the ground all around both teams!
+arena-tag.toxicSpikesOnAddPlayer	Poison spikes were scattered on the ground all around your team!
+arena-tag.toxicSpikesOnAddEnemy	Poison spikes were scattered on the ground all around the opposing team!
+arena-tag.toxicSpikesOnRemove	The poison spikes disappeared from the ground!
+arena-tag.toxicSpikesOnRemovePlayer	The poison spikes disappeared from the ground around your team!
+arena-tag.toxicSpikesOnRemoveEnemy	The poison spikes disappeared from the ground around the opposing team!
+arena-tag.stealthRockOnAdd	Pointed stones float in the air around both teams!
+arena-tag.stealthRockOnAddPlayer	Pointed stones float in the air around your team!
+arena-tag.stealthRockOnAddEnemy	Pointed stones float in the air around the opposing team!
+arena-tag.stealthRockOnRemove	The pointed stones disappeared from around both teams!
+arena-tag.stealthRockOnRemovePlayer	The pointed stones disappeared from around your team!
+arena-tag.stealthRockOnRemoveEnemy	The pointed stones disappeared from around the opposing team!
+arena-tag.stealthRockActivateTrap	Pointed stones dug into {{pokemonNameWithAffix}}!
+arena-tag.stickyWebOnAdd	A sticky web has been laid out on the ground around both teams!
+arena-tag.stickyWebOnAddPlayer	A sticky web has been laid out on the ground around your team!
+arena-tag.stickyWebOnAddEnemy	A sticky web has been laid out on the ground around the opposing team!
+arena-tag.stickyWebOnRemove	The sticky web has disappeared from the ground!
+arena-tag.stickyWebOnRemovePlayer	The sticky web has disappeared from the ground around you!
+arena-tag.stickyWebOnRemoveEnemy	The sticky web has disappeared from the ground around the opposing team!
+arena-tag.stickyWebActivateTrap	{{pokemonNameWithAffix}} was caught in a sticky web!
+arena-tag.trickRoomOnAdd	{{pokemonNameWithAffix}} twisted the dimensions!
+arena-tag.trickRoomOnRemove	The twisted dimensions returned to normal!
+arena-tag.wonderRoomOnAdd	It created a bizarre area in which Defense and Sp. Def stats are swapped!
+arena-tag.wonderRoomOnRemove	Wonder Room wore off, and Defense and Sp. Def stats returned to normal!
+arena-tag.gravityOnAdd	Gravity intensified!
+arena-tag.gravityOnRemove	Gravity returned to normal!
+arena-tag.gravityGroundsPokemon	{{pokemonNameWithAffix}} fell from the sky due to the gravity!
+arena-tag.tailwindOnAdd	The Tailwind blew from behind both teams!
+arena-tag.tailwindOnAddPlayer	The Tailwind blew from behind your team!
+arena-tag.tailwindOnAddEnemy	The Tailwind blew from behind the opposing team!
+arena-tag.tailwindOnRemove	The Tailwind petered out!
+arena-tag.tailwindOnRemovePlayer	Your team’s Tailwind petered out!
+arena-tag.tailwindOnRemoveEnemy	The opposing team’s Tailwind petered out!
+arena-tag.happyHourOnAdd	Everyone is caught up in the happy atmosphere!
+arena-tag.happyHourOnRemove	The atmosphere returned to normal.
+arena-tag.safeguardOnAdd	The whole field is cloaked in a mystical veil!
+arena-tag.safeguardOnAddPlayer	Your team cloaked itself in a mystical veil!
+arena-tag.safeguardOnAddEnemy	The opposing team cloaked itself in a mystical veil!
+arena-tag.safeguardOnRemove	The field is no longer protected by Safeguard!
+arena-tag.safeguardOnRemovePlayer	Your team is no longer protected by Safeguard!
+arena-tag.safeguardOnRemoveEnemy	The opposing team is no longer protected by Safeguard!
+arena-tag.fireGrassPledgeOnAdd	A sea of fire enveloped the field!
+arena-tag.fireGrassPledgeOnAddPlayer	A sea of fire enveloped your team!
+arena-tag.fireGrassPledgeOnAddEnemy	A sea of fire enveloped the opposing team!
+arena-tag.fireGrassPledgeOnRemove	The sea of fire disappeared!
+arena-tag.fireGrassPledgeOnRemovePlayer	The sea of fire around your team disappeared!
+arena-tag.fireGrassPledgeOnRemoveEnemy	The sea of fire around the opposing team disappeared!
+arena-tag.fireGrassPledgeLapse	{{pokemonNameWithAffix}} was hurt by the sea of fire!
+arena-tag.waterFirePledgeOnAdd	A rainbow appeared in the sky!
+arena-tag.waterFirePledgeOnAddPlayer	A rainbow appeared in the sky on your team’s side!
+arena-tag.waterFirePledgeOnAddEnemy	A rainbow appeared in the sky on the opposing team’s side!
+arena-tag.waterFirePledgeOnRemove	The rainbow disappeared!
+arena-tag.waterFirePledgeOnRemovePlayer	The rainbow on your team’s side disappeared!
+arena-tag.waterFirePledgeOnRemoveEnemy	The rainbow on the opposing team’s side disappeared!
+arena-tag.grassWaterPledgeOnAdd	A swamp enveloped both teams!
+arena-tag.grassWaterPledgeOnAddPlayer	A swamp enveloped your team!
+arena-tag.grassWaterPledgeOnAddEnemy	A swamp enveloped the opposing team!
+arena-tag.grassWaterPledgeOnRemove	The swamp disappeared!
+arena-tag.grassWaterPledgeOnRemovePlayer	The swamp around your team disappeared!
+arena-tag.grassWaterPledgeOnRemoveEnemy	The swamp around the opposing team disappeared!
+arena-tag.fairyLockOnAdd	No one will be able to run away during the next turn!
+arena-tag.neutralizingGasOnAdd	{{pokemonNameWithAffix}}’s Neutralizing Gas filled the area!
+arena-tag.neutralizingGasOnRemove	The effects of the neutralizing gas wore off!
+battle-info.generation	Generation {{generation}}
+fight-ui-handler.pp	PP
+fight-ui-handler.power	Power
+fight-ui-handler.accuracy	Accuracy
+fight-ui-handler.abilityFlyInText	 {{pokemonName}}’s {{passive}}{{abilityName}}
+fight-ui-handler.passive	Passive 
+fight-ui-handler.teraHover	{{type}} Terastallized
+fight-ui-handler.effectiveness000	0×
+fight-ui-handler.effectiveness100	1×
+fight-ui-handler.effectivenessMultiplier	{{effectiveness}}×
+command-ui-handler.fight	Fight
+command-ui-handler.ball	Ball
+command-ui-handler.pokemon	Pokémon
+command-ui-handler.run	Run
+command-ui-handler.actionMessage	What will {{pokemonName}} do?
+command-ui-handler.ballCancel	Cancel
+party-ui-handler.sendOut	Send Out
+party-ui-handler.summary	Summary
+party-ui-handler.pokedex	Pokédex
+party-ui-handler.cancel	Cancel
+party-ui-handler.release	Release
+party-ui-handler.apply	Apply
+party-ui-handler.teach	Teach
+party-ui-handler.splice	Splice
+party-ui-handler.unsplice	Unsplice
+party-ui-handler.activate	Activate
+party-ui-handler.deactivate	Deactivate
+party-ui-handler.transfer	Transfer
+party-ui-handler.discard	Discard
+party-ui-handler.switch	Swap
+party-ui-handler.all	All
+party-ui-handler.passBaton	Pass Baton
+party-ui-handler.unpauseEvolution	Unpause Evolution
+party-ui-handler.pauseEvolution	Pause Evolution
+party-ui-handler.revive	Revive
+party-ui-handler.rename	Rename
+party-ui-handler.select	Select
+party-ui-handler.choosePokemon	Choose a Pokémon.
+party-ui-handler.partyTransfer	Choose a Pokémon. (Transfer)
+party-ui-handler.partyDiscard	Choose a Pokémon. (Discard)
+party-ui-handler.doWhatWithThisPokemon	Do what with this Pokémon?
+party-ui-handler.noEnergy	{{pokemonName}} has no energy left to battle!
+party-ui-handler.hasEnergy	{{pokemonName}} still has energy to battle!
+party-ui-handler.cantBeUsed	{{pokemonName}} can’t be used in this challenge!
+party-ui-handler.noFaintedPokemon	Fainted Pokémon can’t be chosen!
+party-ui-handler.tooManyItems	{{pokemonName}} has too many of this item!
+party-ui-handler.anyEffect	It won’t have any effect.
+party-ui-handler.unpausedEvolutions	Evolutions have been unpaused for {{pokemonName}}.
+party-ui-handler.pausedEvolutions	Evolutions have been paused for {{pokemonName}}.
+party-ui-handler.unspliceConfirmation	Do you really want to unsplice {{fusionName}} from {{pokemonName}}? {{fusionName}} will be lost.
+party-ui-handler.wasReverted	{{fusionName}} was reverted to {{pokemonName}}.
+party-ui-handler.releaseConfirmation	Do you really want to release {{pokemonName}}?
+party-ui-handler.releaseInBattle	You can’t release a Pokémon that’s in battle!
+party-ui-handler.selectAMove	Select a move.
+party-ui-handler.changeQuantity	Select a held item to transfer. Use < and > to change the quantity.
+party-ui-handler.changeQuantityDiscard	Select a held item to discard. Use < and > to change the quantity.
+party-ui-handler.changeMode	Change item management mode.
+party-ui-handler.discardConfirmation	Are you sure you want to discard these items?
+party-ui-handler.selectAnotherPokemonToSplice	Select another Pokémon to splice.
+party-ui-handler.fusionForbidden	These Pokémon cannot be fused together!
+party-ui-handler.cannotSwitch	This Pokémon cannot switch out!
+party-ui-handler.cancelButton	Cancel
+party-ui-handler.able	Able
+party-ui-handler.notAble	Not able
+party-ui-handler.learned	Learned
+party-ui-handler.goodbye	Goodbye, {{pokemonName}}!
+party-ui-handler.byebye	Byebye, {{pokemonName}}!
+party-ui-handler.farewell	Farewell, {{pokemonName}}!
+party-ui-handler.soLong	So long, {{pokemonName}}!
+party-ui-handler.thisIsWhereWePart	This is where we part, {{pokemonName}}!
+party-ui-handler.illMissYou	I’ll miss you, {{pokemonName}}!
+party-ui-handler.illNeverForgetYou	I’ll never forget you, {{pokemonName}}!
+party-ui-handler.untilWeMeetAgain	Until we meet again, {{pokemonName}}!
+party-ui-handler.sayonara	Sayonara, {{pokemonName}}!
+party-ui-handler.smellYaLater	Smell ya later, {{pokemonName}}!
+pokemon-summary.pokemonInfo	Pokémon Info
+pokemon-summary.status	Status
+pokemon-summary.powerAccuracyCategory	Power Accuracy Category
+pokemon-summary.type	Type
+pokemon-summary.unknownTrainer	Unknown
+pokemon-summary.ot	OT
+pokemon-summary.idNo	ID No.{{idNo}}
+pokemon-summary.nature	nature
+pokemon-summary.expPoints	Exp. Points
+pokemon-summary.lv	
+pokemon-summary.nextLv	To Next Level
+pokemon-summary.cancel	Cancel
+pokemon-summary.swapMove	Swap Move
+pokemon-summary.deleteMove	Forget Move
+pokemon-summary.memoString	{{natureFragment}} nature, {{metFragment}}
+pokemon-summary.metFragment.normal	met at {{level}}, {{biome}}, Wave {{wave}}.
+pokemon-summary.metFragment.apparently	apparently met at {{level}}, {{biome}}.
+pokemon-summary.natureFragment.hardy	{{nature}}
+pokemon-summary.natureFragment.lonely	{{nature}}
+pokemon-summary.natureFragment.brave	{{nature}}
+pokemon-summary.natureFragment.adamant	{{nature}}
+pokemon-summary.natureFragment.naughty	{{nature}}
+pokemon-summary.natureFragment.bold	{{nature}}
+pokemon-summary.natureFragment.docile	{{nature}}
+pokemon-summary.natureFragment.relaxed	{{nature}}
+pokemon-summary.natureFragment.impish	{{nature}}
+pokemon-summary.natureFragment.lax	{{nature}}
+pokemon-summary.natureFragment.timid	{{nature}}
+pokemon-summary.natureFragment.hasty	{{nature}}
+pokemon-summary.natureFragment.serious	{{nature}}
+pokemon-summary.natureFragment.jolly	{{nature}}
+pokemon-summary.natureFragment.naive	{{nature}}
+pokemon-summary.natureFragment.modest	{{nature}}
+pokemon-summary.natureFragment.mild	{{nature}}
+pokemon-summary.natureFragment.quiet	{{nature}}
+pokemon-summary.natureFragment.bashful	{{nature}}
+pokemon-summary.natureFragment.rash	{{nature}}
+pokemon-summary.natureFragment.calm	{{nature}}
+pokemon-summary.natureFragment.gentle	{{nature}}
+pokemon-summary.natureFragment.sassy	{{nature}}
+pokemon-summary.natureFragment.careful	{{nature}}
+pokemon-summary.natureFragment.quirky	{{nature}}
+pokemon-summary.friendship	Friendship
+nature.hardy	Hardy
+nature.lonely	Lonely
+nature.brave	Brave
+nature.adamant	Adamant
+nature.naughty	Naughty
+nature.bold	Bold
+nature.docile	Docile
+nature.relaxed	Relaxed
+nature.impish	Impish
+nature.lax	Lax
+nature.timid	Timid
+nature.hasty	Hasty
+nature.serious	Serious
+nature.jolly	Jolly
+nature.naive	Naive
+nature.modest	Modest
+nature.mild	Mild
+nature.quiet	Quiet
+nature.bashful	Bashful
+nature.rash	Rash
+nature.calm	Calm
+nature.gentle	Gentle
+nature.sassy	Sassy
+nature.careful	Careful
+nature.quirky	Quirky

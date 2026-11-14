@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RimketThrow.verbProperties.label>림볼 던지기</RimketThrow.verbProperties.label>
+  <RimketThrow.label>림볼 던지기</RimketThrow.label>
+  <RimketThrow.description>림볼을 던져 배틀을 시작한다.</RimketThrow.description>
+  <RimketThrowMaster.verbProperties.label>마스터볼 던지기</RimketThrowMaster.verbProperties.label>
+  <RimketThrowMaster.label>마스터볼 던지기</RimketThrowMaster.label>
+  <RimketThrowMaster.description>마스터볼을 던져 곧바로 붙잡는다.</RimketThrowMaster.description>
+  <RimketSummon.verbProperties.label>림켓몬 꺼내기</RimketSummon.verbProperties.label>
+  <RimketSummon.label>림켓몬 꺼내기</RimketSummon.label>
+  <RimketSummon.description>가리킨 자리에 볼을 던져 파티 맨 앞의 림켓몬을 꺼낸다. 꺼낸 림켓몬은 뒤를 따라다닌다. 이미 나와 있을 때 쓰면 불러들인다.</RimketSummon.description>
+</LanguageData>

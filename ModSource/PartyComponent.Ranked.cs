@@ -112,7 +112,7 @@ namespace Rimketmon
                 + "최종 순위: " + rank + "위" + (rank <= RankedBoard.ShowTop ? " (순위표 상위 " + RankedBoard.ShowTop + "명 안!)" : "") + "\n"
                 + (reward > 0 ? "시즌 보상: " + reward + " BP" + (RankedBoard.TopBonus(rank) > 0 ? " (순위 보너스 " + RankedBoard.TopBonus(rank) + " 포함)" : "") : "이번 시즌에는 랭크전을 하지 않아 보상이 없습니다.") + "\n\n"
                 + "시즌 " + b.Season + " 시작: 등급이 한 단계 내려갑니다.\n" + oldName + " → " + RankedLadder.RankName(rating) + " (" + rating + "점)";
-            try { Find.LetterStack.ReceiveLetter("랭크전 시즌 종료", text, LetterDefOf.PositiveEvent); } catch (Exception) { }
+            try { Find.LetterStack.ReceiveLetter(Lang.Tr("랭크전 시즌 종료"), Lang.Tr(text), LetterDefOf.PositiveEvent); } catch (Exception) { }
         }
 
         private void ExposeRanked()

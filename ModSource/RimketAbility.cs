@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RimWorld;
 using Verse;
+using Rimketmon.Engine;
 
 namespace Rimketmon
 {
@@ -21,37 +22,37 @@ namespace Rimketmon
             var t = target.Pawn;
             if (!RimketLink.Has(caster))
             {
-                if (throwMessages) Messages.Message("림켓링크가 필요하다.", caster, MessageTypeDefOf.RejectInput, false);
+                if (throwMessages) Messages.Message(Lang.Tr("림켓링크가 필요하다."), caster, MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             if (Master)
             {
                 if (!BattleFlow.IsMasterTarget(t))
                 {
-                    if (throwMessages) Messages.Message("대상이 아니다.", MessageTypeDefOf.RejectInput, false);
+                    if (throwMessages) Messages.Message(Lang.Tr("대상이 아니다."), MessageTypeDefOf.RejectInput, false);
                     return false;
                 }
                 if (!RimketInventory.HasMaster(caster))
                 {
-                    if (throwMessages) Messages.Message("마스터볼이 없다.", caster, MessageTypeDefOf.RejectInput, false);
+                    if (throwMessages) Messages.Message(Lang.Tr("마스터볼이 없다."), caster, MessageTypeDefOf.RejectInput, false);
                     return false;
                 }
                 return base.Valid(target, throwMessages);
             }
             if (!BattleFlow.IsValidTarget(t))
             {
-                if (throwMessages) Messages.Message(RimketMech.IsMech(t) && t.Faction != Faction.OfPlayer ? "우리 것이 아닌 메카는 마스터볼로만 잡을 수 있다." : "대상이 아니다.", MessageTypeDefOf.RejectInput, false);
+                if (throwMessages) Messages.Message(Lang.Tr(RimketMech.IsMech(t) && t.Faction != Faction.OfPlayer ? "우리 것이 아닌 메카는 마스터볼로만 잡을 수 있다." : "대상이 아니다."), MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             if (!RimketInventory.HasBall(caster))
             {
-                if (throwMessages) Messages.Message("림볼이 없다.", caster, MessageTypeDefOf.RejectInput, false);
+                if (throwMessages) Messages.Message(Lang.Tr("림볼이 없다."), caster, MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             if (!BattleFlow.IsOwnedAnimal(t) && !RimketInventory.HasBallFor(caster, t))
             {
                 int need = RimketInventory.RequiredTier(t);
-                if (throwMessages) Messages.Message(t.LabelShortCap + "은(는) " + (RimketInventory.TierOf(t) == 0 ? "?" : RimketInventory.TierOf(t).ToString()) + "티어라 " + RimketInventory.BallNames[need] + " 이상이 필요하다.", caster, MessageTypeDefOf.RejectInput, false);
+                if (throwMessages) Messages.Message(Lang.Tr(t.LabelShortCap + "은(는) " + (RimketInventory.TierOf(t) == 0 ? "?" : RimketInventory.TierOf(t).ToString()) + "티어라 " + RimketInventory.BallNames[need] + " 이상이 필요하다."), caster, MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             return base.Valid(target, throwMessages);

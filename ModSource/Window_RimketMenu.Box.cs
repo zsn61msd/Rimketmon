@@ -112,7 +112,7 @@ namespace Rimketmon
                 {
                     // 박스가 100개라 제목을 누르면 바로 가기 목록(몇 마리 들었는지 함께)
                     var opts = new List<FloatMenuOption>();
-                    for (int p = 0; p < pages; p++) { int pp = p; int n = BoxPageCount(pc, p); opts.Add(new FloatMenuOption("박스 " + (p + 1) + (n > 0 ? "  (" + n + "/" + BoxSize + ")" : "  (비어 있음)"), () => { boxPage = pp; boxZone = 0; RimketAudio.PlaySe("gui_sel_cursor"); })); }
+                    for (int p = 0; p < pages; p++) { int pp = p; int n = BoxPageCount(pc, p); opts.Add(new FloatMenuOption(Lang.Tr("박스 " + (p + 1) + (n > 0 ? "  (" + n + "/" + BoxSize + ")" : "  (비어 있음)")), () => { boxPage = pp; boxZone = 0; RimketAudio.PlaySe("gui_sel_cursor"); })); }
                     Find.WindowStack.Add(new FloatMenu(opts));
                 }
                 if (Clicked(262f, 6f, 48f, 13f)) OpenSortMenu();
@@ -311,7 +311,7 @@ namespace Rimketmon
                 {
                     sortMode = boxMenuCursor; pc.SortBox(sortMode); RimketAudio.PlaySe("gui_sel_decision");
                     boxPage = 0; boxZone = 0; boxIdx = 0;
-                    Messages.Message("보관함을 " + PartyComponent.SortNames[sortMode] + "으로 정렬했다.", MessageTypeDefOf.NeutralEvent, false);
+                    Messages.Message(Lang.Tr("보관함을 " + PartyComponent.SortNames[sortMode] + "으로 정렬했다."), MessageTypeDefOf.NeutralEvent, false);
                 }
                 return;
             }
@@ -319,10 +319,10 @@ namespace Rimketmon
             {
                 case "이동": carry = sel; carryByMouse = false; break;
                 case "박스에 맡기기":
-                    if (pc.Deposit(sel)) { RimketAudio.PlaySe("gui_sel_decision"); partyIdx = Math.Min(partyIdx, Math.Max(0, pc.All.Count - 1)); Messages.Message(sel.C.Name + "을(를) PC에 맡겼다.", MessageTypeDefOf.NeutralEvent, false); }
+                    if (pc.Deposit(sel)) { RimketAudio.PlaySe("gui_sel_decision"); partyIdx = Math.Min(partyIdx, Math.Max(0, pc.All.Count - 1)); Messages.Message(Lang.Tr(sel.C.Name + "을(를) PC에 맡겼다."), MessageTypeDefOf.NeutralEvent, false); }
                     break;
                 case "파티에 데려가기":
-                    if (pc.Withdraw(sel)) { RimketAudio.PlaySe("gui_sel_decision"); Messages.Message(sel.C.Name + "을(를) 파티에 데려왔다.", MessageTypeDefOf.NeutralEvent, false); }
+                    if (pc.Withdraw(sel)) { RimketAudio.PlaySe("gui_sel_decision"); Messages.Message(Lang.Tr(sel.C.Name + "을(를) 파티에 데려왔다."), MessageTypeDefOf.NeutralEvent, false); }
                     break;
                 case "파티와 교체": boxSwap = true; boxSwapMon = sel; boxZone = 1; partyIdx = 0; break;
                 case "요약": selected = sel; OpenSummary(); sumFromBox = true; break;

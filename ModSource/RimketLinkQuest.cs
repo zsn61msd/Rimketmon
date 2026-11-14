@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using Rimketmon.Engine;
 
 namespace Rimketmon
 {
@@ -36,6 +37,21 @@ namespace Rimketmon
             var sel = Find.Selector != null ? Find.Selector.SingleSelectedThing as Pawn : null;
             if (sel != null && linked.Contains(sel)) return sel;
             return linked[0];
+        }
+
+        private static int anyAt = -999; private static bool anyCached;
+        /// <summary>림켓링크를 단 우리 정착민이 살아 있는가(지도에 없어도: 캐러밴·이동 중 포함). 1초에 한 번만 다시 센다.</summary>
+        public static bool AnyLivingLinkedColonist()
+        {
+            if (Time.frameCount - anyAt < 60) return anyCached;
+            anyAt = Time.frameCount; anyCached = false;
+            try
+            {
+                foreach (var p in PawnsFinder.AllMapsWorldAndTemporary_Alive)
+                    if (p != null && !p.Dead && p.Faction == Faction.OfPlayer && p.RaceProps != null && p.RaceProps.Humanlike && Has(p)) { anyCached = true; break; }
+            }
+            catch (System.Exception) { anyCached = true; }      // 셀 수 없으면 막지 않는다
+            return anyCached;
         }
 
         public static bool ResearchDone
@@ -185,7 +201,7 @@ namespace Rimketmon
                 spot = DropCellFinder.RandomDropSpot(map, true);
             DropPodUtility.DropThingsNear(spot, map, new List<Thing> { cps }, 110, false, false, true, false);      // 수송포드로 떨어진다
             crashed = true;
-            Find.LetterStack.ReceiveLetter("수송포드 낙하", "정착지 근처에 수송포드가 떨어졌다. 안에는 시체 한 구가 실려 있다.\n\n신호는 그 머릿속에서 나오고 있었다. 정착민으로 시체를 우클릭하면 뇌에 박힌 림켓링크를 뽑아낼 수 있다(소지품에는 몬스터볼 10개).",
+            Find.LetterStack.ReceiveLetter(Lang.Tr("수송포드 낙하"), Lang.Tr("정착지 근처에 수송포드가 떨어졌다. 안에는 시체 한 구가 실려 있다.\n\n신호는 그 머릿속에서 나오고 있었다. 정착민으로 시체를 우클릭하면 뇌에 박힌 림켓링크를 뽑아낼 수 있다(소지품에는 몬스터볼 10개)."),
                 LetterDefOf.PositiveEvent, new TargetInfo(spot, map));
         }
 

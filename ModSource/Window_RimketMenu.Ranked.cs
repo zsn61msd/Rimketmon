@@ -261,7 +261,8 @@ namespace Rimketmon
                 DrawRankedIcon(g, c, 24f, y + 9f, 17f, 17f);
                 g.Label(c.Name + (c.IsUpgraded ? "★" : ""), 38f, y + 2f, 8.5f, Canvas.White, Canvas.WhiteShadow);
                 g.Label("Lv." + RankedLadder.BattleLevel, 38f, y + 10f, 6.5f, Canvas.White, Canvas.WhiteShadow);
-                DrawTypeBadges(g, c, 96f, y + 5f, 1f);
+                DrawTypeBadges(g, c, 96f, y + 1.5f, 0.75f);
+                DrawPickItem(g, c, 96f, y + 10.5f, 60f);
                 if (order >= 0) g.Label((order + 1) + "", 168f, y + 2f, 12f, Canvas.GoldC, Canvas.GoldSh, TextAnchor.UpperRight);
                 if (Clicked(10f, y, 168f, 18f) || (rCursor == i && AcceptKey())) { rCursor = i; TogglePick(i); }
             }
@@ -291,6 +292,7 @@ namespace Rimketmon
                 DrawRankedIcon(g, rOpp.Party[i], cx, cy - 5f, 24f, 24f);
                 g.Label(rOpp.Party[i].Name, cx, cy + 8f, 6.5f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
                 DrawTypeBadges(g, rOpp.Party[i], cx - 17f, cy + 14.5f, 0.5f);
+                if (Paradox.HasWedge(rOpp.Party[i])) Window_RimketBattle.DrawWedgeMark(g, cx - 27f, cy - 17f);      // 쐐기가 박힌 상대
             }
             if (UpKey()) rCursor = Mathf.Max(0, rCursor - 1);
             if (DownKey()) rCursor = Mathf.Min(rMine.Count - 1, rCursor + 1);
@@ -307,6 +309,14 @@ namespace Rimketmon
         }
 
         /// <summary>속성 배지를 가로로 나란히 그린다(위치는 왼쪽 위 기준, sc는 배율).</summary>
+        /// <summary>선출 화면: 지닌 도구 이름(없으면 "도구 없음"). 폭을 넘으면 줄인다.</summary>
+        private void DrawPickItem(Canvas g, RimketCreature c, float x, float y, float maxW)
+        {
+            string t = string.IsNullOrEmpty(c.Item) ? "도구 없음" : "@" + ItemCatalog.NameOf(c.Item);
+            while (t.Length > 2 && g.Measure(t, 6.5f) > maxW) t = t.Substring(0, t.Length - 2) + "…";
+            g.Label(t, x, y, 6.5f, string.IsNullOrEmpty(c.Item) ? new Color(0.7f, 0.7f, 0.75f) : Canvas.GoldC, Canvas.WhiteShadow);
+        }
+
         private void DrawTypeBadges(Canvas g, RimketCreature c, float x, float y, float sc)
         {
             if (c.Neutral) return;
@@ -329,7 +339,7 @@ namespace Rimketmon
             if (rPick.Contains(i)) { rPick.Remove(i); RimketAudio.PlaySe("gui_sel_cancel"); return; }
             if (rPick.Count >= RankedRules.BringCount) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }
             var why = RankedRules.ClauseViolation(rMine, rPick, i);
-            if (why != null) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(why, MessageTypeDefOf.RejectInput, false); return; }
+            if (why != null) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr(why), MessageTypeDefOf.RejectInput, false); return; }
             rPick.Add(i); RimketAudio.PlaySe("gui_sel_decision");
         }
 

@@ -118,7 +118,7 @@ namespace Rimketmon
                 case 4:
                     if (pawn == null) return;
                     Close(); BattleFlow.DevStartWild(pawn, sp.Id, devLevel, devAnimalLook); break;
-                case 7: pc.HealAll(); Messages.Message("림켓몬을 전부 회복했다.", MessageTypeDefOf.NeutralEvent, false); break;
+                case 7: pc.HealAll(); Messages.Message(Lang.Tr("림켓몬을 전부 회복했다."), MessageTypeDefOf.NeutralEvent, false); break;
                 case 8: view = View.DevRank; devRankRow = 0; break;
                 case 9: view = View.Menu; break;
             }
@@ -188,11 +188,11 @@ namespace Rimketmon
         {
             switch (row)
             {
-                case 6: pc.rating = RankedLadder.StartRating; Messages.Message("랭크 점수를 " + RankedLadder.StartRating + "으로 초기화했다.", MessageTypeDefOf.NeutralEvent, false); break;
+                case 6: pc.rating = RankedLadder.StartRating; Messages.Message(Lang.Tr("랭크 점수를 " + RankedLadder.StartRating + "으로 초기화했다."), MessageTypeDefOf.NeutralEvent, false); break;
                 case 7:
                     pc.rating = RankedLadder.StartRating; pc.bestRating = RankedLadder.StartRating; pc.bestRankIdx = 0;
                     pc.rankedGames = pc.rankedWins = pc.rankedLosses = pc.winStreak = 0; pc.bp = 0; pc.bpStarterGiven = false;
-                    Messages.Message("랭크 기록을 전부 초기화했다.", MessageTypeDefOf.NeutralEvent, false); break;
+                    Messages.Message(Lang.Tr("랭크 기록을 전부 초기화했다."), MessageTypeDefOf.NeutralEvent, false); break;
                 case 8: view = View.Dev; break;
             }
         }

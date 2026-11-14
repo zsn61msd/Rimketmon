@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RimketBallMonster.label>몬스터볼</RimketBallMonster.label>
+  <RimketBallMonster.description>림켓몬을 붙잡는 기본 볼.</RimketBallMonster.description>
+  <RimketBallGreat.label>슈퍼볼</RimketBallGreat.label>
+  <RimketBallGreat.description>림켓몬을 붙잡는 볼.</RimketBallGreat.description>
+  <RimketBallUltra.label>하이퍼볼</RimketBallUltra.label>
+  <RimketBallUltra.description>림켓몬을 붙잡는 고성능 볼.</RimketBallUltra.description>
+  <RimketBallMaster.label>마스터볼</RimketBallMaster.label>
+  <RimketBallMaster.description>전투 없이 곧바로 붙잡는 볼.</RimketBallMaster.description>
+</LanguageData>

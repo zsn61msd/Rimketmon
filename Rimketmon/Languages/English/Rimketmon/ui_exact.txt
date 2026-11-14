@@ -1,0 +1,131 @@
+# 짧은 낱말: 문장 전체가 정확히 이 글자일 때만 바꾼다(다른 낱말 속 글자를 잘못 바꾸지 않게). 원문<TAB>번역
+  (더블)	  (Double)
+  (싱글)	  (Single)
+  (현재)	  (current)
+  공 	  Atk 
+  방 	  Def 
+  속 	  Spe 
+  특방 	  SpD 
+ (상향: 	 (boost: 
+ (의식)	 (conscious)
+ 개	
+ 격파	 defeated
+ 남은 	 left 
+ 대 	 vs 
+ 보임 	 shown 
+ 점	 pts
+ 포함)	 included)
+ 폭 	 width 
+ 필요).	 needed).
+(시체)	(corpse)
+(없음)	(none)
+갈래	branches
+개)	)
+결과	Result
+교체	Switch
+구입	Buy
+나	Me
+나 	Me 
+나: 	Me: 
+나감	Left
+냠냠	Yum
+네	Yes
+뇌우	Thunderstorm
+눈	Snow
+대상: 	Target: 
+더블	Double
+도감	Pokédex
+동물 	Animal 
+됐다	became
+만남 	Seen 
+만땅	Full
+무	None
+문제: 	Problem: 
+박스 	Box 
+방	Room
+방생	Release
+번\n\n	\n\n
+번째	th
+번째】\n	th】\n
+변화	Status
+별로	Meh
+볼(	Ball (
+비	Rain
+뺀다	Remove
+사냥	Hunt
+사망	Death
+사용	Use
+사체	Corpse
+설명	Description
+소비	Consumables
+수락	Accept
+승 	W 
+승  	W  
+시즌 	Season 
+시체	Corpse
+실내	Indoors
+싱글	Single
+아군 	Ally 
+안개	Fog
+어라…? 	Huh...? 
+연승	streak
+연승  	streak  
+예	Yes
+오류: 	Error: 
+요약	Summary
+은 	silver 
+이동	Move
+이미 	Already 
+입장	Enter
+입장 	Enter 
+있다	present
+자)	chars)
+저장	Save
+적	Foe
+전당	Hall of Fame
+전적	Record
+전적 	Record 
+전체 	All 
+점)	pts)
+점)\n	pts)\n
+점, 	pts, 
+점수	Rating
+점수 	Rating 
+점수  	Rating  
+정상	Normal
+종족  	Species  
+중력	Gravity
+진화	Evolution
+진화: 	Evolution: 
+참가	Join
+초	s
+최고 	Best 
+최대	Max
+쾌청	Clear
+키 	Height 
+특공	Sp. Atk
+특공 	Sp. Atk 
+특방	Sp. Def
+특성	Ability
+특성 	Ability 
+패	L
+패  	L  
+풀밭	Grassland
+풀숲	Tall grass
+합계 	Total 
+항복	Surrender
+확인	OK
+확정	Confirm
+회)	x)
+훈련	Training
+물	Water
+풀	Grass
+독	Poison
+땅	Ground
+악	Dark
+켬	On
+끔	Off
+내	My
+명	
+종	
+위	

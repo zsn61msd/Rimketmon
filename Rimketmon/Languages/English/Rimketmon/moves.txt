@@ -1,0 +1,954 @@
+# 기술: 키<TAB>이름<TAB>설명
+pound	Pound	The target is physically pounded with a long tail, a foreleg, or the like.
+karatechop	Karate Chop	The target is attacked with a sharp chop. This move’s critical-hit ratio is boosted by 1 stage.
+doubleslap	Double Slap	The target is slapped repeatedly, back and forth, 2-5 times in a row.
+cometpunch	Comet Punch	The target is hit with a flurry of punches that strike 2-5 times in a row.
+megapunch	Mega Punch	The target is slugged by a punch thrown with muscle-packed power.
+payday	Pay Day	Coins are hurled at the target to inflict damage. If the target is successfully struck, you will earn money after the battle.
+firepunch	Fire Punch	The target is attacked with a fiery punch. This move has a 10% chance of burning the target.
+icepunch	Ice Punch	The target is attacked with an icy punch. This move has a 10% chance of freezing the target.
+thunderpunch	Thunder Punch	The target is attacked with an electrified punch. This move has a 10% chance of paralyzing the target.
+scratch	Scratch	Hard, pointed, sharp claws rake the target to inflict damage.
+visegrip	Vise Grip	The target is gripped and squeezed from both sides to inflict damage.
+guillotine	Guillotine	A vicious, tearing attack with big pincers. The target faints instantly if this attack hits, unless it is a Boss Pokémon. The accuracy of this move is fixed at 30%.
+razorwind	Razor Wind	The user attacks the turn after using this move with blades of wind. This move’s critical-hit ratio is boosted by 1 stage.
+swordsdance	Swords Dance	A frenetic dance to uplift the fighting spirit. This sharply boosts the user’s Attack stat.
+cut	Cut	The target is cut with a scythe, a claw, or the like to inflict damage.
+gust	Gust	A gust of wind is whipped up by wings and launched at the target to inflict damage. This move can hit a target that’s in the air from Fly, Bounce, or Sky Drop with its power doubled.
+wingattack	Wing Attack	The target is struck with large, imposing wings spread wide to inflict damage.
+whirlwind	Whirlwind	The user moves last and creates a strong wind. The target is blown away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.
+fly	Fly	The user flies up into the sky on the first turn, then attacks on the next turn.
+bind	Bind	A long body, tentacles, or the like are used to bind and squeeze the target. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+slam	Slam	The target is slammed with a long tail, vines, or the like to inflict damage.
+vinewhip	Vine Whip	The target is struck with slender, whiplike vines to inflict damage.
+stomp	Stomp	The user attacks by stomping on the target with a big foot. This move has a 30% chance of making the target flinch. If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+doublekick	Double Kick	The user attacks by kicking the target twice in a row using two feet.
+megakick	Mega Kick	The target is attacked by a kick launched with muscle-packed power.
+jumpkick	Jump Kick	The user jumps up high, then strikes with a kick. If this move misses or fails, the user takes damage equal to 1/2 of its max HP.
+rollingkick	Rolling Kick	The user lashes out with a quick, spinning kick. This move has a 30% chance of making the target flinch.
+sandattack	Sand Attack	Sand is hurled in the target’s face, lowering the target’s accuracy.
+headbutt	Headbutt	The user sticks out its head and attacks by charging straight into the target. This move has a 30% chance of making the target flinch.
+hornattack	Horn Attack	The target is jabbed with a sharply pointed horn to inflict damage.
+furyattack	Fury Attack	The user attacks by jabbing the target with a horn, a beak, or the like. This move hits 2-5 times in a row.
+horndrill	Horn Drill	The user stabs the target with a horn that rotates like a drill. The target faints instantly if this attack hits, unless it is a Boss Pokémon. The accuracy of this move is fixed at 30%.
+tackle	Tackle	A physical attack in which the user charges and slams into the target with its whole body.
+bodyslam	Body Slam	The user attacks by dropping onto the target with its full body weight. This move has a 30% chance of paralyzing the target. If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+wrap	Wrap	A long body, vines, or the like are used to wrap and squeeze the target. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+takedown	Take Down	A reckless full-body charge attack for slamming into the target. The user takes 1/4 of the damage dealt by this move.
+thrash	Thrash	The user rampages and attacks for 2-3 turns. The user then becomes confused.
+doubleedge	Double-Edge	A reckless life-risking tackle in which the user rushes the target. The user takes 1/3 of the damage dealt by this move.
+tailwhip	Tail Whip	The user wags its tail cutely, making opposing Pokémon less wary. This lowers their Defense stats.
+poisonsting	Poison Sting	The user stabs the target with a poisonous stinger to inflict damage. This move has a 30% chance of poisoning the target.
+twineedle	Twineedle	The user damages the target twice in succession by jabbing it with two spikes. Each hit has a 20% chance of poisoning the target.
+pinmissile	Pin Missile	The user attacks by shooting sharp spikes at the target. This move hits 2-5 times in a row.
+leer	Leer	The user gives opposing Pokémon an intimidating leer that lowers their Defense stats.
+bite	Bite	The target is bitten with viciously sharp fangs. This move has a 30% chance of making the target flinch.
+growl	Growl	The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats.
+roar	Roar	The user moves last and lets out a mighty roar. The target is scared off, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.
+sing	Sing	A soothing lullaby is sung in a beautiful voice that puts the target to sleep.
+supersonic	Supersonic	The user generates odd sound waves from its body that confuse the target.
+sonicboom	Sonic Boom	The target is hit with a destructive shock wave that always inflicts 20 HP damage.
+disable	Disable	For 4 turns, the target will be unable to use whichever move it last used.
+acid	Acid	Opposing Pokémon are attacked with a spray of harsh acid. This move has a 10% chance of lowering their Sp. Def stats.
+ember	Ember	The target is attacked with small flames. This move has a 10% chance of burning the target.
+flamethrower	Flamethrower	The target is scorched with an intense blast of fire. This move has a 10% chance of burning the target.
+mist	Mist	The user cloaks itself and its allies in a white mist that prevents any of their stats from being lowered for 5 turns.
+watergun	Water Gun	The target is blasted with a forceful shot of water.
+hydropump	Hydro Pump	The target is blasted by a huge volume of water launched under great pressure.
+surf	Surf	The user attacks everything around it by swamping its surroundings with a giant wave. This move’s power is doubled against targets submerged with Dive.
+icebeam	Ice Beam	The target is struck with an icy-cold beam of energy. This move has a 10% chance of freezing the target.
+blizzard	Blizzard	A howling blizzard is summoned to strike opposing Pokémon. This move has a 10% chance of freezing targets and never misses in snow or hail.
+psybeam	Psybeam	The target is attacked with a peculiar ray. This move has a 10% chance of confusing the target.
+bubblebeam	Bubble Beam	A spray of bubbles is forcefully ejected at the target. This move has a 10% chance of lowering the target’s Speed stat.
+aurorabeam	Aurora Beam	The target is hit with a rainbow-colored beam. This move has a 10% chance of lowering the target’s Attack stat.
+hyperbeam	Hyper Beam	The target is attacked with a powerful beam. The user can’t move on the next turn.
+peck	Peck	The target is jabbed with a sharply pointed beak or horn to inflict damage.
+drillpeck	Drill Peck	A corkscrewing attack that strikes the target with a sharp beak acting as a drill.
+submission	Submission	The user grabs the target and recklessly dives for the ground. The user takes 1/4 of the damage dealt by this move.
+lowkick	Low Kick	A powerful low kick that makes the target fall over. The heavier the target, the greater the move’s power (ranging between 20 and 120).
+counter	Counter	A retaliatory attack that counters any physical move, inflicting double the damage taken.
+seismictoss	Seismic Toss	The target is thrown using the power of gravity. It inflicts damage equal to the user’s level.
+strength	Strength	The target is slugged with a punch thrown at maximum power.
+absorb	Absorb	A nutrient-draining attack. The user’s HP is restored by 1/2 of the damage dealt by this move.
+megadrain	Mega Drain	A nutrient-draining attack. The user’s HP is restored by 1/2 of the damage dealt by this move.
+leechseed	Leech Seed	A seed is planted on the target. At the end of every turn, 1/8 of the target’s max HP gets absorbed by the user or any Pokémon that takes its place in battle.
+growth	Growth	The user’s body grows all at once, boosting its Attack and Sp. Atk stats. In harsh sunlight, these stats will be boosted sharply instead.
+razorleaf	Razor Leaf	Sharp-edged leaves are launched to slash at opposing Pokémon. This move’s critical-hit ratio is boosted by 1 stage.
+solarbeam	Solar Beam	The user gathers light on the first turn, then blasts a bundled beam on the next turn. In harsh sunlight, the user can attack immediately. This move’s power is halved in any other weather condition.
+poisonpowder	Poison Powder	The user scatters a cloud of poisonous dust that poisons the target. Grass-type Pokémon are unaffected.
+stunspore	Stun Spore	The user scatters a cloud of numbing powder that paralyzes the target. Grass-type Pokémon are unaffected.
+sleeppowder	Sleep Powder	The user scatters a cloud of soporific dust that puts the target to sleep. Grass-type Pokémon are unaffected.
+petaldance	Petal Dance	The user attacks the target by scattering petals for 2-3 turns. The user then becomes confused.
+stringshot	String Shot	The user blows silk from its mouth that binds opposing Pokémon and harshly lowers their Speed stat.
+dragonrage	Dragon Rage	This attack hits the target with a shock wave of pure rage. This attack always inflicts 40 HP damage.
+firespin	Fire Spin	The user traps the target inside a fierce vortex of fire. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+thundershock	Thunder Shock	The user attacks the target with a jolt of electricity. This move has a 10% chance of paralyzing the target.
+thunderbolt	Thunderbolt	The user attacks the target with a strong electric blast. This move has a 10% chance of paralyzing the target.
+thunderwave	Thunder Wave	The user launches a weak jolt of electricity that paralyzes the target. Ground-type Pokémon are unaffected.
+thunder	Thunder	A wicked thunderbolt is dropped on the target to inflict damage. This move has a 30% chance of paralyzing the target and never misses in rain. In harsh sunlight, this move’s accuracy is 50%. This move can hit a target that’s in the air from Fly, Bounce, or Sky Drop.
+rockthrow	Rock Throw	The user picks up and throws a small rock at the target to inflict damage.
+earthquake	Earthquake	The user sets off an earthquake that strikes every Pokémon around it. This move’s power is doubled against targets underground from Dig, and halved while Grassy Terrain is active.
+fissure	Fissure	The user opens up a fissure in the ground and drops the target in. The target faints instantly if this attack hits, unless it is a Boss Pokémon. The accuracy of this move is fixed at 30%.
+dig	Dig	The user burrows into the ground on the first turn, then attacks on the next turn.
+toxic	Toxic	A move that leaves the target badly poisoned. The target takes increasing poison damage at the end of every turn, starting at 1/16 of the Pokémon’s max HP, then 2/16 and so on. If the user is a Poison-type, this move will never miss.
+confusion	Confusion	The target is hit with a weak telekinetic force to inflict damage. This move has a 10% chance of confusing the target.
+psychic	Psychic	The target is hit with a strong telekinetic force to inflict damage. This move has a 10% chance of lowering the target’s Sp. Def stat.
+hypnosis	Hypnosis	The user employs hypnotic suggestion to make the target fall asleep.
+meditate	Meditate	The user meditates to awaken the power deep within its body to boost the user’s Attack stat.
+agility	Agility	The user relaxes and lightens its body to move faster. This sharply boosts its Speed stat.
+quickattack	Quick Attack	The user lunges at the target to inflict damage, moving at blinding speed. This move always goes first.
+rage	Rage	As long as this move is in use, the power of rage boosts the Attack stat each time the user is hit in battle.
+teleport	Teleport	The user moves last and switches places with a party Pokémon in waiting, if any. If a wild Pokémon uses this move, it flees.
+nightshade	Night Shade	The user makes the target see a frightening mirage. It inflicts damage equal to the user’s level.
+mimic	Mimic	The user copies the move last used by the target. The copied move can be used until the user of Mimic leaves the battle.
+screech	Screech	An earsplitting screech harshly lowers the target’s Defense stat.
+doubleteam	Double Team	By moving rapidly, the user makes illusory copies of itself to boost its evasiveness.
+recover	Recover	The user regenerates its cells, restoring 1/2 of its max HP.
+harden	Harden	The user stiffens all the muscles in its body to boost its Defense stat.
+minimize	Minimize	The user compresses its body to make itself look smaller, which sharply boosts its evasiveness. However, this leaves the user more vulnerable to certain slamming and crushing moves.
+smokescreen	Smokescreen	The user releases an obscuring cloud of smoke or ink. This lowers the target’s accuracy.
+confuseray	Confuse Ray	The user shines a sinister ray at the target, leaving it confused.
+withdraw	Withdraw	The user withdraws its body into its hard shell, boosting its Defense stat.
+defensecurl	Defense Curl	The user curls up to conceal weak spots, which boosts its Defense stat. This also doubles the power of Rollout and Ice Ball.
+barrier	Barrier	The user throws up a sturdy wall that sharply boosts its Defense stat.
+lightscreen	Light Screen	A wondrous wall of light is put up to halve the damage taken from special moves for 5 turns. In Double Battles, this damage is reduced by 1/3 instead.
+haze	Haze	The user creates a haze that eliminates every stat change among all the Pokémon engaged in battle.
+reflect	Reflect	A wondrous wall of light is put up to halve the damage taken from physical moves for 5 turns. In Double Battles, this damage is reduced by 1/3 instead.
+focusenergy	Focus Energy	The user takes a deep breath and focuses, gaining a 2-stage critical-hit ratio boost to its future attacks.
+bide	Bide	The user endures attacks for 2 turns, then strikes back to cause double the damage taken.
+metronome	Metronome	The user waggles a finger and stimulates its brain into randomly using nearly any move.
+mirrormove	Mirror Move	The user counters the target by mimicking the target’s last move. This move fails if no other move has been used yet, or if the last move used cannot be copied.
+selfdestruct	Self-Destruct	The user attacks everything around it by causing an explosion. The user faints upon using this move.
+eggbomb	Egg Bomb	A large egg is hurled at the target with maximum force to inflict damage.
+lick	Lick	The user licks the target with a long tongue to inflict damage. This move has a 30% chance of paralyzing the target.
+smog	Smog	The target is attacked with a discharge of filthy gases. This move has a 40% chance of poisoning the target.
+sludge	Sludge	The user hurls unsanitary sludge at the target to inflict damage. This move has a 30% chance of poisoning the target.
+boneclub	Bone Club	The user clubs the target with a bone. This move has a 10% chance of making the target flinch.
+fireblast	Fire Blast	The target is attacked with an intense blast of all-consuming fire. This move has a 10% chance of burning the target.
+waterfall	Waterfall	The user attacks by charging at the target with incredible momentum. This move has a 20% chance of making the target flinch.
+clamp	Clamp	The target is clamped and squeezed by the user’s very thick and sturdy shell. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+swift	Swift	Star-shaped rays are shot at opposing Pokémon. This attack never misses.
+skullbash	Skull Bash	The user tucks in its head to boost its Defense stat on the first turn, then rams the target on the next turn.
+spikecannon	Spike Cannon	Sharp spikes are shot at the target in rapid succession. They hit 2-5 times in a row.
+constrict	Constrict	The target is attacked with long, creeping tentacles, vines, or the like. This move has a 10% chance of lowering the target’s Speed stat.
+amnesia	Amnesia	The user temporarily empties its mind to forget its concerns. This sharply boosts the user’s Sp. Def stat.
+kinesis	Kinesis	The user distracts the target by bending a spoon. This lowers the target’s accuracy.
+softboiled	Soft-Boiled	The user produces itself a large egg, restoring 1/2 of its max HP.
+highjumpkick	High Jump Kick	The target is attacked with a knee kick from a jump. If this move misses or fails, the user takes damage equal to 1/2 of its max HP.
+glare	Glare	The user intimidates the target with a frightful glare that will leave it paralyzed.
+dreameater	Dream Eater	The user eats the dreams of a sleeping target. The user’s HP is restored by 1/2 of the damage dealt by this move.
+poisongas	Poison Gas	A cloud of poison gas is sprayed in the faces of opposing Pokémon, poisoning those it hits.
+barrage	Barrage	Round objects are hurled at the target. This move hits 2-5 times in a row.
+leechlife	Leech Life	The user drains the target’s blood. The user’s HP is restored by 1/2 of the damage dealt by this move.
+lovelykiss	Lovely Kiss	With a scary face, the user tries to kiss the target. If it succeeds, the target falls asleep.
+skyattack	Sky Attack	The user attacks with a powered-up dive the turn after using this move. This move’s critical-hit ratio is boosted by 1 stage, and it has a 30% chance of making the target flinch.
+transform	Transform	The user transforms into a copy of the target, right down to having the same move set. It also copies all of the target’s stats apart from its HP. Copied moves have 5 PP each.
+bubble	Bubble	A spray of countless bubbles is jetted at the opposing Pokémon. This move has a 10% chance of lowering their Speed stats.
+dizzypunch	Dizzy Punch	The target is hit with rhythmically launched punches. This move has a 20% chance of confusing the target.
+spore	Spore	The user scatters bursts of spores that induce sleep. Grass-type Pokémon are unaffected.
+flash	Flash	The user flashes a bright light that lowers the target’s accuracy.
+psywave	Psywave	The target is attacked with an odd psychic wave. This attack varies in damage, ranging from 50% to 150% of the user’s level.
+splash	Splash	The user just flops and splashes around to no effect at all…
+acidarmor	Acid Armor	The user alters its cellular structure to liquefy itself, sharply boosting its Defense stat.
+crabhammer	Crabhammer	The target is hammered with a large pincer. This move’s critical-hit ratio is boosted by 1 stage.
+explosion	Explosion	The user attacks everything around it by causing a tremendous explosion. The user faints upon using this move.
+furyswipes	Fury Swipes	The user attacks by raking the target with claws, scythes, or the like. This move hits 2-5 times in a row.
+bonemerang	Bonemerang	The user throws the bone it holds. The bone loops around to damage the target twice—coming and going.
+rest	Rest	The user goes to sleep for 2 turns. This fully restores the user’s HP and cures any status conditions. This move fails if the user’s HP is full.
+rockslide	Rock Slide	Large boulders are hurled at opposing Pokémon to inflict damage. This move has a 30% chance of making the targets flinch.
+hyperfang	Hyper Fang	The user bites hard on the target with its sharp front fangs. This move has a 10% chance of making the target flinch.
+sharpen	Sharpen	The user makes its edges more jagged, which boosts its Attack stat.
+conversion	Conversion	The user changes its type to become the same type as the move at the top of the list of moves it knows.
+triattack	Tri Attack	The user strikes with a simultaneous three-beam attack. This move has a 20% chance of leaving the target burned, frozen, or paralyzed.
+superfang	Super Fang	The user chomps hard on the target with its sharp front fangs. This deals damage to the target equal to 1/2 of their remaining HP.
+slash	Slash	The target is attacked with a slash of claws, scythes, or the like. This move’s critical-hit ratio is boosted by 1 stage.
+substitute	Substitute	The user creates a substitute for itself by losing 1/4 of its max HP. The substitute will be hit by moves instead of the user, and it will vanish when it takes damage equal to 1/4 of the user’s max HP. Sound-based moves will hit the user through the substitute.
+struggle	Struggle	This attack is used in desperation only if the user has no remaining PP. The user loses 1/4 of its max HP.
+sketch	Sketch	This move enables the user to permanently learn the move last used by the target. Once used, Sketch disappears.
+triplekick	Triple Kick	A consecutive three-kick attack that increases in power by 10 with each successive hit. When one kick misses, the move ends.
+thief	Thief	The user attacks and tries to steal from the target simultaneously. This move has a 30% chance to steal one of the target’s held items.
+spiderweb	Spider Web	The user ensnares the target with thin, gooey silk so it can’t flee or be switched out from battle.
+mindreader	Mind Reader	The user senses the target’s movements with its mind to ensure its next attack does not miss the target.
+nightmare	Nightmare	A sleeping target sees a nightmare that inflicts damage equal to 1/4 of its max HP at the end of every turn. This fails if the target is not asleep.
+flamewheel	Flame Wheel	The user attacks by cloaking itself in fire and charging at the target. This move has a 10% chance of burning the target and thaws out the user if it is frozen.
+snore	Snore	If the user is asleep, it attacks with a harsh noise. This move has a 30% chance of making the target flinch.
+curse	Curse	The user boosts its Attack and Defense stats in exchange for lowering its Speed stat. If the user is a Ghost type, it instead loses 1/2 of its max HP to inflict a curse on the target. A Pokémon inflicted by the curse loses 1/4 of its max HP at the end of every turn.
+flail	Flail	The user flails about aimlessly to attack. The less HP the user has, the greater the move’s power (ranging between 20 and 200).
+conversion2	Conversion 2	The user changes its type to make itself resistant to the type of the move the target used last.
+aeroblast	Aeroblast	A vortex of air is shot at the target to inflict damage. This move’s critical-hit ratio is boosted by 1 stage.
+cottonspore	Cotton Spore	The user releases cotton-like spores that cling to opposing Pokémon. This harshly lowers their Speed stats. Grass-type Pokémon are unaffected.
+reversal	Reversal	An all-out attack that becomes more powerful the less HP the user has (ranging between 20 and 200).
+spite	Spite	The user unleashes its grudge on the move last used by the target by cutting 4 PP from it.
+powdersnow	Powder Snow	The user attacks opposing Pokémon with a chilling gust of powdery snow. This move has a 10% chance of freezing targets.
+protect	Protect	This move enables the user to protect itself from all attacks. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+machpunch	Mach Punch	The user throws a punch at blinding speed. This move always goes first.
+scaryface	Scary Face	The user frightens the target with a scary face to harshly lower its Speed stat.
+feintattack	Feint Attack	The user approaches the target disarmingly, then throws a sucker punch. This attack never misses.
+sweetkiss	Sweet Kiss	The user kisses the target with a sweet, angelic cuteness that causes confusion.
+bellydrum	Belly Drum	The user loses 1/2 of its max HP to maximize its Attack stat. This move fails if the user doesn’t have enough remaining HP.
+sludgebomb	Sludge Bomb	The user hurls unsanitary sludge at the target to inflict damage. This move has a 30% chance of poisoning the target.
+mudslap	Mud-Slap	The user hurls mud in the target’s face to inflict damage and lower its accuracy.
+octazooka	Octazooka	The user attacks by spraying ink in the target’s face. This move has a 50% chance of lowering the target’s accuracy.
+spikes	Spikes	The user lays a trap of spikes at the feet of the opposing team. Opposing Pokémon that land on these spikes when switching into battle will receive damage equal to 1/8 of their max HP. Up to 3 layers can be set, with each layer increasing the damage taken.
+zapcannon	Zap Cannon	The user attacks by firing an electric blast like a cannon. This also leaves the target with paralysis.
+foresight	Foresight	Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also negates the target’s evasiveness stat if it is boosted.
+destinybond	Destiny Bond	If the user is knocked out after using this move, the Pokémon that knocked it out will also faint. This move fails if used in succession. Boss Pokémon are immune to this move.
+perishsong	Perish Song	Any Pokémon that hears this song faints in 3 turns, unless it switches out of battle. Boss Pokémon are immune to this move.
+icywind	Icy Wind	The user attacks with a gust of chilled air. This also lowers opposing Pokémon’s Speed stats.
+detect	Detect	This move enables the user to protect itself from all attacks. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+bonerush	Bone Rush	The user attacks by striking the target with a hard bone. This move hits 2-5 times in a row.
+lockon	Lock-On	The user takes sure aim at the target. This ensures the user’s next move does not miss that target.
+outrage	Outrage	The user rampages and attacks for 2-3 turns. The user then becomes confused.
+sandstorm	Sandstorm	The user summons a sandstorm for 5 turns. Pokémon that are not Rock, Ground, or Steel types take damage equal to 1/16 of their max HP at the end of every turn. This also boosts the Sp. Def stats of Rock types by 50%.
+gigadrain	Giga Drain	A nutrient-draining attack. The user’s HP is restored by 1/2 of the damage dealt by this move.
+endure	Endure	The user endures any attack with at least 1 HP. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+charm	Charm	The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target’s Attack stat.
+rollout	Rollout	The user continually rolls into the target over 5 turns. This attack doubles in power each time it hits, and resets after 5 turns have passed or if the move is interrupted.
+falseswipe	False Swipe	A restrained attack that prevents the target from fainting. The target is left with at least 1 HP.
+swagger	Swagger	The user enrages and confuses the target. However, this also sharply boosts the target’s Attack stat.
+milkdrink	Milk Drink	The user produces highly nutritious milk, restoring 1/2 of the user or an ally’s max HP.
+spark	Spark	The user attacks the target with an electrically charged tackle. This move has a 30% chance of paralyzing the target.
+furycutter	Fury Cutter	The user attacks by slashing the target with scythes, claws, or the like. This move’s power is doubled if it hits in succession, up to a max of 160 power, and resets if this move is interrupted or another move is used.
+steelwing	Steel Wing	The target is hit with wings of steel. This move has a 10% chance of boosting the user’s Defense stat.
+meanlook	Mean Look	The user pins the target with a dark, arresting look. The target becomes unable to flee or be switched out of battle.
+attract	Attract	If the target is of the opposite gender to the user, it becomes infatuated with the user and will have a 50% chance of being unable to use its moves.
+sleeptalk	Sleep Talk	The user randomly uses one of the moves it knows. This move can only be used while the user is asleep.
+healbell	Heal Bell	The user makes a soothing bell chime to cure the status conditions of all its fellow party Pokémon and allies.
+return	Return	This full-power attack grows more powerful the more the user likes its Trainer (ranging between 1 and 102).
+present	Present	The user attacks by giving the target a gift with a hidden trap, randomly dealing damage with 40, 80, or 120 power. The gift restores 1/4 of the target’s max HP sometimes, however.
+frustration	Frustration	This full-power attack grows more powerful the less the user likes its Trainer (ranging between 1 and 102).
+safeguard	Safeguard	The user creates a protective field that prevents status conditions for 5 turns.
+painsplit	Pain Split	The user adds its remaining HP to the target’s remaining HP, then splits the total in half for them to share. Boss Pokémon are immune to this move.
+sacredfire	Sacred Fire	The target is razed with a mystical fire of great intensity. This move has a 50% chance of burning the target and thaws out the user if it is frozen.
+magnitude	Magnitude	The user attacks everything around it with a ground-shaking quake. Its power varies based on the magnitude of the quake, with the possibility of being 10, 30, 50, 70, 90, 110, or 150 power. This move’s power is doubled against targets underground from Dig, and halved while Grassy Terrain is active.
+dynamicpunch	Dynamic Punch	The user attacks by punching the target with full concentrated power. This also confuses the target.
+megahorn	Megahorn	Using its tough and impressive horn, the user rams into the target with no letup.
+dragonbreath	Dragon Breath	The user exhales a mighty gust that inflicts damage. This move has a 30% chance of paralyzing the target.
+batonpass	Baton Pass	The user switches out of battle to be replaced by another party Pokémon. If the user had any stat changes, a substitute, or other such effects, they will be passed on to the Pokémon switching in.
+encore	Encore	The user compels the target to keep using the move it encored for 3 turns.
+pursuit	Pursuit	The power of this attack move is doubled if it’s used on a target that’s switching out of battle.
+rapidspin	Rapid Spin	The user performs a spin attack that can eliminate the effects of binding moves and Leech Seed, as well as any entry hazards on its side. This also boosts the user’s Speed stat.
+sweetscent	Sweet Scent	The user releases a scent that harshly lowers opposing Pokémon’s evasiveness.
+irontail	Iron Tail	The target is slammed with a steel-hard tail. This move has a 30% chance of lowering the target’s Defense stat.
+metalclaw	Metal Claw	The target is raked with steel claws. This move has a 10% chance of boosting the user’s Attack stat.
+vitalthrow	Vital Throw	The user attacks last. In return, this throw move never misses.
+morningsun	Morning Sun	The user bathes in the pleasant rays of the sun, restoring 1/2 of its max HP. In harsh sunlight, 2/3 of its max HP will be restored instead. In all other weather conditions, 1/4 of its max HP will be restored instead.
+synthesis	Synthesis	The user produces energy through photosynthesis, restoring 1/2 of its max HP. In harsh sunlight, 2/3 of its max HP will be restored instead. In all other weather conditions, 1/4 of its max HP will be restored instead.
+moonlight	Moonlight	The user bathes in the soothing light of the moon, restoring 1/2 of its max HP. In harsh sunlight, 2/3 of its max HP will be restored instead. In all other weather conditions, 1/4 of its max HP will be restored instead.
+hiddenpower	Hidden Power	A unique attack that varies in type depending on the Pokémon using it.
+crosschop	Cross Chop	The user delivers a double chop with its forearms crossed. This move’s critical-hit ratio is boosted by 1 stage.
+twister	Twister	The user whips up a vicious tornado to tear at opposing Pokémon. This move has a 20% chance of making targets flinch, and can also hit a target that’s in the air from Fly, Bounce, or Sky Drop with its power doubled.
+raindance	Rain Dance	The user summons a heavy rain that falls for 5 turns, powering up Water-type moves by 50%. The rain also halves the damage dealt by Fire-type moves.
+sunnyday	Sunny Day	The user intensifies the sun for 5 turns, powering up Fire-type moves by 50%. The sunlight also halves the damage dealt by Water-type moves.
+crunch	Crunch	The user crunches up the target with sharp fangs. This move has a 20% chance of lowering the target’s Defense stat.
+mirrorcoat	Mirror Coat	A retaliatory attack that counters any special move, inflicting double the damage taken.
+psychup	Psych Up	The user hypnotizes itself into copying any stat change made by the target.
+extremespeed	Extreme Speed	The user charges the target at blinding speed. This move always goes first.
+ancientpower	Ancient Power	The user attacks with a prehistoric power. This has a 10% chance of boosting the user’s Attack, Defense, Sp. Atk, Sp. Def, and Speed stats all at once.
+shadowball	Shadow Ball	The user attacks by hurling a shadowy blob at the target. This move has a 20% chance of lowering the target’s Sp. Def stat.
+futuresight	Future Sight	2 turns after this move is used, a hunk of psychic energy attacks the target.
+rocksmash	Rock Smash	The user attacks with a punch. This move has a 50% chance of lowering the target’s Defense stat.
+whirlpool	Whirlpool	The user traps the target inside a violent, swirling whirlpool. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn. This move’s power is doubled against targets submerged with Dive.
+beatup	Beat Up	The user gets all party Pokémon to attack the target, attacking as many times as the number of healthy Pokémon in the user’s party. This move’s power is calculated based on the Attack stats of the party Pokémon.
+fakeout	Fake Out	This attack hits first and makes the target flinch. This move fails unless it is the first move used by the user after it enters a battle.
+uproar	Uproar	The user attacks in an uproar for 3 turns. During that time, no Pokémon can fall asleep.
+stockpile	Stockpile	The user raises its Stockpiling level by 1 and boosts its Defense and Sp. Def stats. This move can be used up to 3 times.
+spitup	Spit Up	The levels stored using the move Stockpile are released at once in an attack. The more power is stored, the greater the move’s power (ranging between 100 and 300).
+swallow	Swallow	The levels stored using the move Stockpile are absorbed by the user to restore its HP. Level 1: 1/4 of the user’s max HP is restored. Level 2: 1/2 of the user’s max HP is restored. Level 3: The user’s HP is fully restored.
+heatwave	Heat Wave	The user attacks by blasting opposing Pokémon with searingly hot wind. This move has a 10% chance of burning targets.
+hail	Hail	The user summons a hailstorm lasting 5 turns. All Pokémon except Ice types will be damaged for 1/16 of their max HP at the end of every turn.
+torment	Torment	The user torments and enrages the target, making it incapable of using the same move twice in a row.
+flatter	Flatter	Flattery is used to confuse the target. However, this also boosts the target’s Sp. Atk stat.
+willowisp	Will-O-Wisp	The user shoots a sinister flame at the target to inflict a burn.
+memento	Memento	The user faints. In return, the target’s Attack and Sp. Atk stats are harshly lowered.
+facade	Facade	This move’s power is doubled if the user is poisoned, badly poisoned, burned, or paralyzed. Although this move is a physical move, the damage it deals is not halved when the user is burned.
+focuspunch	Focus Punch	The user moves last to focus its mind before launching a punch. This move fails if the user is hit before using the move.
+smellingsalts	Smelling Salts	This attack’s power is doubled when used on a target with paralysis. This also cures the target’s paralysis, however.
+followme	Follow Me	The user draws attention to itself, making all opposing Pokémon take aim only at the user.
+naturepower	Nature Power	This attack makes use of nature’s power. Its effects vary depending on the biome or terrain this move was used in.
+charge	Charge	The user becomes charged, doubling the power of the next Electric-type move it uses. This also boosts the user’s Sp. Def stat.
+taunt	Taunt	The target is taunted into a rage that allows it to use only attack moves for 3 turns.
+helpinghand	Helping Hand	The user assists an ally by boosting the power of that ally’s attack by 50%.
+trick	Trick	The user catches the target off guard and swaps a target’s held item with its own.
+roleplay	Role Play	The user mimics the target completely, copying the target’s Ability.
+wish	Wish	One turn after this move is used, the user’s or its replacement’s HP is restored by up to 1/2 the user’s max HP
+assist	Assist	The user hurriedly and randomly uses a move among those known by ally Pokémon.
+ingrain	Ingrain	The user lays roots that restore 1/16 of its max HP at the end of every turn. Because it’s rooted, the user becomes grounded and cannot flee or be switched out of battle.
+superpower	Superpower	The user attacks the target with great power. This also lowers the user’s Attack and Defense stats.
+magiccoat	Magic Coat	Until the end of the turn, certain non-damaging moves directed at the user are blocked by a barrier and reflected back to the user of those moves.
+recycle	Recycle	The user recycles a held item that has been used in battle so it can be used again.
+revenge	Revenge	The user moves last. The power of this move is doubled if the target has inflicted damage on the user in the same turn.
+brickbreak	Brick Break	The user attacks with a swift chop. This move can also break barriers such as Light Screen, Reflect, and Aurora Veil.
+yawn	Yawn	The user lets loose a huge yawn that lulls the target into falling asleep on the next turn.
+knockoff	Knock Off	The user slaps down a target’s held item, removing the item. This move’s power is boosted by 50% if the target has a held item.
+endeavor	Endeavor	The user inflicts damage by cutting down the target’s HP to roughly equal the user’s HP. This fails if the target’s HP is the same as or lower than the user’s. Boss Pokémon are immune to this move.
+eruption	Eruption	The user attacks opposing Pokémon with explosive fury. The less HP the user has left, the lower this move’s power (ranging between 1 and 150).
+skillswap	Skill Swap	The user employs its psychic power to exchange Abilities with the target.
+imprison	Imprison	If opposing Pokémon know any move also known by the user, they are prevented from using it.
+refresh	Refresh	The user rests to cure itself of poisoning, a burn, or paralysis.
+grudge	Grudge	If the user faints, the user’s grudge fully depletes the PP of the opponent’s move that knocked it out.
+snatch	Snatch	The user steals the effects of any attempts to use a healing or stat-changing move.
+secretpower	Secret Power	The additional effects of this attack depend upon the biome or terrain it was used in.
+dive	Dive	The user dives on the first turn, then floats up and attacks on the next turn.
+armthrust	Arm Thrust	The user attacks the target with open-palmed arm thrusts. This move hits 2-5 times in a row.
+camouflage	Camouflage	The user’s type is changed depending on the biome or terrain this move was used in.
+tailglow	Tail Glow	The user flashes bright lights as it focuses its mind, drastically boosting its Sp. Atk stat.
+lusterpurge	Luster Purge	The user lets loose a damaging burst of light. This move has a 50% chance of lowering the target’s Sp. Def stat.
+mistball	Mist Ball	The user attacks with a ball packed with mist-like down. This move has a 50% chance of lowering the target’s Sp. Atk stat.
+featherdance	Feather Dance	The user covers the target’s body with a mass of down that harshly lowers its Attack stat.
+teeterdance	Teeter Dance	The user performs a wobbly dance that confuses every Pokémon around it.
+blazekick	Blaze Kick	The user attacks with a fiery kick that has a 10% chance of burning the target. This move’s critical-hit ratio is boosted by 1 stage.
+mudsport	Mud Sport	The user kicks up mud on the battlefield. This weakens the Electric-type moves of all Pokémon on the field by 50% for 5 turns.
+iceball	Ice Ball	The user continually rolls into the target over 5 turns. This attack doubles in power each time it hits, and resets after 5 turns have passed or if the move is interrupted.
+needlearm	Needle Arm	The user attacks by wildly swinging its thorny arms. This move has a 30% chance of making the target flinch.
+slackoff	Slack Off	The user slacks off, restoring 1/2 of its max HP.
+hypervoice	Hyper Voice	The user attacks by letting loose a horribly loud, resounding cry.
+poisonfang	Poison Fang	The user bites the target with toxic fangs. This move has a 50% chance of badly poisoning the target.
+crushclaw	Crush Claw	The user slashes the target with hard and sharp claws. This move has a 50% chance of lowering the target’s Defense stat.
+blastburn	Blast Burn	The target is razed by a fiery explosion. The user can’t move on the next turn.
+hydrocannon	Hydro Cannon	The target is hit with a watery blast. The user can’t move on the next turn.
+meteormash	Meteor Mash	The target is hit with a hard punch fired like a meteor. This move has a 20% chance of boosting the user’s Attack stat.
+astonish	Astonish	The user attacks the target by crying out in a startling fashion. This move has a 30% chance of making the target flinch.
+weatherball	Weather Ball	This move’s type and power change depending on the weather at the time the move is used.
+aromatherapy	Aromatherapy	The user releases a soothing scent to cure the status conditions of all its fellow party Pokémon and allies.
+faketears	Fake Tears	The user feigns crying to fluster the target. This harshly lowers the target’s Sp. Def stat.
+aircutter	Air Cutter	The user launches razor-like wind to slash opposing Pokémon. This move’s critical-hit ratio is boosted by 1 stage.
+overheat	Overheat	The user attacks the target with all its might. The recoil from this move harshly lowers the user’s Sp. Atk stat.
+odorsleuth	Odor Sleuth	Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also negates the target’s evasiveness stat if it is boosted.
+rocktomb	Rock Tomb	The user hurls boulders at the target to inflict damage. This also lowers the target’s Speed stat by cutting off its movement.
+silverwind	Silver Wind	The target is attacked with powdery scales blown by the wind. This has a 10% chance of boosting the user’s Attack, Defense, Sp. Atk, Sp. Def, and Speed stats all at once.
+metalsound	Metal Sound	A horrible sound like scraping metal harshly lowers the target’s Sp. Def stat.
+grasswhistle	Grass Whistle	The user plays a pleasant melody that puts the target to sleep.
+tickle	Tickle	The user tickles the target into laughing, lowering its Attack and Defense stats.
+cosmicpower	Cosmic Power	The user absorbs a mystical power from space to boost its Defense and Sp. Def stats.
+waterspout	Water Spout	The user spouts water to damage opposing Pokémon. The less HP the user has left, the lower this move’s power (ranging between 1 and 150).
+signalbeam	Signal Beam	The user attacks with a sinister beam of light. This move has a 10% chance of confusing the target.
+shadowpunch	Shadow Punch	The user throws a punch from the shadows. This attack never misses.
+extrasensory	Extrasensory	The user attacks with an odd, unseeable power. This move has a 10% chance of making the target flinch.
+skyuppercut	Sky Uppercut	The user attacks the target with an uppercut thrown skyward with force. This move can also hit a target that’s in the air from Fly, Bounce, or Sky Drop.
+sandtomb	Sand Tomb	The user traps the target inside a harshly raging sandstorm. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+sheercold	Sheer Cold	The target is attacked with a blast of absolute-zero cold. The target faints instantly if this attack hits, unless it is a Boss Pokémon. This move does not affect Ice types. The accuracy of this move is fixed at 30%. If used by Pokémon other than Ice types, the accuracy of this move is 20%.
+muddywater	Muddy Water	The user attacks by shooting muddy water at opposing Pokémon. This move has a 30% chance of lowering their accuracy.
+bulletseed	Bullet Seed	The user attacks by forcefully shooting seeds at the target. This move hits 2-5 times in a row.
+aerialace	Aerial Ace	The user confounds the target with speed, then slashes. This attack never misses.
+iciclespear	Icicle Spear	The user attacks by launching sharp icicles at the target. This move hits 2-5 times in a row.
+irondefense	Iron Defense	The user hardens its body’s surface like iron, sharply boosting its Defense stat.
+block	Block	The user blocks the target’s way with arms spread wide to prevent the target from fleeing or switching out of battle.
+howl	Howl	The user howls loudly to rouse itself and its allies. This boosts their Attack stats.
+dragonclaw	Dragon Claw	The user slashes the target with huge, sharp claws to inflict damage.
+frenzyplant	Frenzy Plant	The user slams the target with the roots of an enormous tree. The user can’t move on the next turn.
+bulkup	Bulk Up	The user tenses its muscles to bulk up its body, boosting its Attack and Defense stats.
+bounce	Bounce	The user bounces up high on the first turn, then drops onto the target on the next turn. This move has a 30% chance of paralyzing the target.
+mudshot	Mud Shot	The user attacks by hurling a blob of mud at the target. This also lowers the target’s Speed stat.
+poisontail	Poison Tail	The user hits the target with its tail. This move’s critical-hit ratio is boosted by 1 stage and has a 10% chance of poisoning the target.
+covet	Covet	The user endearingly approaches the target, then tries to steal from the target. This move has a 30% chance to steal one of the target’s held items.
+volttackle	Volt Tackle	The user electrifies itself and charges the target to inflict damage. The user takes 1/3 of the damage dealt by this move. This also has a 10% chance of paralyzing the target.
+magicalleaf	Magical Leaf	The user scatters curious leaves that chase the target. This attack never misses.
+watersport	Water Sport	The user soaks the battlefield with water. This weakens the Fire-type moves of all Pokémon on the field by 50% for 5 turns.
+calmmind	Calm Mind	The user quietly focuses its mind and calms its spirit to boost its Sp. Atk and Sp. Def stats.
+leafblade	Leaf Blade	The user handles a sharp leaf like a sword and cuts the target to inflict damage. This move’s critical-hit ratio is boosted by 1 stage.
+dragondance	Dragon Dance	The user vigorously performs a mystic, powerful dance that boosts its Attack and Speed stats.
+rockblast	Rock Blast	The user attacks by hurling hard rocks at the target. This move hits 2-5 times in a row.
+shockwave	Shock Wave	The user strikes the target with a quick jolt of electricity. This attack never misses.
+waterpulse	Water Pulse	The user attacks the target with a pulsing blast of water. This move has a 20% chance of confusing the target.
+doomdesire	Doom Desire	2 turns after this move is used, a concentrated bundle of light blasts the target.
+psychoboost	Psycho Boost	The user attacks the target with all its might. The recoil from this move harshly lowers the user’s Sp. Atk stat.
+roost	Roost	The user lands and rests its body, restoring 1/2 of its max HP. If the user is a Flying type, it will lose the Flying type for the turn.
+gravity	Gravity	Boosts the accuracy of moves by 67% and grounds Pokémon such as Flying types or ones with the Levitate Ability for 5 turns. Moves that involve flying cannot be used.
+miracleeye	Miracle Eye	Enables a Dark-type target to be hit by Psychic-type attacks. This also negates the target’s evasiveness stat if it is boosted.
+wakeupslap	Wake-Up Slap	This move’s power is doubled on a sleeping target. This also wakes the target up, however.
+hammerarm	Hammer Arm	The user swings its strong, heavy fist at the target to inflict damage. This also lowers the user’s Speed stat.
+gyroball	Gyro Ball	The user tackles the target with a high-speed spin. The slower the user is than the target, the greater the move’s power (ranging between 1 and 150).
+healingwish	Healing Wish	The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.
+brine	Brine	This move’s power is doubled if the target’s HP is at half or less.
+naturalgift	Natural Gift	The user draws power to attack by using a held Berry. The Berry determines the move’s type and power.
+feint	Feint	This move can hit a target using a move such as Protect or Detect and removes the effects of those moves.
+pluck	Pluck	The user attacks by pecking the target. If the target is holding a Berry, the user eats it and gains its effect.
+tailwind	Tailwind	The user whips up a turbulent whirlwind that doubles the Speed stats of itself and its allies for 4 turns.
+acupressure	Acupressure	The user applies pressure to stress points, sharply boosting one of its or its allies’ stats.
+metalburst	Metal Burst	The user retaliates to deal 1.5x the damage it took from an opponent’s move during the turn this move is used.
+uturn	U-turn	After making its attack, the user rushes back to switch places with a party Pokémon in waiting.
+closecombat	Close Combat	The user fights the target up close, inflicting damage without guarding itself. This also lowers the user’s Defense and Sp. Def stats.
+payback	Payback	The user stores power, then attacks. This move’s power is doubled if the user moves after the target.
+assurance	Assurance	This move’s power is doubled if the target has already taken some damage in the same turn.
+embargo	Embargo	This move prevents the target from using its held items for 5 turns.
+fling	Fling	The user flings one of its held items at the target to attack. This move’s power and effects depend on the item.
+psychoshift	Psycho Shift	Using its psychic power of suggestion, the user transfers its status conditions to the target.
+trumpcard	Trump Card	This move’s power starts at 40 and increases as its remaining PP decreases: 50 at 4 PP, 60 at 3 PP, 80 at 2 PP, and 200 at 1 PP. This move never misses.
+healblock	Heal Block	For 5 turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP.
+wringout	Wring Out	The user powerfully wrings the target. The more HP the target has, the greater the move’s power (ranging between 1 and 120).
+powertrick	Power Trick	The user employs its psychic power to switch its Attack stat with its Defense stat.
+gastroacid	Gastro Acid	The user hurls up its stomach acids on the target. The fluid eliminates the effect of the target’s Ability and Passive.
+luckychant	Lucky Chant	The user chants an incantation toward the sky, preventing opposing Pokémon from landing critical hits for 5 turns.
+mefirst	Me First	The user cuts ahead of the target to copy and use the target’s intended move, boosting its power by 50%. This move fails if it isn’t used first.
+copycat	Copycat	The user mimics the move that was last used. This move fails if no other move has been used yet, or if the last move used cannot be copied.
+powerswap	Power Swap	The user employs its psychic power to switch changes to its Attack and Sp. Atk stats with the target.
+guardswap	Guard Swap	The user employs its psychic power to switch changes to its Defense and Sp. Def stats with the target.
+punishment	Punishment	This move’s power is increased by 20 for each stage that the target’s stats have been boosted.
+lastresort	Last Resort	This move can be used only after the user has used all the other moves it knows in the battle.
+worryseed	Worry Seed	A seed that causes worry is planted on the target. It prevents sleep by making the target’s Ability Insomnia.
+suckerpunch	Sucker Punch	This move enables the user to attack first. This move fails if the target is not readying an attack.
+toxicspikes	Toxic Spikes	The user lays a trap of poison spikes at the feet of the opposing team. Opposing Pokémon that land on these spikes when switching into battle will be poisoned. A second layer of spikes will instead badly poison. Poison-types that land on these spikes will absorb and remove them from the field.
+heartswap	Heart Swap	The user employs its psychic power to switch stat changes with the target.
+aquaring	Aqua Ring	The user envelops itself in a veil made of water, restoring 1/16 of its max HP at the end of every turn.
+magnetrise	Magnet Rise	The user levitates using electrically generated magnetism for 5 turns.
+flareblitz	Flare Blitz	The user cloaks itself in fire and charges the target to inflict damage. The user takes 1/3 of the damage dealt by this move. This also has a 10% chance of burning the target and thaws out the user if it is frozen.
+forcepalm	Force Palm	The target is attacked with a shock wave. This move has a 30% chance of paralyzing the target.
+aurasphere	Aura Sphere	The user lets loose a pulse of aura power from deep within its body at the target. This attack never misses.
+rockpolish	Rock Polish	The user polishes its body to reduce drag. This sharply boosts the user’s Speed stat.
+poisonjab	Poison Jab	The target is stabbed with a tentacle, an arm, or the like steeped in poison. This move has a 30% chance of poisoning the target.
+darkpulse	Dark Pulse	The user releases a horrible aura imbued with ill intent. This move has a 20% chance of making the target flinch.
+nightslash	Night Slash	The user slashes the target the instant an opportunity arises. This move’s critical-hit ratio is boosted by 1 stage.
+aquatail	Aqua Tail	The user attacks by swinging its tail as if it were a vicious wave in a raging storm.
+seedbomb	Seed Bomb	The user attacks by slamming a barrage of hard-shelled seeds down on the target from above.
+airslash	Air Slash	The user attacks with a blade of air that slices even the sky. This move has a 30% chance of making the target flinch.
+xscissor	X-Scissor	The user slashes at the target by crossing its scythes, claws, or the like as if they were a pair of scissors.
+bugbuzz	Bug Buzz	The user vibrates to generate a damaging sound wave. This move has a 10% chance of lowering the target’s Sp. Def stat.
+dragonpulse	Dragon Pulse	The target is attacked with a shock wave generated by the user’s gaping mouth.
+dragonrush	Dragon Rush	The user tackles the target while exhibiting overwhelming menace. This move has a 20% chance of making the target flinch. If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+powergem	Power Gem	The user attacks with a ray of light that sparkles as if it were made of gemstones.
+drainpunch	Drain Punch	The user attacks with an energy-draining punch. The user’s HP is restored by 1/2 of the damage dealt by this move.
+vacuumwave	Vacuum Wave	The user whirls its fists to send a wave of pure vacuum at the target. This move always goes first.
+focusblast	Focus Blast	The user heightens its mental focus and unleashes its power. This move has a 10% chance of lowering the target’s Sp. Def stat.
+energyball	Energy Ball	The user draws power from nature and fires it at the target. This move has a 10% chance of lowering the target’s Sp. Def stat.
+bravebird	Brave Bird	The user tucks in its wings and charges at a low altitude. The user takes 1/3 of the damage dealt by this move.
+earthpower	Earth Power	The user makes the ground under the target erupt with power. This move has a 10% chance of lowering the target’s Sp. Def stat.
+switcheroo	Switcheroo	The user trades a held item with the target faster than the eye can follow.
+gigaimpact	Giga Impact	The user charges at the target using every bit of its power. The user can’t move on the next turn.
+nastyplot	Nasty Plot	The user stimulates its brain by thinking bad thoughts. This sharply boosts the user’s Sp. Atk stat.
+bulletpunch	Bullet Punch	The user strikes the target with tough punches as fast as bullets. This move always goes first.
+avalanche	Avalanche	The user moves last. The power of this move is doubled if the target has inflicted damage on the user in the same turn.
+iceshard	Ice Shard	The user flash-freezes chunks of ice and hurls them at the target. This move always goes first.
+shadowclaw	Shadow Claw	The user attacks by slashing the target with a sharp claw made from shadows. This move’s critical-hit ratio is boosted by 1 stage.
+thunderfang	Thunder Fang	The user bites with electrified fangs. This move has a 10% chance of paralyzing the target and a 10% chance of making the target flinch.
+icefang	Ice Fang	The user bites with cold-infused fangs. This move has a 10% chance of freezing the target and a 10% chance of making the target flinch.
+firefang	Fire Fang	The user bites with flame-cloaked fangs. This move has a 10% chance of burning the target and a 10% chance of making the target flinch.
+shadowsneak	Shadow Sneak	The user extends its shadow and attacks the target from behind. This move always goes first.
+mudbomb	Mud Bomb	The user launches a hard-packed mud ball to attack. This move has a 30% chance of lowering the target’s accuracy.
+psychocut	Psycho Cut	The user tears at the target with blades formed by psychic power. This move’s critical-hit ratio is boosted by 1 stage.
+zenheadbutt	Zen Headbutt	The user focuses its willpower to its head and attacks the target. This move has a 20% chance of making the target flinch.
+mirrorshot	Mirror Shot	The user lets loose a flash of energy at the target from its polished body. This move has a 30% chance of lowering the target’s accuracy.
+flashcannon	Flash Cannon	The user gathers all its light energy and releases it all at once. This move has a 10% chance of lowering the target’s Sp. Def stat.
+rockclimb	Rock Climb	The user attacks the target by smashing into it with incredible force. This move has a 20% chance of confusing the target.
+defog	Defog	A strong wind blows away the target’s barriers such as Light Screen, Reflect, Aurora Veil, or Safeguard, as well as any entry hazards or terrain from the field. This also lowers the target’s evasiveness, and can clear deep fog.
+trickroom	Trick Room	The user moves last and creates a bizarre area in which slower Pokémon get to move first for 5 turns.
+dracometeor	Draco Meteor	Comets are summoned down from the sky onto the target. The recoil from this move harshly lowers the user’s Sp. Atk stat.
+discharge	Discharge	The user strikes everything around it by letting loose a flare of electricity. This move has a 30% chance of paralyzing targets.
+lavaplume	Lava Plume	The user torches everything around it in an inferno of scarlet flames. This move has a 30% chance of burning targets.
+leafstorm	Leaf Storm	The user whips up a storm of leaves around the target. The recoil from this move harshly lowers the user’s Sp. Atk stat.
+powerwhip	Power Whip	The user violently whirls its vines, tentacles, or the like to lash the target.
+rockwrecker	Rock Wrecker	The user launches a huge boulder at the target to attack. The user can’t move on the next turn.
+crosspoison	Cross Poison	A slashing attack with a poisonous blade that has a 10% chance of poisoning the target. This move’s critical-hit ratio is boosted by 1 stage.
+gunkshot	Gunk Shot	The user shoots filthy garbage at the target to attack. This move has a 30% chance of poisoning the target.
+ironhead	Iron Head	The user slams the target with its steel-hard head. This move has a 20% chance of making the target flinch.
+magnetbomb	Magnet Bomb	The user launches steel bombs that stick to the target. This attack never misses.
+stoneedge	Stone Edge	The user stabs the target with sharpened stones. This move’s critical-hit ratio is boosted by 1 stage.
+captivate	Captivate	If any opposing Pokémon is the opposite gender of the user, it is charmed, which harshly lowers its Sp. Atk stat.
+stealthrock	Stealth Rock	The user lays a trap of levitating stones around the opposing team. Any Pokémon that switch into battle will take damage equal to 1/8 of their max HP. This damage differs depending on the Pokémon’s type matchup with the Rock type.
+grassknot	Grass Knot	The user snares the target with grass and trips it. The heavier the target, the greater the move’s power (ranging between 20 and 120).
+chatter	Chatter	The user attacks the target with sound waves of deafening chatter. This also confuses the target.
+judgment	Judgment	The user releases countless shots of light at the target. This move’s type changes depending on the kind of Plate or Memory Disc the user is holding, if it has the Multitype or RKS System ability.
+bugbite	Bug Bite	The user attacks by biting the target. If the target is holding a Berry, the user eats it and gains its effect.
+chargebeam	Charge Beam	The user attacks the target with an electric charge. The residual electricity has a 70% chance of boosting the user’s Sp. Atk stat.
+woodhammer	Wood Hammer	The user slams its rugged body into the target to attack. The user takes 1/3 of the damage dealt by this move.
+aquajet	Aqua Jet	The user lunges at the target to inflict damage, moving at blinding speed. This move always goes first.
+attackorder	Attack Order	The user calls out its underlings to pummel the target. This move’s critical-hit ratio is boosted by 1 stage.
+defendorder	Defend Order	The user calls out its underlings to shield its body, boosting its Defense and Sp. Def stats.
+healorder	Heal Order	The user calls out its underlings to heal it, restoring 1/2 of its max HP.
+headsmash	Head Smash	The user attacks the target with a hazardous full-power headbutt. The user takes 1/2 of the damage dealt by this move.
+doublehit	Double Hit	The user slams the target with a tail or the like. The target is hit twice in a row.
+roaroftime	Roar of Time	The user blasts the target with power that distorts even time. The user can’t move on the next turn.
+spacialrend	Spacial Rend	The user tears the target along with the space around it. This move’s critical-hit ratio is boosted by 1 stage.
+lunardance	Lunar Dance	The user faints. In return, the Pokémon taking its place will have its HP and PP restored and its status conditions cured.
+crushgrip	Crush Grip	The target is crushed with great force. The more HP the target has left, the greater the move’s power (ranging between 1 and 120).
+magmastorm	Magma Storm	The user traps the target inside a maelstrom of fire. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+darkvoid	Dark Void	Opposing Pokémon are dragged into a world of total darkness that puts them to sleep.
+seedflare	Seed Flare	The user emits a shock wave from its body to attack its target. This move has a 40% chance of harshly lowering the target’s Sp. Def stat.
+ominouswind	Ominous Wind	The user attacks with a gust of horrible wind that makes the target’s skin crawl. This has a 10% chance of boosting the user’s Attack, Defense, Sp. Atk, Sp. Def, and Speed stats all at once.
+shadowforce	Shadow Force	The user disappears on the first turn, then attacks on the next turn. This move can hit a target using a move such as Protect or Detect and removes the effects of those moves.
+honeclaws	Hone Claws	The user sharpens its claws to boost its Attack stat and accuracy.
+wideguard	Wide Guard	During the turn this move is used, the user protects its side from moves that target all allies.
+guardsplit	Guard Split	The user employs its psychic power to add its Defense and Sp. Def stats to the target’s, then splits the total in half for them to share.
+powersplit	Power Split	The user employs its psychic power to add its Attack and Sp. Atk stats to the target’s, then splits the total in half for them to share.
+wonderroom	Wonder Room	The user creates a bizarre area in which Pokémon’s Defense and Sp. Def stats are swapped for 5 turns.
+psyshock	Psyshock	The user materializes an odd psychic wave to attack the target. This move deals physical damage.
+venoshock	Venoshock	The user drenches the target in a special poisonous liquid. This move’s power is doubled if the target is poisoned or badly poisoned.
+autotomize	Autotomize	The user sheds part of its body to make itself lighter. This sharply boosts the user’s Speed stat.
+ragepowder	Rage Powder	The user scatters a cloud of irritating powder to draw attention to itself, making all opposing Pokémon take aim only at the user. Grass-type Pokémon are unaffected.
+telekinesis	Telekinesis	The user makes the target float with its psychic power for 3 turns. The target is immune to Ground-type moves while floating, but moves used against it are sure to hit (except for one-hit KO moves).
+magicroom	Magic Room	The user creates a bizarre area in which Pokémon’s held items lose their effects for 5 turns.
+smackdown	Smack Down	The user throws a stone or similar projectile to attack the target. This move can hit opposing Pokémon that are in the air, including those using Fly, Bounce, or Sky Drop, knocking them down to the ground.
+stormthrow	Storm Throw	The user attacks by striking the target with a fierce blow. This move always lands a critical hit.
+flameburst	Flame Burst	The user attacks the target with a bursting flame. Pokémon next to the target also take damage equal to 1/16 of their max HP.
+sludgewave	Sludge Wave	The user strikes everything around it by swamping the area with a giant sludge wave. This move has a 10% chance of poisoning targets.
+quiverdance	Quiver Dance	The user lightly performs a beautiful, mystic dance. This boosts the user’s Sp. Atk, Sp. Def, and Speed stats.
+heavyslam	Heavy Slam	The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move’s power (ranging between 40 and 120). If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+synchronoise	Synchronoise	Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it.
+electroball	Electro Ball	The user hurls an electric orb at the target. The higher the user’s Speed stat compared to the target’s, the greater this move’s power (ranging between 40 and 150).
+soak	Soak	The user shoots a torrent of water that changes the target’s type to Water.
+flamecharge	Flame Charge	Cloaking itself in flame, the user attacks the target. Then, building up momentum, the user boosts its Speed stat.
+coil	Coil	The user coils up and concentrates. This boosts its Attack and Defense stats as well as its accuracy.
+lowsweep	Low Sweep	The user makes a swift attack on the target’s legs, which lowers the target’s Speed stat.
+acidspray	Acid Spray	The user attacks by spitting fluid that works to melt the target. This also harshly lowers the target’s Sp. Def stat.
+foulplay	Foul Play	The user turns the target’s strength against it. The damage dealt by this move is determined using the target’s Attack stat instead of the user’s Attack stat.
+simplebeam	Simple Beam	The user emits a mysterious psychic wave that changes the target’s Ability to Simple.
+entrainment	Entrainment	The user dances with an odd rhythm that compels the target to mimic it, making the target’s Ability the same as the user’s.
+afteryou	After You	The user helps the target and makes it use its move right after the user.
+round	Round	The user attacks the target with a song. If others use this move, they will act immediately after the initial user, and the power of their Rounds will be doubled.
+echoedvoice	Echoed Voice	The user attacks the target with an echoing voice. This move’s power is increased by 40 each turn this move is used consecutively by any Pokémon, up to a max of 200.
+chipaway	Chip Away	Looking for an opening, the user strikes consistently. This move ignores the target’s stat changes when dealing damage.
+clearsmog	Clear Smog	The user attacks the target by throwing a clump of special mud. All stat changes are eliminated.
+storedpower	Stored Power	The user attacks the target with stored power. This move’s power is increased by 20 for each stage that the user’s stats have been boosted.
+quickguard	Quick Guard	The user protects itself and its allies from priority moves.
+allyswitch	Ally Switch	The user teleports using a strange power and switches places with one of its allies. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+scald	Scald	The user attacks by shooting boiling hot water at the target. This move has a 30% chance of burning the target and will thaw out the user or target if one is frozen.
+shellsmash	Shell Smash	The user breaks its shell, which lowers its Defense and Sp. Def stats but sharply boosts its Attack, Sp. Atk, and Speed stats.
+healpulse	Heal Pulse	The user emits a healing pulse that restores 1/2 of the target’s max HP.
+hex	Hex	The user attacks with relentless intensity. This move’s power is doubled if the target has a status condition.
+skydrop	Sky Drop	The user takes the target into the sky on the first turn, then drops it during the next turn. The target cannot attack while in the sky.
+shiftgear	Shift Gear	The user rotates its gears, boosting its Attack stat and sharply boosting its Speed stat.
+circlethrow	Circle Throw	The user attacks last. In return, the target is thrown and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.
+incinerate	Incinerate	The user attacks opposing Pokémon with fire. If a Pokémon is holding a certain item, such as a Berry, the item becomes burned up and unusable.
+quash	Quash	The user suppresses the target and makes its move go last.
+acrobatics	Acrobatics	The user nimbly strikes the target. The fewer held items, the higher the damage it inflicts (ranging between 55 and 110).
+reflecttype	Reflect Type	The user reflects the target’s type to become the same type as the target.
+retaliate	Retaliate	The user takes revenge for a fainted ally. This move’s power is doubled if an ally fainted in the previous turn.
+finalgambit	Final Gambit	The user risks everything to attack the target. The user faints but inflicts damage equal to its remaining HP at the time this move was used.
+bestow	Bestow	The user passes a held item to the target.
+inferno	Inferno	The user attacks by engulfing the target in an intense fire. This leaves the target with a burn.
+waterpledge	Water Pledge	A column of water hits the target. When used alongside Fire Pledge or Grass Pledge, the moves will combine for 150 base power and summon a rainbow or vast swamp, respectively, for 4 turns.
+firepledge	Fire Pledge	A column of fire hits the target. When used alongside Water Pledge or Grass Pledge, the moves will combine for 150 base power and summon a rainbow or vast sea of fire, respectively, for 4 turns.
+grasspledge	Grass Pledge	A column of grass hits the target. When used alongside Water Pledge or Fire Pledge, the moves will combine for 150 base power and summon a vast swamp or sea of fire, respectively, for 4 turns.
+voltswitch	Volt Switch	After making its attack, the user rushes back to switch places with a party Pokémon in waiting.
+strugglebug	Struggle Bug	The user attacks by struggling against opposing Pokémon. This also lowers their Sp. Atk stats.
+bulldoze	Bulldoze	The user strikes everything around it by stomping down on the ground. This lowers the Speed stats of those hit.
+frostbreath	Frost Breath	The user attacks by blowing its cold breath on the target. This move always lands a critical hit.
+dragontail	Dragon Tail	The user attacks last. In return, the target is knocked away and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.
+workup	Work Up	The user is roused, and its Attack and Sp. Atk stats are boosted.
+electroweb	Electroweb	The user captures opposing Pokémon in an electric net to inflict damage. This also lowers their Speed stats.
+wildcharge	Wild Charge	The user shrouds itself in electricity and smashes into its target. The user takes 1/4 of the damage dealt by this move.
+drillrun	Drill Run	The user crashes into the target while rotating its body like a drill. This move’s critical-hit ratio is boosted by 1 stage.
+dualchop	Dual Chop	The user attacks its target by hitting it with brutal strikes. The target is hit twice in a row.
+heartstamp	Heart Stamp	The user unleashes a vicious blow after its cute act makes the target less wary. This move has a 30% chance of making the target flinch.
+hornleech	Horn Leech	The user drains the target’s energy with its horns. The user’s HP is restored by 1/2 of the damage dealt by this move.
+sacredsword	Sacred Sword	The user attacks by slicing with a sword. This move ignores the target’s stat changes when dealing damage.
+razorshell	Razor Shell	The user cuts the target with sharp shells to inflict damage. This move has a 50% chance of lowering the target’s Defense stat.
+heatcrash	Heat Crash	The user slams into the target with its flame-covered body. The more the user outweighs the target, the greater the move’s power (ranging between 40 and 120). If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+leaftornado	Leaf Tornado	The user attacks its target by encircling it in sharp leaves. This move has a 50% chance of lowering the target’s accuracy.
+steamroller	Steamroller	The user crushes its target by rolling over the target with its rolled-up body. This move has a 30% chance of making the target flinch.
+cottonguard	Cotton Guard	The user protects itself by wrapping its body in soft cotton, drastically boosting its Defense stat.
+nightdaze	Night Daze	The user looses a pitch-black shock wave at the target to inflict damage. This move has a 40% chance of lowering the target’s accuracy.
+psystrike	Psystrike	The user materializes an odd psychic wave to attack the target. This move deals physical damage.
+tailslap	Tail Slap	The user attacks by striking the target with its hard tail. This move hits 2-5 times in a row.
+hurricane	Hurricane	The user attacks by wrapping its opponent in a fierce wind. This move has a 30% chance of confusing the target and never misses in rain. In harsh sunlight, this move’s accuracy is 50%. This move can hit a target that’s in the air from Fly, Bounce, or Sky Drop.
+headcharge	Head Charge	The user charges its head into the target, using its powerful guard hair. The user takes 1/4 of the damage dealt by this move.
+geargrind	Gear Grind	The user attacks by throwing steel gears at the target twice in a row.
+searingshot	Searing Shot	The user torches everything around it in an inferno of scarlet flames. This move has a 30% chance of burning targets.
+technoblast	Techno Blast	The user attacks by firing a beam of light at the target. When used by Genesect, this move’s type changes depending on the Drive being held.
+relicsong	Relic Song	The user sings an ancient song and attacks by appealing to the hearts of the listening opposing Pokémon. This move has a 10% chance of putting the target to sleep. If used by Meloetta, it will cause it to swap between its Aria and Pirouette Formes.
+secretsword	Secret Sword	The user attacks by slashing targets with a long sword. The odd power contained in the sword does physical damage to the target. If a Keldeo knows this move, it will transform into its Resolute form.
+glaciate	Glaciate	The user attacks by blowing freezing cold air at opposing Pokémon. This also lowers their Speed stats.
+boltstrike	Bolt Strike	The user surrounds itself with a great amount of electricity and charges the target. This move has a 20% chance of paralyzing the target.
+blueflare	Blue Flare	The user attacks by engulfing the target in an intense, yet beautiful, blue flame. This move has a 20% chance of burning the target.
+fierydance	Fiery Dance	Cloaked in flames, the user dances and attacks the target. This move has a 50% chance of boosting the user’s Sp. Atk stat.
+freezeshock	Freeze Shock	The turn after using this move, the user hits the target with electrically charged ice to inflict damage. This move has a 30% chance of paralyzing the target.
+iceburn	Ice Burn	The turn after using this move, the user surrounds the target with an ultracold, freezing wind to inflict damage. This move has a 30% chance of burning the target.
+snarl	Snarl	The user snarls incessantly at targets, lowering the Sp. Atk stats of opposing Pokémon.
+iciclecrash	Icicle Crash	The user attacks by crashing large icicles onto the target. This move has a 30% chance of making the target flinch.
+vcreate	V-create	The user emits a hot flame from its forehead and hurls itself at the target to inflict damage. This also lowers the user’s Defense, Sp. Def, and Speed stats.
+fusionflare	Fusion Flare	The user brings down a giant flame. This move’s power is doubled if used after Fusion Bolt. The user is thawed out if it is frozen.
+fusionbolt	Fusion Bolt	The user throws down a giant lightning bolt. This move’s power is doubled if used after Fusion Flare.
+flyingpress	Flying Press	The user dives down onto the target from the sky. This move is Fighting and Flying type simultaneously. If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+matblock	Mat Block	Using a pulled-up mat as a shield, the user protects itself and its allies from damaging moves. This move does not stop status moves and will fail unless it is the first move used by the user after it enters a battle.
+belch	Belch	The user lets out a damaging belch at the target. The user must eat a held Berry to use this move.
+rototiller	Rototiller	Tilling the soil, the user makes it easier for plants to grow. This boosts the Attack and Sp. Atk stats of all grounded Grass-type Pokémon in battle.
+stickyweb	Sticky Web	The user weaves a sticky net around the opposing team. Pokémon that switch into battle will have their Speed stats lowered. Pokémon such as Flying types or ones with the Levitate Ability are unaffected.
+fellstinger	Fell Stinger	When the user knocks out a target with this move, the user’s Attack stat is boosted drastically.
+phantomforce	Phantom Force	The user attacks by disappearing into the shadows for a short time, then surfacing to strike the target on the next turn. This move can hit a target using a move such as Protect or Detect and removes the effects of those moves.
+trickortreat	Trick-or-Treat	The user invites targets to go trick-or-treating. This adds the Ghost type to the target’s type.
+nobleroar	Noble Roar	Letting out a noble roar, the user intimidates the target and lowers the target’s Attack and Sp. Atk stats.
+iondeluge	Ion Deluge	The user disperses electrically charged particles, which changes Normal-type moves to Electric-type moves.
+paraboliccharge	Parabolic Charge	The user attacks by unleashing a wave of electricity. The user’s HP is restored by 1/2 of the damage dealt by this move.
+forestscurse	Forest’s Curse	The user places the curse of the forest on targets. This adds the Grass type to the target’s type.
+petalblizzard	Petal Blizzard	The user stirs up a violent petal blizzard and damages everything around it.
+freezedry	Freeze-Dry	The user attacks by rapidly lowering the target’s temperature. This move is super effective on Water-type Pokémon.
+disarmingvoice	Disarming Voice	Letting out a charming cry, the user does emotional damage to opposing Pokémon. This attack never misses.
+partingshot	Parting Shot	With a parting threat, the user lowers the target’s Attack and Sp. Atk stats. The user then switches out of battle to be replaced by another party Pokémon.
+topsyturvy	Topsy-Turvy	All stat changes affecting the target turn topsy-turvy and become the opposite of what they were.
+drainingkiss	Draining Kiss	The user steals the target’s HP with a kiss. The user’s HP is restored by ¾ of the damage dealt by this move.
+craftyshield	Crafty Shield	The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage.
+flowershield	Flower Shield	The user boosts the Defense stats of all Grass-type Pokémon in battle with a mysterious power.
+grassyterrain	Grassy Terrain	Turns the entire field into Grassy Terrain for 5 turns. Pokémon on the ground have their Grass-type moves boosted by 30% and restore 1/16 of their max HP at the end of every turn.
+mistyterrain	Misty Terrain	Turns the entire field into Misty Terrain for 5 turns. Pokémon on the ground are protected from status conditions and receive half the damage dealt by Dragon-type moves.
+electrify	Electrify	If this move hits the target before it uses a move, its move becomes Electric type for that turn.
+playrough	Play Rough	The user attacks by playing rough with the target. This move has a 10% chance of lowering the target’s Attack stat.
+fairywind	Fairy Wind	The user attacks by stirring up a fairy wind to strike the target.
+moonblast	Moonblast	Borrowing the power of the moon, the user attacks the target. This move has 10% chance of lowering the target’s Sp. Atk stat.
+boomburst	Boomburst	The user attacks everything around it with the destructive power of a terrible explosive sound.
+fairylock	Fairy Lock	By locking down the battlefield, the user keeps all Pokémon from fleeing or switching out of battle during the next turn.
+kingsshield	King’s Shield	The user takes a defensive stance while it protects itself from damage. Any attackers that use contact moves against the user during this turn will have their Attack stats lowered. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+playnice	Play Nice	The user and the target become friends, and the target loses its will to fight. This lowers the target’s Attack stat.
+confide	Confide	The user tells the target a secret, and the target loses its ability to concentrate. This lowers the target’s Sp. Atk stat.
+diamondstorm	Diamond Storm	The user attacks by engulfing targets in a storm of diamonds. This move has a 50% chance to sharply boost the user’s Defense stat.
+steameruption	Steam Eruption	The user attacks by immersing targets in superheated steam. This move has a 30% chance of burning the target and will thaw out the user or target if one is frozen.
+hyperspacehole	Hyperspace Hole	The user attacks by using a hyperspace hole to appear right near targets without warning. This attack can hit a target using a move such as Protect or Detect.
+watershuriken	Water Shuriken	The user hits the target with throwing stars 2-5 times in a row. This move always goes first. When used by Ash-Greninja, this move’s power is increased to 20 and will always strike 3 times in a row.
+mysticalfire	Mystical Fire	The user attacks by breathing a special kind of searing flame. This also lowers the target’s Sp. Atk stat.
+spikyshield	Spiky Shield	The user protects itself from incoming moves for the turn. Any attackers that use contact moves against the user during this turn take damage equal to 1/8 of their max HP. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+aromaticmist	Aromatic Mist	The user boosts the Sp. Def stat of an ally Pokémon by using a mysterious aroma.
+eerieimpulse	Eerie Impulse	The user’s body generates an eerie impulse. Exposing the target to it harshly lowers the target’s Sp. Atk stat.
+venomdrench	Venom Drench	Opposing Pokémon are drenched in an odd poisonous liquid. This lowers the Attack, Sp. Atk, and Speed stats of a poisoned target.
+powder	Powder	The user covers the target in a combustible powder. If the target uses a Fire-type move, the powder explodes and the target takes damages equal to 1/4 of their max HP.
+geomancy	Geomancy	The user absorbs energy on the first turn, then sharply boosts its Sp. Atk, Sp. Def, and Speed stats on the next turn.
+magneticflux	Magnetic Flux	The user manipulates magnetic fields, which boosts the Defense and Sp. Def stats of ally Pokémon with the Plus Ability or the Minus Ability.
+happyhour	Happy Hour	Using Happy Hour doubles the amount of prize money received after battle.
+electricterrain	Electric Terrain	The user turns the ground into Electric Terrain for 5 turns. Pokémon on the ground have their Electric-type moves boosted by 30% and cannot be put to sleep.
+dazzlinggleam	Dazzling Gleam	The user damages opposing Pokémon by emitting a powerful flash.
+celebrate	Celebrate	The Pokémon congratulates you on your special day!
+holdhands	Hold Hands	The user and an ally hold hands. This makes them very happy.
+babydolleyes	Baby-Doll Eyes	The user stares at the target with its baby-doll eyes, which lowers the target’s Attack stat. This move always goes first.
+nuzzle	Nuzzle	The user attacks by nuzzling its electrified cheeks against the target. This paralyzes the target.
+holdback	Hold Back	The user holds back when it attacks, and the target is left with at least 1 HP.
+infestation	Infestation	The target is infested and attacked. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn. The target can’t flee or be switched out of battle during this time.
+poweruppunch	Power-Up Punch	The user attacks targets with a punch that will make its own fist tougher. This boosts the user’s Attack stat.
+oblivionwing	Oblivion Wing	The user unleashes a wave of destruction to absorb HP from target. The user’s HP is restored by ¾ of the damage dealt by this move.
+thousandarrows	Thousand Arrows	The user attacks by generating countless arrows from its internal energy and raining them down upon targets. This move can hit opposing Pokémon that are in the air, including those using Fly, Bounce, or Sky Drop, knocking them down to the ground.
+thousandwaves	Thousand Waves	The user attacks by unleashing a wave that crawls along the ground. Any Pokémon hit by the wave cannot flee or be switched out of battle.
+landswrath	Land’s Wrath	The user gathers the energy of the land and focuses that power on opposing Pokémon to inflict damage.
+lightofruin	Light of Ruin	Drawing in mystical energy, the user fires a powerful beam of light. The user takes 1/2 of the damage dealt by this move.
+originpulse	Origin Pulse	The user attacks opposing Pokémon with countless beams of light that glow a deep and brilliant blue.
+precipiceblades	Precipice Blades	The user attacks opposing Pokémon by manifesting the power of the land in fearsome blades of stone.
+dragonascent	Dragon Ascent	After soaring upward, the user attacks the target by dropping out of the sky at high speed. This also lowers the user’s Defense and Sp. Def stats.
+hyperspacefury	Hyperspace Fury	Using its many arms, the user unleashes a barrage of attacks that ignore the effects of moves like Protect and Detect. This also lowers the user’s Defense stat.
+breakneckblitzphysical	Breakneck Blitz	The user builds up its momentum using its Z-Power and crashes into the target at full speed. The power varies, depending on the original move.
+breakneckblitzspecial	Breakneck Blitz	Dummy Data
+alloutpummelingphysical	All-Out Pummeling	The user rams an energy orb created by its Z-Power into the target with full force. The power varies, depending on the original move.
+alloutpummelingspecial	All-Out Pummeling	Dummy Data
+supersonicskystrikephysical	Supersonic Skystrike	The user soars up with its Z-Power and plummets toward the target at full speed. The power varies, depending on the original move.
+supersonicskystrikespecial	Supersonic Skystrike	Dummy Data
+aciddownpourphysical	Acid Downpour	The user creates a poisonous swamp using its Z-Power and sinks the target into it at full force. The power varies, depending on the original move.
+aciddownpourspecial	Acid Downpour	Dummy Data
+tectonicragephysical	Tectonic Rage	The user burrows deep into the ground and slams into the target with the full force of its Z-Power. The power varies, depending on the original move.
+tectonicragespecial	Tectonic Rage	Dummy Data
+continentalcrushphysical	Continental Crush	The user summons a huge rock mountain using its Z-Power and drops it onto the target with full force. The power varies, depending on the original move.
+continentalcrushspecial	Continental Crush	Dummy Data
+savagespinoutphysical	Savage Spin-Out	The user binds the target with full force with threads of silk that the user spits using its Z-Power. The power varies, depending on the original move.
+savagespinoutspecial	Savage Spin-Out	Dummy Data
+neverendingnightmarephysical	Never-Ending Nightmare	Deep-seated grudges summoned by the user’s Z-Power trap the target. The power varies, depending on the original move.
+neverendingnightmarespecial	Never-Ending Nightmare	Dummy Data
+corkscrewcrashphysical	Corkscrew Crash	The user spins very fast and rams into the target with the full force of its Z-Power. The power varies, depending on the original move.
+corkscrewcrashspecial	Corkscrew Crash	Dummy Data
+infernooverdrivephysical	Inferno Overdrive	The user breathes a stream of intense fire toward the target with the full force of its Z-Power. The power varies depending on the original move.
+infernooverdrivespecial	Inferno Overdrive	Dummy Data
+hydrovortexphysical	Hydro Vortex	The user creates a huge whirling current using its Z-Power to swallow the target with full force. The power varies, depending on the original move.
+hydrovortexspecial	Hydro Vortex	Dummy Data
+bloomdoomphysical	Bloom Doom	The user collects energy from plants using its Z-Power and attacks the target with full force. The power varies, depending on the original move.
+bloomdoomspecial	Bloom Doom	Dummy Data
+gigavolthavocphysical	Gigavolt Havoc	The user hits the target with a powerful electric current collected by its Z-Power. The power varies, depending on the original move.
+gigavolthavocspecial	Gigavolt Havoc	Dummy Data
+shatteredpsychephysical	Shattered Psyche	The user controls the target with its Z-Power and hurts the target with full force. The power varies, depending on the original move.
+shatteredpsychespecial	Shattered Psyche	Dummy Data
+subzeroslammerphysical	Subzero Slammer	The user dramatically drops the temperature using its Z-Power and freezes the target with full force. The power varies, depending on the original move.
+subzeroslammerspecial	Subzero Slammer	Dummy Data
+devastatingdrakephysical	Devastating Drake	The user materializes its aura using its Z-Power and attacks the target with full force. The power varies, depending on the original move.
+devastatingdrakespecial	Devastating Drake	Dummy Data
+blackholeeclipsephysical	Black Hole Eclipse	The user gathers dark energy using its Z-Power and sucks the target into it. The power varies, depending on the original move.
+blackholeeclipsespecial	Black Hole Eclipse	Dummy Data
+twinkletacklephysical	Twinkle Tackle	The user creates a very charming space using its Z-Power and totally toys with the target. The power varies, depending on the original move.
+twinkletacklespecial	Twinkle Tackle	Dummy Data
+catastropika	Catastropika	The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force.
+shoreup	Shore Up	The user restores 1/2 of its max HP by kicking up a cloud of sand from its surroundings. In a sandstorm, the user restores 2/3 of its max HP instead.
+firstimpression	First Impression	The user attacks with tremendous power, but this move only succeeds if it is used first thing upon the user entering a battle.
+banefulbunker	Baneful Bunker	The user protects itself from incoming moves for the turn. Any attackers that use contact moves against the user during this turn become poisoned. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+spiritshackle	Spirit Shackle	The user attacks while simultaneously stitching the target’s shadow to the ground to prevent the target from fleeing or switching out of battle.
+darkestlariat	Darkest Lariat	The user swings both arms and hits the target. This move ignores the target’s stat changes when dealing damage.
+sparklingaria	Sparkling Aria	The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be cured by the touch of these bubbles.
+icehammer	Ice Hammer	The user swings its strong, heavy fist at the target to inflict damage. This also lowers the user’s Speed stat.
+floralhealing	Floral Healing	The user restores 1/2 of the target’s max HP. When the ground is Grassy Terrain, 2/3 of the target’s max HP is restored instead.
+highhorsepower	High Horsepower	The user fiercely attacks the target using its entire body.
+strengthsap	Strength Sap	The user restores its own HP by the same amount as the target’s Attack stat. It then lowers the target’s Attack stat.
+solarblade	Solar Blade	The user gathers light on the first turn, then fills a blade with the light’s energy and attacks on the next turn. In harsh sunlight, the user can attack immediately. This move’s power is halved in any other weather condition.
+leafage	Leafage	The user attacks by pelting the target with leaves.
+spotlight	Spotlight	The user shines a spotlight on the target so that only the target will be attacked during the turn.
+toxicthread	Toxic Thread	The user shoots poisonous threads to poison the target and harshly lower the target’s Speed stat.
+laserfocus	Laser Focus	The user concentrates intensely. The attack on the next turn always results in a critical hit.
+gearup	Gear Up	The user engages its gears to boost the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.
+throatchop	Throat Chop	The user attacks the target’s throat, and the resultant suffering prevents the target from using sound-based moves for 2 turns.
+pollenpuff	Pollen Puff	The user attacks the enemy with a pollen puff that explodes. When used on an ally, this move restores 1/2 of its max HP instead of dealing damage.
+anchorshot	Anchor Shot	The user entangles the target with its anchor chain while attacking. The target becomes unable to flee or switched out of battle.
+psychicterrain	Psychic Terrain	The user turns the ground into Psychic Terrain for 5 turns. Pokémon on the ground have their Psychic-type moves boosted by 30% and cannot use or be targeted by moves with increased priority.
+lunge	Lunge	The user makes a lunge at the target, attacking with full force. This also lowers the target’s Attack stat.
+firelash	Fire Lash	The user strikes the target with a burning lash. This also lowers the target’s Defense stat.
+powertrip	Power Trip	The user boasts its strength and attacks the target. This move’s power is increased by 20 for each stage that the user’s stats have been boosted.
+burnup	Burn Up	To inflict massive damage, the user burns itself out and loses the Fire type. The user is thawed out if it is frozen. This move fails unless it is used by a Fire type.
+speedswap	Speed Swap	The user exchanges Speed stats with the target.
+smartstrike	Smart Strike	The user stabs the target with a sharp horn. This attack never misses.
+purify	Purify	The user cures the target’s status condition. If the move succeeds, it also restores the user’s own HP.
+revelationdance	Revelation Dance	The user attacks the target by dancing with all its might. This move becomes the same type as the user’s primary type.
+coreenforcer	Core Enforcer	The user attacks by firing off a powerful beam that scorches across the battlefield. If the Pokémon damaged by this move have already used their moves that turn, this move eliminates the effects of those Pokémon’s Abilities.
+tropkick	Trop Kick	The user lands an intense kick of tropical origins on the target. This also lowers the target’s Attack stat.
+instruct	Instruct	The user instructs the target to reuse the move last used by the target.
+beakblast	Beak Blast	The user first heats up its beak, and then it waits before attacking the target. Making direct contact with the user while it’s heating up its beak results in a burn.
+clangingscales	Clanging Scales	The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user’s Defense stat is lowered after the attack.
+dragonhammer	Dragon Hammer	The user wields its body like a hammer to attack the target and inflict damage.
+brutalswing	Brutal Swing	The user swings its body around violently to inflict damage on everything in its vicinity.
+auroraveil	Aurora Veil	This move halves the damage taken from physical and special moves for 5 turns. In Double Battles, this damage is reduced by 1/3 instead. This can be used only under hail or when it is snowing.
+sinisterarrowraid	Sinister Arrow Raid	The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force.
+maliciousmoonsault	Malicious Moonsault	The user, Incineroar, strengthens its body using its Z-Power and crashes into the target with full force.
+oceanicoperetta	Oceanic Operetta	The user, Primarina, summons a massive amount of water using its Z-Power and attacks the target with full force.
+guardianofalola	Guardian of Alola	The user, the Land Spirit Pokémon, obtains Alola’s energy using its Z-Power and attacks the target with full force. This reduces the target’s HP greatly.
+soulstealing7starstrike	Soul-Stealing 7-Star Strike	After obtaining Z-Power, the user, Marshadow, punches and kicks the target consecutively with full force.
+stokedsparksurfer	Stoked Sparksurfer	After obtaining Z-Power, the user, Alolan Raichu, attacks the target with full force. This move leaves the target with paralysis.
+pulverizingpancake	Pulverizing Pancake	Z-Power brings out the true capabilities of the user, Snorlax. The Pokémon moves its enormous body energetically and attacks the target with full force.
+extremeevoboost	Extreme Evoboost	After obtaining Z-Power, the user, Eevee, gets energy from its evolved friends and boosts its stats sharply.
+genesissupernova	Genesis Supernova	After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy.
+shelltrap	Shell Trap	The user sets a shell trap. If the user is hit by a physical move, the trap will explode and inflict damage on opposing Pokémon.
+fleurcannon	Fleur Cannon	The user attacks by unleashing a strong beam. The recoil from this move harshly lowers the user’s Sp. Atk stat.
+psychicfangs	Psychic Fangs	The user attacks by biting targets using psychic power. This move can also break barriers such as Light Screen, Reflect, and Aurora Veil.
+stompingtantrum	Stomping Tantrum	Driven by frustration, the user attacks the target. This move’s power is doubled if the user couldn’t act, or its move missed or failed on the previous turn.
+shadowbone	Shadow Bone	The user attacks by beating targets with a bone in which a spirit resides. This move has a 20% chance of lowering the target’s Defense stat.
+accelerock	Accelerock	The user smashes into the target at high speed. This move always goes first.
+liquidation	Liquidation	The user slams into the target using a full-force blast of water. This move has a 20% chance of lowering the target’s Defense stat.
+prismaticlaser	Prismatic Laser	The user shoots powerful lasers using the power of a prism. The user can’t move on the next turn.
+spectralthief	Spectral Thief	The user hides in the target’s shadow, steals the target’s stat boosts, and then attacks.
+sunsteelstrike	Sunsteel Strike	The user slams into the target with the force of a meteor. This move can ignore a target’s ability (with certain exceptions).
+moongeistbeam	Moongeist Beam	The user emits a sinister ray to attack the target. This move can ignore a target’s ability (with certain exceptions).
+tearfullook	Tearful Look	The user gets teary-eyed to make the target lose its combative spirit. This lowers the target’s Attack and Sp. Atk stats.
+zingzap	Zing Zap	The user crashes into the target, delivering a powerful electric shock. This move has a 30% chance of making the target flinch.
+naturesmadness	Nature’s Madness	The user hits the target with the full wrath of nature. This deals damage to the target equal to 1/2 of their remaining HP.
+multiattack	Multi-Attack	Cloaking itself in powerful energy, the user slams into the target to inflict damage. This move’s type changes depending on the kind of Memory Disc or Plate the user is holding, if it has the RKS System or Multitype ability.
+tenmillionvoltthunderbolt	10,000,000 Volt Thunderbolt	The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. This move’s critical-hit ratio is boosted by 2 stages.
+mindblown	Mind Blown	The user attacks everything around it by causing its own head to explode. After attacking, the user takes damage equal to 1/2 of its max HP.
+plasmafists	Plasma Fists	The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves.
+photongeyser	Photon Geyser	The user attacks the target with a pillar of light. This move inflicts damage using the Attack or Sp. Atk stat—whichever is higher for the user. This move can ignore the effect of the target’s Ability (with certain exceptions).
+lightthatburnsthesky	Light That Burns the Sky	This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move can ignore the effect of the target’s Ability (with certain exceptions).
+searingsunrazesmash	Searing Sunraze Smash	After obtaining Z-Power, the user, Solgaleo, attacks the target with full force. This move can ignore the effect of the target’s Ability (with certain exceptions).
+menacingmoonrazemaelstrom	Menacing Moonraze Maelstrom	After obtaining Z-Power, the user, Lunala, attacks the target with full force. This move can ignore the effect of the target’s Ability (with certain exceptions).
+letssnuggleforever	Let’s Snuggle Forever	After obtaining Z-Power, the user, Mimikyu, punches the target with full force.
+splinteredstormshards	Splintered Stormshards	After obtaining Z-Power, the user, Lycanroc, attacks the target with full force. This move negates the effect on the battlefield.
+clangoroussoulblaze	Clangorous Soulblaze	After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user’s stats.
+zippyzap	Zippy Zap	The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit.
+splishysplash	Splishy Splash	The user charges a huge wave with electricity and hits the opposing Pokémon with the wave. This move has a 30% chance of paralyzing targets.
+floatyfall	Floaty Fall	The user floats in the air, and then dives at a steep angle to attack the target. This move has a 30% chance of making the target flinch.
+pikapapow	Pika Papow	The more Pikachu loves its Trainer, the greater the move’s power (ranging between 1 and 102). This attack never misses.
+bouncybubble	Bouncy Bubble	The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by 100% of the damage dealt by this move.
+buzzybuzz	Buzzy Buzz	The user shoots a jolt of electricity to attack the target. This also paralyzes the target.
+sizzlyslide	Sizzly Slide	The user cloaks itself in fire and charges at the target. This also burns the target.
+glitzyglow	Glitzy Glow	The user bombards the target with telekinetic force. A wondrous wall of light is put up to halve the damage taken from special moves. In Double Battles, this damage is reduced by 1/3 instead.
+baddybad	Baddy Bad	The user acts bad and attacks the target. A wondrous wall of light is put up to halve the damage taken from physical moves. In Double Battles, this damage is reduced by 1/3 instead.
+sappyseed	Sappy Seed	The user grows a gigantic stalk that scatters seeds to attack the target. At the end of every turn, 1/8 of the target’s max HP gets absorbed by the user or any Pokémon that takes its place in battle.
+freezyfrost	Freezy Frost	The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle.
+sparklyswirl	Sparkly Swirl	The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also cures the status conditions of all its fellow party Pokémon and allies.
+veeveevolley	Veevee Volley	The more Eevee loves its Trainer, the greater the move’s power (ranging between 1 and 102). This attack never misses.
+doubleironbash	Double Iron Bash	The user rotates, steeling itself with a spin, and then strikes with its arms twice in a row. Each hit has a 30% chance of making the target flinch.
+maxguard	Max Guard	This move enables the user to protect itself from all attacks. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+dynamaxcannon	Dynamax Cannon	The user condenses energy within its body and unleashes that energy from its core to inflict damage. The higher the target’s level exceeds the current level cap, the greater this move’s power (ranging from 100 to 200).
+snipeshot	Snipe Shot	The user ignores the effects of Abilities and moves that draw in moves. This move’s critical-hit ratio is boosted by 1 stage.
+jawlock	Jaw Lock	This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field.
+stuffcheeks	Stuff Cheeks	The user eats its held Berry, then sharply boosts its Defense stat.
+noretreat	No Retreat	The user puts everything on the line and boosts its Attack, Defense, Sp. Atk, Sp. Def, and Speed stats. In exchange, the user loses the ability to flee or be switched out of battle. Can only be used once per time the user enters battle.
+tarshot	Tar Shot	The user pours sticky tar over the target, lowering the target’s Speed stat. Fire-type moves used on the target have their effectiveness doubled.
+magicpowder	Magic Powder	The user scatters a cloud of magic powder that changes the target’s type to Psychic. Grass-type Pokémon are unaffected.
+dragondarts	Dragon Darts	The user attacks twice by launching draconic arrows. If there are 2 opposing Pokémon, each of them is attacked once.
+teatime	Teatime	The user has teatime with all the Pokémon currently in the battle. Each Pokémon eats a held Berry.
+octolock	Octolock	The user locks the target in and prevents it from fleeing or switching out of battle. This move also lowers the target’s Defense and Sp. Def every turn.
+boltbeak	Bolt Beak	The user stabs the target with its electrified beak. This move’s power is doubled if the user moves before the target.
+fishiousrend	Fishious Rend	The user rends the target with its hard gills. This move’s power is doubled if the user moves before the target.
+courtchange	Court Change	With its mysterious power, the user swaps the effects on either side of the field.
+maxflare	Max Flare	This is a Fire-type attack Dynamax Pokémon use. The user intensifies the sun for 5 turns.
+maxflutterby	Max Flutterby	This is a Bug-type attack Dynamax Pokémon use. This lowers the target’s Sp. Atk stat.
+maxlightning	Max Lightning	This is an Electric-type attack Dynamax Pokémon use. The user turns the ground into Electric Terrain for 5 turns.
+maxstrike	Max Strike	This is a Normal-type attack Dynamax Pokémon use. This lowers the target’s Speed stat.
+maxknuckle	Max Knuckle	This is a Fighting-type attack Dynamax Pokémon use. This boosts ally Pokémon’s Attack stats.
+maxphantasm	Max Phantasm	This is a Ghost-type attack Dynamax Pokémon use. This lowers the target’s Defense stat.
+maxhailstorm	Max Hailstorm	This is an Ice-type attack Dynamax Pokémon use. The user summons a hailstorm lasting 5 turns.
+maxooze	Max Ooze	This is a Poison-type attack Dynamax Pokémon use. This boosts ally Pokémon’s Sp. Atk stats.
+maxgeyser	Max Geyser	This is a Water-type attack Dynamax Pokémon use. The user summons a heavy rain that falls for 5 turns.
+maxairstream	Max Airstream	This is a Flying-type attack Dynamax Pokémon use. This boosts ally Pokémon’s Speed stats.
+maxstarfall	Max Starfall	This is a Fairy-type attack Dynamax Pokémon use. The user turns the ground into Misty Terrain for 5 turns.
+maxwyrmwind	Max Wyrmwind	This is a Dragon-type attack Dynamax Pokémon use. This lowers the target’s Attack stat.
+maxmindstorm	Max Mindstorm	This is a Psychic-type attack Dynamax Pokémon use. The user turns the ground into Psychic Terrain for 5 turns.
+maxrockfall	Max Rockfall	This is a Rock-type attack Dynamax Pokémon use. The user summons a sandstorm lasting 5 turns.
+maxquake	Max Quake	This is a Ground-type attack Dynamax Pokémon use. This boosts ally Pokémon’s Sp. Def stats.
+maxdarkness	Max Darkness	This is a Dark-type attack Dynamax Pokémon use. This lowers the target’s Sp. Def stat.
+maxovergrowth	Max Overgrowth	This is a Grass-type attack Dynamax Pokémon use. The user turns the ground into Grassy Terrain for 5 turns.
+maxsteelspike	Max Steelspike	This is a Steel-type attack Dynamax Pokémon use. This boosts ally Pokémon’s Defense stats.
+clangoroussoul	Clangorous Soul	The user loses 1/3 of its max HP to boost its Attack, Defense, Sp. Atk, Sp. Def, and Speed stats. This move fails if the user doesn’t have enough remaining HP.
+bodypress	Body Press	The user attacks by slamming its body into the target. The damage dealt by this move is determined using the user’s Defense stat instead of its Attack stat.
+decorate	Decorate	The user sharply boosts the target’s Attack and Sp. Atk stats by decorating the target.
+drumbeating	Drum Beating	The user plays its drum, controlling the drum’s roots to attack the target. This also lowers the target’s Speed stat.
+snaptrap	Snap Trap	The user snares the target in a snap trap. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+pyroball	Pyro Ball	The user attacks by igniting a small stone and launching it as a fiery ball at the target. This move has a 10% chance of burning the target and thaws out the user if it is frozen.
+behemothblade	Behemoth Blade	The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack.
+behemothbash	Behemoth Bash	The user’s body becomes a firm shield and slams into the target fiercely.
+aurawheel	Aura Wheel	The user attacks and boosts its Speed with the energy stored in its cheeks. When used by Morpeko, this move’s type changes depending on its form.
+breakingswipe	Breaking Swipe	The user swings its tough tail wildly and attacks opposing Pokémon. This also lowers their Attack stats.
+branchpoke	Branch Poke	The user attacks the target by poking it with a sharply pointed branch.
+overdrive	Overdrive	The user attacks opposing Pokémon with an electrifying soundwave, causing a huge echo and strong vibration.
+appleacid	Apple Acid	The user attacks the target with an acidic liquid created from tart apples. This also lowers the target’s Sp. Def stat.
+gravapple	Grav Apple	The user inflicts damage by dropping an apple from high above. This also lowers the target’s Defense stat. This move’s power is boosted by 50% when Gravity is active.
+spiritbreak	Spirit Break	The user attacks the target with so much force that it could break the target’s spirit. This also lowers the target’s Sp. Atk stat.
+strangesteam	Strange Steam	The user attacks the target by emitting steam. This move has a 20% chance of confusing the target.
+lifedew	Life Dew	The user scatters mysterious water around and restores 1/4 of the user and its ally Pokémon’s max HP.
+obstruct	Obstruct	This move enables the user to protect itself from all attacks. Any attackers that use contact moves against the user during this turn will have their Defense stats harshly lowered. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+falsesurrender	False Surrender	The user pretends to bow its head, but then it stabs the target with its disheveled hair. This attack never misses.
+meteorassault	Meteor Assault	The user attacks wildly with a long weapon. However, this also makes the user stagger, leaving it unable to move next turn.
+eternabeam	Eternabeam	This is Eternatus’s most powerful attack in its original form. The user can’t move on the next turn.
+steelbeam	Steel Beam	The user fires a beam of steel that it collected from its entire body. After attacking, the user takes damage equal to 1/2 of its max HP.
+expandingforce	Expanding Force	The user attacks the target with its psychic power. If the user is on Psychic Terrain, this move’s power is boosted by 50% and its range extends to all opponents.
+steelroller	Steel Roller	The user attacks while destroying the terrain. This move fails if the ground hasn’t turned into a terrain.
+scaleshot	Scale Shot	The user attacks by shooting scales 2-5 times in a row. This move boosts the user’s Speed stat but lowers its Defense stat.
+meteorbeam	Meteor Beam	The user gathers energy from space and boosts its Sp. Atk stat on the first turn, then attacks on the next turn.
+shellsidearm	Shell Side Arm	This move is either physical or special—whichever will inflict more damage. This move has a 20% chance of poisoning the target.
+mistyexplosion	Misty Explosion	The user attacks everything around it and faints upon using this move. If the user is on Misty Terrain, this move’s power is boosted by 50%.
+grassyglide	Grassy Glide	Gliding on the ground, the user attacks the target. If the user is on Grassy Terrain, this move always goes first.
+risingvoltage	Rising Voltage	The user attacks with electricity rising from the ground. This move’s power is doubled if the target is on Electric Terrain.
+terrainpulse	Terrain Pulse	The user utilizes the energy of the terrain to attack. This move’s type and power change depending on the terrain at the time the move is used.
+skittersmack	Skitter Smack	The user skitters behind the target to attack. This also lowers the target’s Sp. Atk stat.
+burningjealousy	Burning Jealousy	The user attacks with energy from jealousy. This leaves all opposing Pokémon that have had their stats boosted during the turn with a burn.
+lashout	Lash Out	The user lashes out to vent its frustration toward the target. This move’s power is doubled if the user’s stats were lowered during this turn.
+poltergeist	Poltergeist	The user attacks by controlling one of the target’s items. This move fails if the target isn’t holding any items.
+corrosivegas	Corrosive Gas	The user surrounds everything around it with highly acidic gas and disables items held by other Pokémon for the remainder of the battle.
+coaching	Coaching	The user properly coaches its ally Pokémon, boosting their Attack and Defense stats.
+flipturn	Flip Turn	After making its attack, the user rushes back to switch places with a party Pokémon in waiting.
+tripleaxel	Triple Axel	A consecutive three-kick attack that increases in power by 20 with each successive hit. When one kick misses, the move ends.
+dualwingbeat	Dual Wingbeat	The user slams the target with its wings to inflict damage. The target is hit twice in a row.
+scorchingsands	Scorching Sands	The user throws scorching sand at the target to attack. This move has a 30% chance of burning the target and will thaw out the user or target if one is frozen.
+junglehealing	Jungle Healing	The user becomes one with the jungle, restoring 1/4 of the user and its ally Pokémon’s max HP while curing status conditions.
+wickedblow	Wicked Blow	The user strikes the target with a fierce blow. This move always lands a critical hit.
+surgingstrikes	Surging Strikes	The user strikes the target with a flowing motion 3 times in a row. This move always lands a critical hit.
+thundercage	Thunder Cage	The user traps the target inside a cage of sparking electricity. For 4-5 turns, the target takes damage equal to 1/8 of its max HP at the end of every turn.
+dragonenergy	Dragon Energy	Converting its life-force into power, the user attacks opposing Pokémon. The less HP the user has left, the lower this move’s power (ranging between 1 and 150).
+freezingglare	Freezing Glare	The user shoots its psychic power from its eyes to attack. This move has a 10% chance of freezing the target.
+fierywrath	Fiery Wrath	The user transforms its wrath into a fire-like aura to attack. This move has a 20% chance of making targets flinch.
+thunderouskick	Thunderous Kick	The user overwhelms the target with lightning-like movement before delivering a kick. This also lowers the target’s Defense stat.
+glaciallance	Glacial Lance	The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokémon.
+astralbarrage	Astral Barrage	The user attacks by sending a frightful amount of small ghosts at opposing Pokémon.
+eeriespell	Eerie Spell	The user attacks with its tremendous psychic power. This also drains 3 PP from the move last used by the target.
+direclaw	Dire Claw	The user lashes out at the target with ruinous claws. This move has a 30% chance of leaving the target poisoned, paralyzed, or asleep.
+psyshieldbash	Psyshield Bash	Cloaking itself in psychic energy, the user slams into the target. This also boosts the user’s Defense stat.
+powershift	Power Shift	The user swaps its Attack and Defense stats.
+stoneaxe	Stone Axe	The user swings its stone axes at the target, leaving behind stone splinters that float around the opposing team. Any Pokémon that switch into battle will take damage equal to 1/8 of their max HP. The damage of these rocks differ depending on the Pokémon’s type matchup with the Rock type.
+springtidestorm	Springtide Storm	The user attacks by wrapping opposing Pokémon in fierce winds brimming with love and hate. This move has a 30% chance of lowering the Attack stats of opposing Pokémon.
+mysticalpower	Mystical Power	The user attacks by emitting a mysterious power. This also boosts the user’s Sp. Atk stat.
+ragingfury	Raging Fury	The user rampages around spewing flames for 2-3 turns. The user then becomes confused.
+wavecrash	Wave Crash	The user shrouds itself in water and slams into the target with its whole body to inflict damage. The user takes 1/3 of the damage dealt by this move.
+chloroblast	Chloroblast	The user launches its amassed chlorophyll to inflict damage on the target. After attacking, the user takes damage equal to 1/2 of its max HP.
+mountaingale	Mountain Gale	The user hurls giant chunks of ice at the target to inflict damage. This move has a 30% chance of making the target flinch.
+victorydance	Victory Dance	The user performs an intense dance to usher in victory, boosting its Attack, Defense, and Speed stats.
+headlongrush	Headlong Rush	The user smashes into the target in a full-body tackle. This also lowers the user’s Defense and Sp. Def stats.
+barbbarrage	Barb Barrage	The user launches countless toxic barbs to inflict damage. This move has a 50% chance of poisoning the target. This move’s power is doubled if the target is already poisoned.
+esperwing	Esper Wing	The user slashes the target with aura-enriched wings, boosting its Speed stat. This move’s critical-hit ratio is also boosted by 1 stage.
+bittermalice	Bitter Malice	The user attacks the target with spine-chilling resentment. This also lowers the target’s Attack stat.
+shelter	Shelter	The user makes its skin as hard as an iron shield, sharply boosting its Defense stat.
+triplearrows	Triple Arrows	The user kicks, then fires three arrows. This move has a 50% chance of lowering the target’s Defense stat and has a 30% chance of making the target flinch. This move’s critical-hit ratio is also boosted by 1 stage.
+infernalparade	Infernal Parade	The user attacks with myriad fireballs. This move has a 30% chance of burning the target. This move’s power is doubled if the target has a status condition.
+ceaselessedge	Ceaseless Edge	The user slashes a sharpened blade at the target, leaving splinters under the target as spikes. Opposing Pokémon that land on these spikes when switching into battle will receive damage equal to 1/8 of their max HP. Up to 3 layers can be set, with each layer increasing the damage taken.
+bleakwindstorm	Bleakwind Storm	The user attacks with savagely cold winds that cause both body and spirit to tremble. This move has a 30% chance of lowering the Speed stats of opposing Pokémon, and never misses in rain.
+wildboltstorm	Wildbolt Storm	The user summons a thunderous tempest and savagely attacks with lightning and wind. This move has a 20% chance of paralyzing targets, and never misses in rain.
+sandsearstorm	Sandsear Storm	The user attacks by wrapping opposing Pokémon in fierce winds and searingly hot sand. This move has a 20% chance of burning targets, and never misses in rain.
+lunarblessing	Lunar Blessing	The user receives a blessing from the crescent moon, restoring 1/4 of the user and its ally Pokémon’s max HP while curing status conditions.
+takeheart	Take Heart	The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats.
+gmaxwildfire	G-Max Wildfire	A Fire-type attack that Gigantamax Charizard use. For 4 turns, this move continues to deal damage to non-Fire type opponents equal to 1/6 of their max HP at the end of every turn.
+gmaxbefuddle	G-Max Befuddle	A Bug-type attack that Gigantamax Butterfree use. This move inflicts the poisoned, paralyzed, or asleep status condition on opponents.
+gmaxvoltcrash	G-Max Volt Crash	An Electric-type attack that Gigantamax Pikachu use. This move paralyzes opponents.
+gmaxgoldrush	G-Max Gold Rush	A Normal-type attack that Gigantamax Meowth use. This move confuses opponents and also earns extra money.
+gmaxchistrike	G-Max Chi Strike	A Fighting-type attack that Gigantamax Machamp use. This move pumps up the user and its allies, boosting the critical-hit ratio of moves by 1 stage.
+gmaxterror	G-Max Terror	A Ghost-type attack that Gigantamax Gengar use. This Pokémon steps on the opposing Pokémon’s shadow to prevent them from escaping.
+gmaxresonance	G-Max Resonance	An Ice-type attack that Gigantamax Lapras use. This move halves the damage taken from physical and special moves for 5 turns.
+gmaxcuddle	G-Max Cuddle	A Normal-type attack that Gigantamax Eevee use. This move infatuates opponents.
+gmaxreplenish	G-Max Replenish	A Normal-type attack that Gigantamax Snorlax use. This move has a 50% chance to restore Berries consumed by the user or its allies.
+gmaxmalodor	G-Max Malodor	A Poison-type attack that Gigantamax Garbodor use. This move poisons opponents.
+gmaxstonesurge	G-Max Stonesurge	A Water-type attack that Gigantamax Drednaw use. This move scatters sharp rocks around the field, inflicting damage to opposing Pokémon that switch into battle equal to 1/8 of their max HP. The damage of these rocks differ depending on the Pokémon’s type matchup with the Rock type.
+gmaxwindrage	G-Max Wind Rage	A Flying-type attack that Gigantamax Corviknight use. This move removes the target’s barriers such as Light Screen, Reflect, Aurora Veil, or Safeguard, as well as any entry hazards or terrain from the field. This can also clear deep fog.
+gmaxstunshock	G-Max Stun Shock	An Electric-type attack that Gigantamax Toxtricity use. This move poisons or paralyzes opponents.
+gmaxfinale	G-Max Finale	A Fairy-type attack that Gigantamax Alcremie use. This move restores 1/6 of the max HP of the user and its allies.
+gmaxdepletion	G-Max Depletion	A Dragon-type attack that Gigantamax Duraludon use. Reduces the PP of the move last used by the target by 2.
+gmaxgravitas	G-Max Gravitas	A Psychic-type attack that Gigantamax Orbeetle use. This move changes gravity for 5 turns, boosting the accuracy of moves by 67% and grounding Flying types or Pokémon with Levitate.
+gmaxvolcalith	G-Max Volcalith	A Rock-type attack that Gigantamax Coalossal use. For 4 turns, this move continues to deal damage to non-Rock type opponents equal to 1/6 of their max HP at the end of every turn.
+gmaxsandblast	G-Max Sandblast	A Ground-type attack that Gigantamax Sandaconda use. Opponents are trapped in a raging sandstorm that inflicts damage equal to 1/8 of their max HP for 4-5 turns
+gmaxsnooze	G-Max Snooze	A Dark-type attack that Gigantamax Grimmsnarl use. The user lets loose a huge yawn that lulls the targets into falling asleep on the next turn.
+gmaxtartness	G-Max Tartness	A Grass-type attack that Gigantamax Flapple use. This move reduces the opponents’ evasiveness.
+gmaxsweetness	G-Max Sweetness	A Grass-type attack that Gigantamax Appletun use. This move heals the status conditions of allies.
+gmaxsmite	G-Max Smite	A Fairy-type attack that Gigantamax Hatterene use. This move confuses opponents.
+gmaxsteelsurge	G-Max Steelsurge	A Steel-type attack that Gigantamax Copperajah use. This move scatters sharp spikes around the field, inflicting damage to opposing Pokémon that switch into battle equal to 1/8 of their max HP. The damage of these spikes differ depending on the Pokémon’s type matchup with the Steel type.
+gmaxmeltdown	G-Max Meltdown	A Steel-type attack that Gigantamax Melmetal use. This move makes opponents incapable of using the same move twice in a row.
+gmaxfoamburst	G-Max Foam Burst	A Water-type attack that Gigantamax Kingler use. This move harshly lowers the Speed of opponents.
+gmaxcentiferno	G-Max Centiferno	A Fire-type attack that Gigantamax Centiskorch use. For 4-5 turns, this move traps opponents in flames that inflict damage equal to 1/8 of their max HP at the end of every turn.
+gmaxvinelash	G-Max Vine Lash	A Grass-type attack that Gigantamax Venusaur use. For 4 turns, this move continues to deal damage to non-Grass type opponents equal to 1/6 of their max HP at the end of every turn.
+gmaxcannonade	G-Max Cannonade	A Water-type attack that Gigantamax Blastoise use. For 4 turns, this move continues to deal damage to non-Water type opponents equal to 1/6 of their max HP at the end of every turn.
+gmaxdrumsolo	G-Max Drum Solo	A Grass-type attack that Gigantamax Rillaboom use. This move can ignore the effect of the target’s Ability (with certain exceptions).
+gmaxfireball	G-Max Fireball	A Fire-type attack that Gigantamax Cinderace use. This move can ignore the effect of the target’s Ability (with certain exceptions).
+gmaxhydrosnipe	G-Max Hydrosnipe	A Water-type attack that Gigantamax Inteleon use. This move can ignore the effect of the target’s Ability (with certain exceptions).
+gmaxoneblow	G-Max One Blow	A Dark-type attack that Gigantamax Urshifu use. This single-strike move can hit a target using a move such as Protect or Detect.
+gmaxrapidflow	G-Max Rapid Flow	A Water-type attack that Gigantamax Urshifu use. This rapid-strike move can hit a target using a move such as Protect or Detect.
+terablast	Tera Blast	If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat—whichever is higher for the user.
+silktrap	Silk Trap	The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact. With each consecutive use, this move’s chance of success becomes 1/3 of what it was before.
+axekick	Axe Kick	The user attacks by kicking up into the air and slamming its heel down upon the target. This move has a 30% chance of confusing the target. If this move misses or fails, the user takes damage equal to 1/2 of its max HP instead.
+lastrespects	Last Respects	The user attacks to avenge its allies. This move’s power is increased by 50 for each time that a Pokémon in the user’s party has fainted.
+luminacrash	Lumina Crash	The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target’s Sp. Def stat.
+orderup	Order Up	The user attacks with elegant poise. If the user has a Tatsugiri in its mouth, this move boosts the user’s stats based on the Tatsugiri’s form: Attack for Curly Tatsugiri, Defense for Droopy, or Speed for Stretchy.
+jetpunch	Jet Punch	The user summons a torrent around its fist and punches at blinding speed. This move always goes first.
+spicyextract	Spicy Extract	The user emits an incredibly spicy extract, sharply boosting the target’s Attack stat and harshly lowering the target’s Defense stat.
+spinout	Spin Out	The user spins furiously by straining its legs, inflicting damage on the target. This also harshly lowers the user’s Speed stat.
+populationbomb	Population Bomb	The user’s fellows gather in droves to perform a combo attack that hits the target 1 to 10 times in a row. The attack ends if the user misses.
+icespinner	Ice Spinner	The user covers itself in thin ice and twirls around, slamming into the target. This move’s spinning motion also destroys the terrain.
+glaiverush	Glaive Rush	The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user’s next turn.
+revivalblessing	Revival Blessing	The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon’s max HP.
+saltcure	Salt Cure	The user salt cures the target, inflicting damage equal to 1/16 of the target’s max HP at the end of every turn. Steel and Water types take damage equal to 1/8 of their max HP instead.
+tripledive	Triple Dive	The user performs a perfectly timed triple dive, hitting the target with splashes of water 3 times in a row.
+mortalspin	Mortal Spin	The user performs a spin attack that can eliminate the effects of binding moves and Leech Seed, as well as any entry hazards on its side. This also poisons opposing Pokémon.
+doodle	Doodle	The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.
+filletaway	Fillet Away	The user loses 1/2 of its max HP to sharply boost its Attack, Sp. Atk, and Speed stats. This move fails if the user doesn’t have enough remaining HP.
+kowtowcleave	Kowtow Cleave	The user slashes at the target after kowtowing to make the target let down its guard. This attack never misses.
+flowertrick	Flower Trick	The user throws a rigged bouquet of flowers at the target. This attack never misses and always lands a critical hit.
+torchsong	Torch Song	The user blows out raging flames as if singing a song, scorching the target. This also boosts the user’s Sp. Atk stat.
+aquastep	Aqua Step	The user toys with the target and attacks it using light and fluid dance steps. This also boosts the user’s Speed stat.
+ragingbull	Raging Bull	The user performs a tackle like a raging bull. It can also break barriers, such as Light Screen and Reflect. When used by Tauros, this move’s type changes depending on its form.
+makeitrain	Make It Rain	The user attacks by throwing out a mass of coins. This harshly lowers the user’s Sp. Atk stat. If a target is successfully struck, you will earn money after the battle.
+psyblade	Psyblade	The user rends the target with an ethereal blade. This move’s power is boosted by 50% if the user is on Electric Terrain.
+hydrosteam	Hydro Steam	The user blasts the target with boiling-hot water. This move’s power is not lowered in harsh sunlight but rather boosted by 50%.
+ruination	Ruination	The user summons a ruinous disaster. This deals damage to the target equal to 1/2 of their remaining HP.
+collisioncourse	Collision Course	The user rushes forward and crashes to the ground, causing a massive prehistoric explosion. This move’s power is boosted by 33% if it’s a supereffective hit.
+electrodrift	Electro Drift	The user races forward at ultrafast speeds, piercing its target with futuristic electricity. This move’s power is boosted by 33% if it’s a supereffective hit.
+shedtail	Shed Tail	The user creates a substitute for itself using 1/2 of its max HP before switching places with a party Pokémon in waiting.
+chillyreception	Chilly Reception	The user tells a chillingly bad joke before switching places with a party Pokémon in waiting. This summons a snowstorm lasting 5 turns.
+tidyup	Tidy Up	The user tidies up and removes the effects of Spikes, Stealth Rock, Sticky Web, Toxic Spikes, and Substitute. This also boosts the user’s Attack and Speed stats.
+snowscape	Snowscape	The user summons a snowstorm lasting 5 turns. This boosts the Defense stats of Ice types by 50%.
+pounce	Pounce	The user attacks by pouncing on the target. This also lowers the target’s Speed stat.
+trailblaze	Trailblaze	The user attacks suddenly as if leaping out from tall grass. The user’s nimble footwork boosts its Speed stat.
+chillingwater	Chilling Water	The user attacks the target by showering it with water that’s so cold it saps the target’s power. This also lowers the target’s Attack stat.
+hyperdrill	Hyper Drill	The user spins the pointed part of its body at high speed to pierce the target. This attack can hit a target using a move such as Protect or Detect.
+twinbeam	Twin Beam	The user shoots mystical beams from its eyes to inflict damage. The target is hit twice in a row.
+ragefist	Rage Fist	The user attacks by converting its rage into energy. This move’s power is increased by 50 each time the user takes damage from a move, up to a maximum power of 350. If the user switches out of battle, the move’s power returns to its usual value.
+armorcannon	Armor Cannon	The user attacks by shooting off its own armor as blazing projectiles. This also lowers the user’s Defense and Sp. Def stats.
+bitterblade	Bitter Blade	The user attacks by focusing all its bitter feelings toward this world into the tip of its blade. The user’s HP is restored by 1/2 of the damage dealt by this move.
+doubleshock	Double Shock	The user discharges all the electricity from its body to perform a high-damage attack, and loses the Electric type. This move fails unless it is used by a Electric type.
+gigatonhammer	Gigaton Hammer	The user swings its whole body around to attack with its huge hammer. This move can’t be used twice in a row.
+comeuppance	Comeuppance	The user retaliates to deal 1.5x of the damage it took from an opponent’s move during the turn this move is used.
+aquacutter	Aqua Cutter	The user expels pressurized water to cut at the target like a blade. This move’s critical-hit ratio is boosted by 1 stage.
+blazingtorque	Blazing Torque	The user rams into the target with blazing energy. This move has a 30% chance of burning the target.
+wickedtorque	Wicked Torque	The user rams into the target with malicious intent. This move has a 10% chance of putting the target to sleep.
+noxioustorque	Noxious Torque	The user rams into the target with a poisonous end. This move has a 30% chance of poisoning the target.
+combattorque	Combat Torque	The user rams into the target with great force. This move has a 30% chance of paralyzing the target.
+magicaltorque	Magical Torque	The user rams into the target with a fae-like force. This move has a 30% chance of confusing the target.
+bloodmoon	Blood Moon	The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can’t be used twice in a row.
+matchagotcha	Matcha Gotcha	The user fires a blast of tea that it mixed. The user’s HP is restored by 1/2 of the damage dealt by this move, and has a 20% chance of burning targets. This will also thaw out a frozen user or target.
+syrupbomb	Syrup Bomb	The user sets off an explosion of sticky candy syrup, which coats the target and causes the target’s Speed stat to drop at the end of every turn for 3 turns.
+ivycudgel	Ivy Cudgel	The user strikes with an ivy-wrapped cudgel. This move’s critical-hit ratio is boosted by 1 stage. When used by Ogerpon, this move’s type changes depending on the mask worn.
+electroshot	Electro Shot	The user gathers electricity on the first turn, boosting its Sp. Atk stat, then fires a high-voltage shot on the next turn. The shot will be fired immediately in rain.
+terastarstorm	Tera Starstorm	With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon. This move inflicts damage using the Attack or Sp. Atk stat—whichever is higher for the user when Terastallized.
+ficklebeam	Fickle Beam	The user shoots a beam of light to inflict damage. There is a 30% chance that all of the user’s heads will shoot beams in unison, doubling the move’s power.
+burningbulwark	Burning Bulwark	The user intensely heats up a part of its body, protecting it from attacks and also causing burns to any attacker that makes direct contact with it.
+thunderclap	Thunderclap	This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.
+mightycleave	Mighty Cleave	The user wields the light that has accumulated through its blades to cleave the target. This move hits even if the target protects itself.
+tachyoncutter	Tachyon Cutter	The user attacks by launching particle blades at the target twice in a row. This attack never misses.
+hardpress	Hard Press	The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move’s power (ranging between 1 and 100).
+dragoncheer	Dragon Cheer	The user raises its allies’ morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. Dragon types receive a 2-stage boost. All other types receive a 1-stage boost.
+alluringvoice	Alluring Voice	The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn.
+temperflare	Temper Flare	Spurred by desperation, the user attacks the target. This move’s power is doubled if the user’s previous move failed.
+supercellslam	Supercell Slam	The user electrifies its body and drops onto the target to inflict damage. The user takes damage equal to 1/2 of its max HP if this move misses or fails. If the target has used Minimize, this move’s power is doubled and it will be sure to hit.
+psychicnoise	Psychic Noise	The user attacks the target with unpleasant sound waves. For 2 turns, the target is prevented from recovering HP through moves, Abilities, or held items.
+upperhand	Upper Hand	The user reacts to the target’s movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.
+malignantchain	Malignant Chain	The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This move has a 50% chance of badly poisoning the target.
+nihillight	Nihil Light	The user attacks by unleashing a powerful light that defies all laws of nature, striking even Fairy types and ignoring any stat changes affecting its targets.

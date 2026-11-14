@@ -437,6 +437,20 @@ namespace Rimketmon
         private int preDelayFor = -1; private float preDelayVal;             // 다음 줄을 띄우기 전에 두는 뜸(줄마다 한 번 계산)
         private void Hold(float until) { if (until > holdUntil) holdUntil = until; }
 
+        // 레벨업 기술 배우기: 칸이 다 찼으면 무엇을 잊을지 묻는 창을 하나씩 띄우고, 그동안 다음 메시지로 넘어가지 않는다
+        private readonly Queue<KeyValuePair<RimketCreature, string>> learnQueue = new Queue<KeyValuePair<RimketCreature, string>>();
+        private bool learnOpen;
+        private void PumpLearn()
+        {
+            if (learnOpen) return;
+            if (learnQueue.Count == 0) { holdUntil = Time.realtimeSinceStartup; return; }
+            var next = learnQueue.Dequeue();
+            Move m; try { m = MoveCatalog.Get(next.Value); } catch (Exception) { m = null; }
+            if (m == null) { PumpLearn(); return; }
+            learnOpen = true; holdUntil = float.MaxValue;
+            Dialog_LearnMove.Open(next.Key, m, () => { learnOpen = false; PumpLearn(); });
+        }
+
         /// <summary>다음 줄(= 아직 안 보인 첫 줄)과 함께 일어날 사건을 보고, 그 줄을 띄우기 전에 둘 뜸(초)을 정한다.</summary>
         private float PreDelay()
         {
@@ -696,7 +710,7 @@ namespace Rimketmon
 
         /// <summary>온라인 배틀이 열려 있는 동안은 양쪽 화면 속도를 맞추려고 연출·체력바를 1배속으로 고정한다(설정 무시).</summary>
         internal static bool OnlineOpen;
-        private static float Speed { get { return OnlineOpen ? 1f : RimketmonMod.Settings.Speed; } }
+        private static float Speed { get { return OnlineOpen ? RimketmonSettings.GameSpeedMult[2] : RimketmonMod.Settings.Speed; } }      // 온라인은 항상 '빠름'
         private static float HpRateNow { get { return OnlineOpen ? RimketmonSettings.HpBarRate[0] : RimketmonMod.Settings.HpRate; } }
         private static bool MoveAnimsOn { get { return OnlineOpen || RimketmonMod.Settings.moveAnimations; } }
         private static float Sec(float ms) { return ms / 1000f / Speed; }
@@ -817,7 +831,7 @@ namespace Rimketmon
                     v.Thrown = !v.Person && (e.PlayerSide || battle.IsTrainer);
                     if (e.PlayerSide) { v.FirstEntry = !allyEverEntered; allyEverEntered = true; }
                     else if (battle.IsTrainer && foeTrainerExit < 0f) { foeTrainerExit = now; v.FirstEntry = true; }
-                    else if (HasFoeTrainerArt) { v.FirstEntry = false; foeTrainerBack = now; foeTrainerExit = now + Sec(450f); }      // 교체·다음 림켓몬: 트레이너가 다시 나와서 던진다
+                    else if (HasFoeTrainerArt) { v.FirstEntry = false; foeTrainerBack = now; foeTrainerExit = now + Sec(TrainerReshowMs); }      // 교체·다음 림켓몬: 트레이너가 다시 나와서 던진다
                     v.AppearTime = (v.Thrown || (v.Person && !e.PlayerSide)) ? now : now - 10f;
                     if (v.Person && !e.PlayerSide) holdUntil = now + Sec(Mathf.Min(Mathf.Max(PersonEnterMs, TrainerAnimMs()), 3000f));
                     v.InfoTime = v.Thrown ? now + ThrowDelay(v, e.PlayerSide) + Sec(650f + 250f) : (firstFoe ? openTime + IntroSec : now);
@@ -842,6 +856,9 @@ namespace Rimketmon
                         else if (tNew && tr != Rimketmon.Engine.Terrain.None) PlayCommon(TerrainAnim(tr), ally, now, 999);
                         else if (lapse && w != Weather.None) PlayCommon(WeatherAnim(w), ally, now, 30);
                     }
+                    break;
+                case BattleEventKind.LearnMove:
+                    if (e.Learner != null && e.MoveId != null) { learnQueue.Enqueue(new KeyValuePair<RimketCreature, string>(e.Learner, e.MoveId)); PumpLearn(); }
                     break;
                 case BattleEventKind.Exp:
                     if (v.F == e.Who) { v.ExpTarget = e.HpAfter; RimketAudio.PlaySe("exp_gain"); }
@@ -909,11 +926,14 @@ namespace Rimketmon
             };
         }
 
+        /// <summary>교체·다음 림켓몬 때 트레이너가 다시 나와 서 있는 시간(ms).</summary>
+        private const float TrainerReshowMs = 1500f;
+
         /// <summary>볼이 날아가기 시작하기까지의 대기. 내 트레이너는 던지는 동작(750ms)을 먼저 한다.</summary>
         private float ThrowDelay(SideView v, bool player)
         {
-            if (player) return v.FirstEntry ? Sec(750f) : Sec(450f);
-            return (!v.FirstEntry && HasFoeTrainerArt && foeTrainerBack > 0f) ? Sec(450f) : 0f;      // 상대도 트레이너가 다시 나온 뒤에 던진다
+            if (player) return v.FirstEntry ? Sec(750f) : Sec(TrainerReshowMs);
+            return (!v.FirstEntry && HasFoeTrainerArt && foeTrainerBack > 0f) ? Sec(TrainerReshowMs) : 0f;      // 상대도 트레이너가 다시 나온 뒤에 던진다
         }
 
         private void PlayHitSound(BattleEvent e)
@@ -1048,7 +1068,7 @@ namespace Rimketmon
                 if (ally.Visible && ally.Thrown)
                 {
                     float t = now - ally.AppearTime, d = ThrowDelay(ally, true);
-                    if (t < d) px = ally.FirstEntry ? PawnStandX : Mathf.Lerp(-40f, PawnStandX, PR.SineIn(t / d));
+                    if (t < d) px = ally.FirstEntry ? PawnStandX : Mathf.Lerp(-40f, PawnStandX, PR.SineIn(Mathf.Min(1f, t / Sec(450f))));      // 0.45초에 들어와 나머지는 서 있다
                     else px = Mathf.Lerp(PawnStandX, -40f, PR.Linear((t - d) / Sec(1000f)));
                     handX = (ally.FirstEntry ? PawnStandX : PawnStandX) + 15f; handY = 160f - 40f; hasHand = true;
                 }
@@ -1406,6 +1426,14 @@ namespace Rimketmon
             g.Tx(Genders.Symbol(c.Gender), x, y, 0f, 0f, size, male ? Canvas.BlueC : Canvas.PinkC, male ? Canvas.BlueSh : Canvas.PinkSh);
         }
 
+        /// <summary>유전자 쐐기 표시(작은 분홍 칸). 상대 이름 옆·선출 화면에서 쓴다.</summary>
+        internal static void DrawWedgeMark(Canvas g, float x, float y)
+        {
+            float w = g.Measure("쐐기", 6f) + 5f;
+            g.Box(x, y, w, 8.5f, new Color(0.55f, 0.15f, 0.45f, 0.95f), new Color(1f, 0.5f, 0.85f, 1f));
+            g.Label("쐐기", x + w / 2f, y + 1.2f, 6f, Color.white, new Color(0f, 0f, 0f, 0.8f), TextAnchor.UpperCenter);
+        }
+
         private void DrawFoeBox(Canvas g, SideView v, float cx, float cy, float now)
         {
             var c = v.F.Shown;
@@ -1420,6 +1448,12 @@ namespace Rimketmon
                 if (key != null && PartyComponent.Instance.DexCaught(key))
                     g.ImgRegion(PR.Tex("ui/pb_sheet"), 0, 210, 12, 12, cx - 124f + g.Measure(name, 9.5f) + ((c.Neutral || c.Gender == Genders.None) ? 3f : 10f), cy - 11.6f, 0f, 0f, 0.7f, 1f, 0f);
             }
+            if (Paradox.HasWedge(c))
+            {
+                // 유전자 쐐기가 박힌 상대: 이름 옆에 쐐기 표시
+                float wx = cx - 124f + g.Measure(name, 9.5f) + ((c.Neutral || c.Gender == Genders.None) ? 3f : 10f) + (battle.HuntMode ? 10f : 0f);
+                DrawWedgeMark(g, wx, cy - 10.5f);
+            }
             DrawTypes(g, c, "enemy", cx - 15f, cy - 15.5f, cx - 15f, cy - 2.5f);
             string lv = c.Level.ToString();
             float lx = cx - 50f - 8f * Math.Max(lv.Length - 3, 0), ly = cy - 5f;
@@ -1429,7 +1463,7 @@ namespace Rimketmon
             if (RimketmonMod.Settings.showFoeHp)
                 g.NumbersRight(Mathf.CeilToInt(v.DispHp) + "/" + v.MaxHp, cx - 20f, cy + 13f, "numbers");   // 레벨·아군 HP와 같은 픽셀 숫자 글꼴
             DrawStatus(g, v.F, cx - 124f, cy + 0.5f);
-            if (RimketmonMod.Settings.showFoeMoves && v.F.UsedMoves.Count > 0)
+            if (RimketmonMod.Settings.showFoeMoves && !Online && !(battle.Ranked && !battle.Paradox) && v.F.UsedMoves.Count > 0)      // 랭크·온라인 배틀에서는 표시하지 않는다
             {
                 // 상대가 쓴 기술: 기술칸처럼 속성 색을 칠한 칸으로(한 줄에 다 안 들어가면 다음 줄)
                 float mx = cx - 124f, my = cy + 12f;
@@ -1697,6 +1731,7 @@ namespace Rimketmon
             }
             else if (i == 1) { mode = Mode.Item; cursor = 0; }
             else if (i == 2) { mode = Mode.Switch; cursor = 0; movePage = 0; }
+            else if (battle.HuntMode && !HuntRun.CurrentRare && battle.Phase != BattlePhase.Colonist && actions.Any(a => a.Kind == ActionKind.Disconnect)) DoSurrender();      // 사냥: 흔한 상대는 묻지 않고 바로 도망 → 다음 포켓몬
             else { mode = Mode.Surrender; cursor = 1; RimketAudio.PlaySe("gui_sel_cursor"); }      // 항복·도망·강제 해제 모두 실수로 누르지 않도록 언제나 한 번 더 묻는다
         }
 
@@ -1706,7 +1741,7 @@ namespace Rimketmon
             g.Window(win, 0f, 132f, 320f, 48f);
             bool run = battle.Paradox || !CanSurrenderNow;
             bool riskyQuit = battle.Phase == BattlePhase.Colonist;
-            g.Wrap(riskyQuit ? "정말 강제로 접속을 끊을까? 위험할 수 있어." : run ? (battle.Paradox ? "정말 도망칠까? 패배로 처리돼." : "정말 도망칠까?") : "정말 항복할까? 패배로 처리돼.", 12f, 138f, 296f, 14f, Canvas.White, Canvas.WhiteShadow);
+            g.Wrap(riskyQuit ? "정말 강제로 접속을 끊을까? 위험할 수 있어." : run ? (battle.Paradox ? "정말 도망칠까? 패배로 처리돼." : battle.HuntMode && HuntRun.CurrentRare ? "레어도가 높은 포켓몬(" + HuntRun.CurrentRareText + ")이다! 정말 도망칠까?" : "정말 도망칠까?") : "정말 항복할까? 패배로 처리돼.", 12f, 138f, 296f, 14f, Canvas.White, Canvas.WhiteShadow);
             string[] opt = { riskyQuit ? "강제 해제" : run ? "도망친다" : "항복한다", "계속 싸운다" };
             for (int i = 0; i < 2; i++)
             {
@@ -1772,7 +1807,7 @@ namespace Rimketmon
                 }
                 g.Label(ItemCatalog.NameOf(id) + " ×" + pc.BagCount(id), x, y, 11f, Canvas.White, Canvas.WhiteShadow);
                 var info = ItemCatalog.Get(id);
-                if (info != null) g.Label((Lang.English ? info.DescEn : info.DescKo).Replace("\n", " ").Substring(0, Math.Min(26, (Lang.English ? info.DescEn : info.DescKo).Length)) + "…", x, y + 10f, 6.5f, new Color(0.85f, 0.85f, 0.9f), Canvas.WhiteShadow);
+                if (info != null) g.Label(ItemCatalog.DescOf(info).Replace("\n", " ").Substring(0, Math.Min(26, ItemCatalog.DescOf(info).Length)) + "…", x, y + 10f, 6.5f, new Color(0.85f, 0.85f, 0.9f), Canvas.WhiteShadow);
                 if (Hot(g, x - 8f, y - 1f, 144f, 19f)) cursor = i;
                 if (Clicked(g, x - 8f, y - 1f, 144f, 19f)) { pickedItem = id; mode = Mode.ItemTarget; cursor = 0; movePage = 0; return; }
             }
@@ -2062,18 +2097,18 @@ namespace Rimketmon
             int[] d = { -10, -1, 1, 10 };
             foreach (int dv in d)
             {
-                if (Widgets.ButtonText(g.R(x, y, 12f, 10f), (dv > 0 ? "+" : "") + dv)) DevSetHp(v, f, f.C.Hp + dv);
+                if (Widgets.ButtonText(g.R(x, y, 12f, 10f), Lang.Tr((dv > 0 ? "+" : "") + dv))) DevSetHp(v, f, f.C.Hp + dv);
                 x += 12.5f;
             }
-            if (Widgets.ButtonText(g.R(x, y, 14f, 10f), "만땅")) DevSetHp(v, f, f.C.MaxHp);
+            if (Widgets.ButtonText(g.R(x, y, 14f, 10f), Lang.Tr("만땅"))) DevSetHp(v, f, f.C.MaxHp);
             x += 15f;
-            if (Widgets.ButtonText(g.R(x, y, 10f, 10f), "1")) DevSetHp(v, f, 1);
+            if (Widgets.ButtonText(g.R(x, y, 10f, 10f), Lang.Tr("1"))) DevSetHp(v, f, 1);
             x += 11f;
             if (withPp)
             {
-                if (Widgets.ButtonText(g.R(x, y, 18f, 10f), "PP+")) foreach (var m in f.C.Moves) if (m.Move.MaxPP >= 0) m.PP = m.Move.MaxPP;
+                if (Widgets.ButtonText(g.R(x, y, 18f, 10f), Lang.Tr("PP+"))) foreach (var m in f.C.Moves) if (m.Move.MaxPP >= 0) m.PP = m.Move.MaxPP;
                 x += 19f;
-                if (Widgets.ButtonText(g.R(x, y, 18f, 10f), "PP0")) foreach (var m in f.C.Moves) if (m.Move.MaxPP >= 0) m.PP = 0;
+                if (Widgets.ButtonText(g.R(x, y, 18f, 10f), Lang.Tr("PP0"))) foreach (var m in f.C.Moves) if (m.Move.MaxPP >= 0) m.PP = 0;
             }
         }
 
@@ -2087,12 +2122,12 @@ namespace Rimketmon
         {
             var s = RimketmonMod.Settings;
             var r = g.R(262f, 2f, 56f, 11f);
-            if (Widgets.ButtonText(r, "속도 " + RimketmonSettings.GameSpeedNames[s.gameSpeed]))
+            if (Widgets.ButtonText(r, Lang.Tr("속도 " + RimketmonSettings.GameSpeedNames[s.gameSpeed])))
             {
                 s.gameSpeed = (s.gameSpeed + 1) % RimketmonSettings.GameSpeedMult.Length;
                 s.Write();
             }
-            TooltipHandler.TipRegion(r, "메시지와 연출 속도를 바꿉니다. 모드 설정에서도 바꿀 수 있습니다.");
+            TooltipHandler.TipRegion(r, Lang.Tr("메시지와 연출 속도를 바꿉니다. 모드 설정에서도 바꿀 수 있습니다."));
         }
 
         // ------------------------------------------------------------------ 호환용: 다른 창에서 쓰는 타입 칩
@@ -2102,7 +2137,7 @@ namespace Rimketmon
             Widgets.DrawBoxSolid(r, c);
             var old = Text.Font; Text.Font = GameFont.Tiny; Text.Anchor = TextAnchor.MiddleCenter;
             GUI.color = Color.white;
-            Widgets.Label(r, text);
+            Widgets.Label(r, Lang.Tr(text));
             Text.Anchor = TextAnchor.UpperLeft; Text.Font = old;
         }
 

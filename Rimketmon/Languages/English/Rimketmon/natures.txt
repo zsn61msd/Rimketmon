@@ -1,0 +1,26 @@
+# 성격 25개(이 순서 그대로): hardy lonely brave adamant naughty bold docile relaxed impish lax timid hasty serious jolly naive modest mild quiet bashful rash calm gentle sassy careful quirky
+Hardy
+Lonely
+Brave
+Adamant
+Naughty
+Bold
+Docile
+Relaxed
+Impish
+Lax
+Timid
+Hasty
+Serious
+Jolly
+Naive
+Modest
+Mild
+Quiet
+Bashful
+Rash
+Calm
+Gentle
+Sassy
+Careful
+Quirky

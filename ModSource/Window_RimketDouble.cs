@@ -310,7 +310,7 @@ namespace Rimketmon
             BattleAction? a2 = liveSlots.Count > 1 ? picked[1] : (BattleAction?)null;
             if (!session.Submit(picked[0].Value, a2))
             {
-                Messages.Message("그 행동은 낼 수 없습니다. 다시 고르세요.", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("그 행동은 낼 수 없습니다. 다시 고르세요."), MessageTypeDefOf.RejectInput, false);
                 BeginInput();
                 return;
             }

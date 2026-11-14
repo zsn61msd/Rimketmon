@@ -113,7 +113,7 @@ namespace Rimketmon.Engine
                 "i=" + Clean(c.Item), "a=" + Clean(c.Ability), "t=" + c.Tier, "bt=" + c.BaseTier, "nat=" + c.Nature,
                 "t1=" + (int)c.Type1, "t2=" + (c.Type2.HasValue ? ((int)c.Type2.Value).ToString() : "-"),
                 "bs=" + string.Join(",", new[] { c.BaseHp, c.BaseAtk, c.BaseDef, c.BaseSpA, c.BaseSpD, c.BaseSpe }),
-                "iv=" + string.Join(",", c.Iv), "pt=" + string.Join(",", c.Sp), "lk=" + Clean(c.Look), "nu=" + (c.Neutral ? 1 : 0),
+                "iv=" + string.Join(",", c.Iv), "pt=" + string.Join(",", c.Sp), "lk=" + Clean(c.Look), "nu=" + (c.Neutral ? 1 : 0), "wd=" + (Paradox.HasWedge(c) ? 1 : 0),
                 "mv=" + string.Join(",", c.Moves.Select(m => Clean(m.Move.Id) + ":" + m.PP))
             };
             return string.Join(";", kv);
@@ -140,6 +140,7 @@ namespace Rimketmon.Engine
             {
                 SpeciesId = g("sp"), Species = g("s"), Name = g("n"), Gender = gi("g", 2), Item = g("i").Length == 0 ? null : g("i"),
                 Ability = g("a").Length == 0 ? null : g("a"), Tier = gi("t", 0), BaseTier = gi("bt", 0), Nature = gi("nat", 0), Look = g("lk"), Neutral = g("nu") == "1",
+                WedgeBackup = g("wd") == "1" ? "remote" : null,      // 상대 쪽 쐐기 표시용(되돌리기 정보는 보내지 않는다)
                 Level = BattleLevel
             };
             int t1 = gi("t1", -1);

@@ -121,7 +121,7 @@ namespace Rimketmon
             else if (!can && (Clicked(bx - 10f, by - 3f, 50f, 18f) || AcceptKey()))
             {
                 RimketAudio.PlaySe("gui_sel_buzzer");
-                Messages.Message(pawn == null ? "림켓링크 착용자가 필요하다." : pc.bp < HuntCost ? "BP가 부족하다." : balls.Sum() == 0 ? "볼이 없다. 림월드에서 볼을 만들어 착용자의 소지품에 넣자." : "싸울 수 있는 림켓몬이 없다.", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr(pawn == null ? "림켓링크 착용자가 필요하다." : pc.bp < HuntCost ? "BP가 부족하다." : balls.Sum() == 0 ? "볼이 없다. 림월드에서 볼을 만들어 착용자의 소지품에 넣자." : "싸울 수 있는 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false);
             }
             if (CancelKey()) { view = View.Menu; RimketAudio.PlaySe("gui_sel_cancel"); }
         }
@@ -131,6 +131,9 @@ namespace Rimketmon
     internal static class HuntRun
     {
         private static HuntBiome biome; private static Pawn pawn; private static int left, caught;
+        /// <summary>지금 상대가 레어(드묾 이상 등급이거나 이로치)인가: 도망칠 때 한 번 더 묻는다.</summary>
+        internal static bool CurrentRare; internal static string CurrentRareText;
+        public const int RareTier = 2;      // 드묾 이상
 
         public static void Start(HuntBiome b, Pawn p)
         {
@@ -151,7 +154,7 @@ namespace Rimketmon
             var rng = new GameRng();
             var map = pawn.Map ?? Find.AnyPlayerHomeMap;
             int time = HuntCatalog.TimeOf(map != null ? GenLocalDate.HourFloat(map) : 12f);
-            string id = HuntCatalog.Roll(biome, time, rng, pc.RareMultiplier);
+            int rTier; string id = HuntCatalog.Roll(biome, time, rng, out rTier, pc.RareMultiplier);
             SpeciesInfo sp;
             if (id == null || !SpeciesCatalog.TryGet(id, out sp)) { End(); return; }
             int cap = pc.LevelCap;
@@ -160,6 +163,8 @@ namespace Rimketmon
             var wild = SpawnRoller.FromSpecies(sp, lv, rng, settings);
             wild.Shiny = Shinies.Roll(sp.Id, rng, pc.ShinyMultiplier);
             wild.FullHeal();
+            CurrentRare = rTier >= RareTier || wild.Shiny > 0;
+            CurrentRareText = wild.Shiny > 0 ? "이로치" : rTier >= 0 && rTier < HuntCatalog.TierNames.Length ? HuntCatalog.TierNames[rTier] : "";
             var colonist = new ColonistCombatant { Name = pawn.LabelShortCap };      // 사냥은 림켓몬끼리만 싸운다
             var battle = new RimketBattle(rng, settings, party, wild, colonist) { HuntMode = true };
             for (int t = 0; t < 4; t++) battle.Balls[t] = RimketInventory.CountPublic(pawn, t);
@@ -174,20 +179,21 @@ namespace Rimketmon
             {
                 var c = b.Wild; c.FullHeal();
                 pc.Add(c); pc.huntCaught++; caught++;
-                Messages.Message(c.Name + (c.Shiny > 0 ? "(이로치)" : "") + "을(를) 잡았다!", MessageTypeDefOf.PositiveEvent, false);
+                Messages.Message(Lang.Tr(c.Name + (c.Shiny > 0 ? "(이로치)" : "") + "을(를) 잡았다!"), MessageTypeDefOf.PositiveEvent, false);
             }
             if (b.Result.End == BattleEnd.Defeat) { End("눈앞이 캄캄해졌다… 바이옴에서 빠져나왔다."); return; }
             if (left <= 0) { End(); return; }
+            if (b.Result.End == BattleEnd.Disconnected && !b.Result.Captured) { Next(); return; }      // 도망쳤으면 바로 다음 포켓몬
             var party = pc != null ? pc.ActiveParty().Where(c => !c.IsFainted).ToList() : new List<RimketCreature>();
             if (party.Count == 0) { End("싸울 수 있는 림켓몬이 없어 돌아왔다."); return; }
             string text = biome.Name + " — 남은 배틀 " + left + "번\n\n" + string.Join("\n", party.Select(c => c.Name + " Lv." + c.Level + "  HP " + c.Hp + "/" + c.MaxHp).ToArray());
-            Find.WindowStack.Add(new Dialog_MessageBox(text, "다음 포켓몬을 찾는다", Next, "돌아간다", () => End(), "포켓몬 사냥", false));
+            Find.WindowStack.Add(new Dialog_MessageBox(Lang.Tr(text), Lang.Tr("다음 포켓몬을 찾는다"), Next, Lang.Tr("돌아간다"), () => End(), "포켓몬 사냥", false));
         }
 
         private static void End(string why = null)
         {
             string msg = (why ?? biome.Name + "에서 돌아왔다.") + " (잡은 포켓몬 " + caught + "마리)";
-            Messages.Message(msg, MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr(msg), MessageTypeDefOf.NeutralEvent, false);
             left = 0;
         }
     }

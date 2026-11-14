@@ -21,6 +21,15 @@ namespace Rimketmon
             p.Destroy(DestroyMode.Vanish);
         }
 
+        /// <summary>볼에 담아 지도에서 치우기 전에 소속 무리(교역단·방문단 등 Lord)에서 뺀다.
+        /// 빼지 않으면 무리가 '세계 폰'을 계속 붙잡고 있어 오류가 난다.</summary>
+        public static void LeaveLord(Pawn p)
+        {
+            if (p == null) return;
+            try { var lord = Verse.AI.Group.LordUtility.GetLord(p); if (lord != null) lord.Notify_PawnLost(p, Verse.AI.Group.PawnLostCondition.MadePrisoner); }
+            catch (System.Exception e) { Log.Warning("[림켓몬] 무리에서 빼기 실패: " + e.Message); }
+        }
+
         /// <summary>날아가는 중이면 죽이지 않고 치운다(시체가 빈 물체 안에 남지 않게).</summary>
         public static void Kill(Pawn p)
         {

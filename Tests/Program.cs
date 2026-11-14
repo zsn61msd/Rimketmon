@@ -25,6 +25,24 @@ internal static class Program
 
     private static int Main(string[] args)
     {
+        // 언어 묶음(글자 파일)을 저장소의 Rimketmon/Languages 에서 읽는다
+        for (var d = new System.IO.DirectoryInfo(AppContext.BaseDirectory); d != null; d = d.Parent)
+        {
+            string lp = System.IO.Path.Combine(d.FullName, "Rimketmon", "Languages");
+            if (System.IO.Directory.Exists(lp)) { Lang.LoadFolder(lp); break; }
+        }
+        if (args.Length > 1 && args[0] == "--lang-audit")
+        {
+            // 한국어 문장 목록을 영어로 바꿔 보고 한글이 남는 것을 출력
+            Lang.Set(true); int left = 0;
+            foreach (var line in System.IO.File.ReadAllLines(args[1]))
+            {
+                var t = Lang.Tr(line.Replace("\\n", "\n"));
+                if (Lang.HasKorean(t)) { left++; Console.WriteLine(line + "\t=> " + t.Replace("\n", "\\n")); }
+            }
+            Console.Error.WriteLine("남은 줄: " + left);
+            return 0;
+        }
         if (args.Length > 1 && args[0] == "--show")
         {
             foreach (var id in args.Skip(1))
@@ -1095,7 +1113,7 @@ internal static class Program
 
     private static void TestMystery()
     {
-        int badBst = 0, badMv = 0, badAb = 0, extreme = 0, bad1 = 0, badMoves4 = 0;
+        int badBst = 0, badMv = 0, badAb = 0, extreme = 0, bad1 = 0, badMoves4 = 0, flat = 0;
         for (int seed = 1; seed <= 300; seed++)
         {
             var sp = MysteryGen.Build(seed);
@@ -1103,12 +1121,13 @@ internal static class Program
             if (sp.Bst < 600 || sp.Bst > 700) badBst++;
             if (st.Any(v => v < 1)) bad1++;
             if (st.Max() >= 300) extreme++;
+            if (st.Max() <= 180) flat++;
             if (sp.Learnset.Count < 50 || sp.Learnset.Count > 100) badMv++;
             if (sp.Abilities.Count < 2 || sp.Abilities.Count > 5 || sp.Abilities.Any(a => !AbilityCatalog.Implemented.Contains(a))) badAb++;
             if (sp.Learnset.Count(k => k.Key == 1) < 4) badMoves4++;
         }
         Check(badBst == 0 && bad1 == 0, "?티어: 종족값 합 600~700, 모든 능력 1 이상");
-        Check(extreme > 30, "?티어: 극단적 몰빵 종족이 흔하다 (" + extreme + "/300)");
+        Check(extreme > 3 && extreme < 150 && flat > 3, "?티어: 능력 분배가 완전 무작위(몰빵 " + extreme + " · 고른형 " + flat + " /300)");
         Check(badMv == 0 && badMoves4 == 0, "?티어: 기술 풀 50~100개, 레벨 1 기술 4개 이상");
         Check(badAb == 0, "?티어: 특성 풀 2~5개(구현된 특성만)");
         Check(MysteryGen.Build(77).Bst == MysteryGen.FromId("MYSTERY_77").Bst && SpeciesCatalog.Get("MYSTERY_77").Mystery, "?티어: id만으로 같은 종족 복원");
@@ -1147,6 +1166,8 @@ internal static class Program
         Check(b.Paradox && b.Ranked && b.Log.Count > 0 && b.IsOver, "패러독스 배틀 진행/종료 (" + b.Result.End + ")");
         var target = Mk("PIKACHU", 37, "STATIC", "TACKLE"); target.Friendship = 200; target.Name = "내 피카츄";
         var mfoe = Paradox.MakeFoe(rng, s, true); var wedge = Paradox.MakeWedge(mfoe);
+        Check(!Paradox.Apply(target, wedge) && target.Species == "PIKACHU", "포켓몬(본가 종족)에게는 쐐기를 쓸 수 없다");
+        target.SpeciesId = "Muffalo";      // 림월드 동물 껍데기
         bool ok = Paradox.Apply(target, wedge);
         Check(ok && target.Species == wedge.Species && target.Tier == 0 && target.BaseHp == wedge.BaseHp && target.BaseSpe == wedge.BaseSpe && target.Level == 37 && target.Name == "내 피카츄" && target.Friendship == 200
               && target.Ability == wedge.Ability && target.Moves.Count == wedge.Moves.Count && target.IsPerfectIv && target.Hp == target.MaxHp, "유전자 쐐기: 정보 덮어쓰기(레벨·이름 유지)");
@@ -2041,7 +2062,7 @@ internal static class Program
     {
         Console.WriteLine("== 유전자 쐐기 빼기 ==");
         var rng = new SystemRng(77); var st = new EngineSettings();
-        var mon = RankedBuilder.Build("ou", 1, 50, rng, st)[0];
+        var mon = RankedBuilder.Build("ou", 1, 50, rng, st)[0]; mon.SpeciesId = "Muffalo";      // 쐐기는 림월드 동물에게만
         string before = Paradox.Backup(mon); string sp0 = mon.Species; int lv = mon.Level; string nm = mon.Name;
         var foe = Paradox.MakeFoe(rng, st, false); var w = Paradox.MakeWedge(foe);
         Check(Paradox.Apply(mon, w) && mon.Species == w.Species && Paradox.HasWedge(mon), "쐐기를 쓰면 원래 정보가 기억된다");

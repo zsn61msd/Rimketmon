@@ -32,7 +32,7 @@ namespace Rimketmon.Engine
     }
 
     /// <summary>UI 연출용 사건. 로그 문장과 별개로 '무슨 일이 일어났는가'를 알려 준다.</summary>
-    public enum BattleEventKind { SendOut, Faint, Hit, StatusChange, Heal, Person, MoveUsed, Exp, PersonAttack, FieldChange }
+    public enum BattleEventKind { SendOut, Faint, Hit, StatusChange, Heal, Person, MoveUsed, Exp, PersonAttack, FieldChange, LearnMove }
 
     public struct BattleEvent
     {
@@ -44,6 +44,7 @@ namespace Rimketmon.Engine
         public string MoveId;      // MoveUsed: 쓴 기술 id
         public Fighter Target;     // MoveUsed: 기술을 맞는 쪽(자기 자신이면 Who와 같다)
         public int HpAfter;        // 사건 직후 대상의 HP(연출에서 HP 바를 메시지와 맞출 때 쓴다)
+        public RimketCreature Learner;     // LearnMove: 기술을 배우려는 림켓몬(칸이 다 차서 무엇을 잊을지 물어야 한다). 기술 id는 MoveId
     }
 
     public sealed class BattleResult

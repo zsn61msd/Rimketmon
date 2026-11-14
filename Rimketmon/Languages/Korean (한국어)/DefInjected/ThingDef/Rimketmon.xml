@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RimketBall.label>몬스터볼</RimketBall.label>
+  <RimketBall.description>림켓몬을 붙잡는 볼.</RimketBall.description>
+  <RimketGreatBall.label>슈퍼볼</RimketGreatBall.label>
+  <RimketGreatBall.description>림켓몬을 붙잡는 볼.</RimketGreatBall.description>
+  <RimketUltraBall.label>하이퍼볼</RimketUltraBall.label>
+  <RimketUltraBall.description>림켓몬을 붙잡는 볼.</RimketUltraBall.description>
+  <RimketMasterBall.label>마스터볼</RimketMasterBall.label>
+  <RimketMasterBall.description>전투 없이 곧바로 붙잡는 볼.</RimketMasterBall.description>
+  <RimketLink.label>림켓링크</RimketLink.label>
+  <RimketLink.description>림켓몬과 의식을 잇는 두뇌 임플란트.</RimketLink.description>
+  <RimketMasterBlueprint.label>마스터볼 설계도</RimketMasterBlueprint.label>
+  <RimketMasterBlueprint.description>마스터볼의 설계도.</RimketMasterBlueprint.description>
+  <RimketBallProjectile.label>몬스터볼</RimketBallProjectile.label>
+  <RimketGreatBallProjectile.label>슈퍼볼</RimketGreatBallProjectile.label>
+  <RimketUltraBallProjectile.label>하이퍼볼</RimketUltraBallProjectile.label>
+  <RimketMasterBallProjectile.label>마스터볼</RimketMasterBallProjectile.label>
+  <RimketPokemonBody.label>림켓몬</RimketPokemonBody.label>
+  <RimketPokemonBody.description>볼에서 나온 림켓몬의 모습. 겉모습일 뿐이라 다치거나 사라져도 림켓몬 본체에는 영향이 없다.</RimketPokemonBody.description>
+  <RimketLink.comps.0.useLabel>림켓링크 설치</RimketLink.comps.0.useLabel>
+  <RimketMasterBlueprint.comps.0.activateLabelString>설계도 해석</RimketMasterBlueprint.comps.0.activateLabelString>
+  <RimketMasterBlueprint.comps.0.activateDescString>마스터볼 설계도를 해석한다.</RimketMasterBlueprint.comps.0.activateDescString>
+</LanguageData>

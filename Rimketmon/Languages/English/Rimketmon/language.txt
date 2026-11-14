@@ -1,0 +1,4 @@
+# 림켓몬 언어 묶음 / Rimketmon language pack
+# code: 짧은 언어 코드(겹치지 않게). name: 설정 화면에 보일 이름.
+code=en
+name=English

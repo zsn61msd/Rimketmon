@@ -19,7 +19,7 @@ namespace Rimketmon.Engine
             {
                 if (table != null) return table;
                 var t = new Dictionary<string, string>();
-                foreach (var r in Lang.English ? EnData.Msgs : MsgData.Rows)
+                foreach (var r in (IEnumerable<string>)Lang.MessageRows ?? MsgData.Rows)
                 {
                     int i = r.IndexOf('\t');
                     if (i > 0) t[r.Substring(0, i)] = r.Substring(i + 1);

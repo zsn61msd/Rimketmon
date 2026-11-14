@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Verse;
+using Rimketmon.Engine;
 
 namespace Rimketmon
 {
@@ -22,20 +23,20 @@ namespace Rimketmon
         public override void DoWindowContents(Rect r)
         {
             Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(0f, 0f, r.width, 28f), "새 이름 (최대 " + MaxLen + "자)");
+            Widgets.Label(new Rect(0f, 0f, r.width, 28f), Lang.Tr("새 이름 (최대 " + MaxLen + "자)"));
             GUI.SetNextControlName("RimketRenameField");
             string t = Widgets.TextField(new Rect(0f, 32f, r.width, 32f), name);
             if (t.Length > MaxLen) t = t.Substring(0, MaxLen);
             name = t;
             if (!focused) { UI.FocusControl("RimketRenameField", this); focused = true; }
             bool enter = Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
-            if (Widgets.ButtonText(new Rect(0f, r.height - 34f, r.width / 2f - 4f, 34f), "확인") || enter)
+            if (Widgets.ButtonText(new Rect(0f, r.height - 34f, r.width / 2f - 4f, 34f), Lang.Tr("확인")) || enter)
             {
                 if (enter) Event.current.Use();
                 finished = true; Close();
                 done?.Invoke(name.Trim());
             }
-            if (Widgets.ButtonText(new Rect(r.width / 2f + 4f, r.height - 34f, r.width / 2f - 4f, 34f), "취소")) Close();
+            if (Widgets.ButtonText(new Rect(r.width / 2f + 4f, r.height - 34f, r.width / 2f - 4f, 34f), Lang.Tr("취소"))) Close();
         }
 
         public override void PostClose()

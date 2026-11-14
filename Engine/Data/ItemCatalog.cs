@@ -43,7 +43,21 @@ namespace Rimketmon.Engine
         public static ItemInfo Get(string id) { Init(); ItemInfo it; return id != null && all.TryGetValue(id, out it) ? it : null; }
         public static ItemInfo ByName(string ko) { Init(); ItemInfo it; return ko != null && byKo.TryGetValue(ko, out it) ? it : null; }
         public static IEnumerable<ItemInfo> All { get { Init(); return all.Values; } }
-        public static string NameOf(string id) { var it = Get(id); return it == null ? id : (Lang.English && it.En.Length > 0 ? it.En : it.Name); }
+        public static string NameOf(string id)
+        {
+            var it = Get(id); if (it == null) return id;
+            if (!Lang.English) return it.Name;
+            var t = Lang.ItemText(id); if (t != null && t.Length > 1 && t[1].Length > 0) return t[1];
+            return it.En.Length > 0 ? it.En : it.Name;
+        }
+        /// <summary>지금 언어의 도구 설명.</summary>
+        public static string DescOf(ItemInfo it)
+        {
+            if (it == null) return "";
+            if (!Lang.English) return it.DescKo;
+            var t = Lang.ItemText(it.Id); if (t != null && t.Length > 2 && t[2].Length > 0) return t[2];
+            return it.DescEn.Length > 0 ? it.DescEn : it.DescKo;
+        }
         public static bool IsBerry(string id) { var it = Get(id); return it != null && it.IsBerry; }
 
         // ---------------------------------------------------------------- 분류표

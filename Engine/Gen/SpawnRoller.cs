@@ -78,6 +78,17 @@ namespace Rimketmon.Engine
             return c;
         }
 
+        /// <summary>레벨을 처음부터 다시 정한다(갓 태어난 새끼 등): 경험치·능력치·기술을 그 레벨에 맞춘다.</summary>
+        public static void ResetToLevel(RimketCreature c, int level, EngineSettings s)
+        {
+            if (c == null) return;
+            level = MathUtil.Clamp(level, 1, 100);
+            c.Level = level; c.Exp = RimketCreature.ExpForLevel(level);
+            SpeciesInfo sp;
+            if (SpeciesCatalog.TryGet(c.Species, out sp)) { var mv = PickMoves(sp, level, s); if (mv.Count > 0) c.Moves = mv; }
+            c.RecalculateStats(); c.Hp = c.MaxHp;
+        }
+
         /// <summary>종족 + 레벨로 림켓몬 한 마리를 만든다(야생/트레이너 공통). 종족값·타입·습득 기술은 종족 그대로.</summary>
         public static RimketCreature FromSpecies(SpeciesInfo sp, int level, IRng rng, EngineSettings s, int gender = -1)
         {

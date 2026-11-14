@@ -358,9 +358,9 @@ namespace Rimketmon
                         if (!e.C.Neutral) PartyComponent.Instance.RememberReleasedPerson(person, e);      // 쐐기를 적용한 사람: 정보를 기억(다시 잡으면 그대로)
                         PartyComponent.Instance.Remove(e);
                         if (selected == e) selected = null;
-                        Messages.Message(person.LabelShortCap + "을(를) 볼에서 풀어 주었다." + (keep ? "" : " 우리 정착지의 죄수가 되었다."), person, keep ? MessageTypeDefOf.NeutralEvent : MessageTypeDefOf.CautionInput, false);
+                        Messages.Message(Lang.Tr(person.LabelShortCap + "을(를) 볼에서 풀어 주었다." + (keep ? "" : " 우리 정착지의 죄수가 되었다.")), person, keep ? MessageTypeDefOf.NeutralEvent : MessageTypeDefOf.CautionInput, false);
                     }
-                    catch (Exception ex) { Log.Warning("[림켓몬] 사람 방생 중 오류: " + ex); Messages.Message("방생에 실패했다. (로그 확인)", MessageTypeDefOf.RejectInput, false); }
+                    catch (Exception ex) { Log.Warning("[림켓몬] 사람 방생 중 오류: " + ex); Messages.Message(Lang.Tr("방생에 실패했다. (로그 확인)"), MessageTypeDefOf.RejectInput, false); }
                     return;
                 }
             }
@@ -378,10 +378,10 @@ namespace Rimketmon
                     if (compM != null) { e.C.FullHeal(); compM.data = e; }
                     PartyComponent.Instance.Remove(e);
                     if (selected == e) selected = null;
-                    if (e.C.MechFoe) Messages.Message(e.C.Name + "을(를) 볼에서 꺼냈다. 적 메카가 풀려나 공격해 온다!", mech, MessageTypeDefOf.ThreatBig, false);
-                    else Messages.Message(e.C.Name + "을(를) 볼에서 꺼냈다. 연결이 끊긴 메카가 되었다(메카나이터가 다시 연결할 수 있다).", mech, MessageTypeDefOf.NeutralEvent, false);
+                    if (e.C.MechFoe) Messages.Message(Lang.Tr(e.C.Name + "을(를) 볼에서 풀어주었다. 적 메카가 풀려나 공격해 온다!"), mech, MessageTypeDefOf.ThreatBig, false);
+                    else Messages.Message(Lang.Tr(e.C.Name + "을(를) 볼에서 풀어주었다. 연결이 끊긴 메카가 되었다(메카나이터가 다시 연결할 수 있다)."), mech, MessageTypeDefOf.NeutralEvent, false);
                 }
-                catch (Exception ex) { Log.Warning("[림켓몬] 메카 방생 중 오류: " + ex); Messages.Message("방생에 실패했다. (로그 확인)", MessageTypeDefOf.RejectInput, false); }
+                catch (Exception ex) { Log.Warning("[림켓몬] 메카 방생 중 오류: " + ex); Messages.Message(Lang.Tr("방생에 실패했다. (로그 확인)"), MessageTypeDefOf.RejectInput, false); }
                 return;
             }
             if (map != null && (def == null || def.race == null || !def.race.Animal) && e.C.PawnId == 0)
@@ -389,12 +389,12 @@ namespace Rimketmon
                 // 진짜 포켓몬(림월드 몸이 없음): 풀어 주면 사라진다
                 PartyComponent.Instance.Remove(e);
                 if (selected == e) selected = null;
-                Messages.Message(e.C.Name + "을(를) 풀어 주었다. 어디론가 떠나갔다…", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message(Lang.Tr(e.C.Name + "을(를) 풀어 주었다. 어디론가 떠나갔다…"), MessageTypeDefOf.NeutralEvent, false);
                 return;
             }
             if (map == null || def == null || def.race == null || !def.race.Animal)
             {
-                Messages.Message("지금은 방생할 수 없다(지도를 열어 주세요).", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("지금은 방생할 수 없다(지도를 열어 주세요)."), MessageTypeDefOf.RejectInput, false);
                 return;
             }
             try
@@ -411,12 +411,12 @@ namespace Rimketmon
                 if (!string.IsNullOrEmpty(e.C.Name) && e.C.Name != sp && !e.C.Neutral) pawn.Name = new NameSingle(e.C.Name);
                 PartyComponent.Instance.Remove(e);
                 if (selected == e) selected = null;
-                Messages.Message(e.C.Name + "을(를) 볼에서 꺼냈다. 우리 정착지의 가축이 되었다.", pawn, MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message(Lang.Tr(e.C.Name + "을(를) 볼에서 풀어주었다. 우리 정착지의 가축이 되었다."), pawn, MessageTypeDefOf.NeutralEvent, false);
             }
             catch (Exception ex)
             {
                 Log.Warning("[림켓몬] 방생 중 오류: " + ex);
-                Messages.Message("방생에 실패했다. (로그 확인)", MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr("방생에 실패했다. (로그 확인)"), MessageTypeDefOf.RejectInput, false);
             }
         }
 
@@ -479,7 +479,7 @@ namespace Rimketmon
             gachaResult = got; gachaShownAt = Time.realtimeSinceStartup;
             RimketAudio.PlaySe("gacha_dispense");
             RimketAudio.PlaySe(count >= 10 ? "level_up_fanfare" : "item_fanfare");
-            Messages.Message(count + "회 뽑기: " + string.Join(", ", got.GroupBy(x => x).Select(gr => ItemCatalog.NameOf(gr.Key) + (gr.Count() > 1 ? " ×" + gr.Count() : "")).ToArray()), MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(count + "회 뽑기: " + string.Join(", ", got.GroupBy(x => x).Select(gr => ItemCatalog.NameOf(gr.Key) + (gr.Count() > 1 ? " ×" + gr.Count() : "")).ToArray())), MessageTypeDefOf.PositiveEvent, false);
         }
 
         private sealed class ShopEntry { public string Name, Desc, Icon; public int Price, Have; public Action Buy; public bool Silver; }      // Silver: BP가 아니라 정착지 창고의 은으로 산다(소비 아이템)
@@ -508,7 +508,7 @@ namespace Rimketmon
                 if (left == 0)
                 {
                     l.Add(new ShopEntry { Name = what + " 뽑기: 더 뽑을 것이 없다", Icon = tab == 0 ? "COINCASE" : "SITRUSBERRY", Price = 0,
-                        Desc = what + " " + pool.Count + "종을 모두 뽑았다. 더 이상 뽑을 것이 없다.", Buy = () => { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message("더 뽑을 " + what + "이(가) 없다.", MessageTypeDefOf.RejectInput, false); } });
+                        Desc = what + " " + pool.Count + "종을 모두 뽑았다. 더 이상 뽑을 것이 없다.", Buy = () => { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr("더 뽑을 " + what + "이(가) 없다."), MessageTypeDefOf.RejectInput, false); } });
                     return l;
                 }
                 foreach (var cnt0 in GachaCounts)
@@ -537,12 +537,12 @@ namespace Rimketmon
                 l.Add(new ShopEntry
                 {
                     Name = ItemCatalog.NameOf(id), Icon = id, Price = BpPrice(id), Have = pc.BagCount(id), Silver = true,
-                    Desc = info == null ? "" : (Lang.English ? info.DescEn : info.DescKo),
+                    Desc = info == null ? "" : ItemCatalog.DescOf(info),
                     Buy = () =>
                     {
                         int p = BpPrice(id);      // 가격 숫자는 예전 BP 가격 그대로, 내는 것만 은
-                        if (!SilverBank.TryPay(SilverBank.PayMap(), p)) { Messages.Message("은이 부족합니다 (" + p + " 필요).", MessageTypeDefOf.RejectInput, false); return; }
-                        pc.BagAdd(id); Messages.Message(ItemCatalog.NameOf(id) + " 구매 완료 (은 " + p + ").", MessageTypeDefOf.PositiveEvent, false);
+                        if (!SilverBank.TryPay(SilverBank.PayMap(), p)) { Messages.Message(Lang.Tr("은이 부족합니다 (" + p + " 필요)."), MessageTypeDefOf.RejectInput, false); return; }
+                        pc.BagAdd(id); Messages.Message(Lang.Tr(ItemCatalog.NameOf(id) + " 구매 완료 (은 " + p + ")."), MessageTypeDefOf.PositiveEvent, false);
                     }
                 });
             }
@@ -645,8 +645,8 @@ namespace Rimketmon
                 if (Clicked(listX, y, 170f, rowH) || (i == shopCursor && AcceptKey()))
                 {
                     shopCursor = i;
-                    if (e.Silver && SilverBank.Count(SilverBank.PayMap()) < e.Price) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message("창고의 은이 부족합니다 (" + e.Price + " 필요).", MessageTypeDefOf.RejectInput, false); }
-                    else if (!e.Silver && pc.bp < e.Price) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message("BP가 부족합니다 (" + e.Price + " 필요).", MessageTypeDefOf.RejectInput, false); }
+                    if (e.Silver && SilverBank.Count(SilverBank.PayMap()) < e.Price) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr("창고의 은이 부족합니다 (" + e.Price + " 필요)."), MessageTypeDefOf.RejectInput, false); }
+                    else if (!e.Silver && pc.bp < e.Price) { RimketAudio.PlaySe("gui_sel_buzzer"); Messages.Message(Lang.Tr("BP가 부족합니다 (" + e.Price + " 필요)."), MessageTypeDefOf.RejectInput, false); }
                     else { RimketAudio.PlaySe("mart_buy_item"); e.Buy(); }
                 }
             }
@@ -714,7 +714,7 @@ namespace Rimketmon
             var thing = ThingMaker.MakeThing(def);
             thing.stackCount = count;
             TradeUtility.SpawnDropPod(DropCellFinder.TradeDropSpot(map), map, thing);
-            Messages.Message(def.LabelCap + " ×" + count + " 구매 완료 (" + price + " BP). 곧 투하됩니다.", MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(def.LabelCap + " ×" + count + " 구매 완료 (" + price + " BP). 곧 투하됩니다."), MessageTypeDefOf.PositiveEvent, false);
         }
 
         // ------------------------------------------------------------------ 개발자 (림월드 개발자 모드일 때만)

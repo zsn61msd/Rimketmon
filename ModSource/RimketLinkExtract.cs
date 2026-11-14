@@ -3,6 +3,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using Rimketmon.Engine;
 using Verse.AI;
 
 namespace Rimketmon
@@ -27,11 +28,11 @@ namespace Rimketmon
             if (corpse == null || corpse.InnerPawn == null || !RimketLink.Has(corpse.InnerPawn)) yield break;
             var pawn = context.FirstSelectedPawn;
             string label = "림켓링크 추출: " + corpse.InnerPawn.LabelShortCap;
-            if (!pawn.CanReach(corpse, PathEndMode.ClosestTouch, Danger.Deadly)) { yield return new FloatMenuOption(label + " (도달할 수 없다)", null); yield break; }
-            if (!pawn.CanReserve(corpse)) { yield return new FloatMenuOption(label + " (다른 정착민이 쓰고 있다)", null); yield break; }
+            if (!pawn.CanReach(corpse, PathEndMode.ClosestTouch, Danger.Deadly)) { yield return new FloatMenuOption(Lang.Tr(label + " (도달할 수 없다)"), null); yield break; }
+            if (!pawn.CanReserve(corpse)) { yield return new FloatMenuOption(Lang.Tr(label + " (다른 정착민이 쓰고 있다)"), null); yield break; }
             var def = DefDatabase<JobDef>.GetNamedSilentFail("RimketExtractLink");
             if (def == null) yield break;
-            yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption(label, () =>
+            yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption(Lang.Tr(label), () =>
             {
                 var job = JobMaker.MakeJob(def, corpse);
                 pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
@@ -64,7 +65,7 @@ namespace Rimketmon
                 c.InnerPawn.health.RemoveHediff(h);
                 var item = RimketLink.LinkItem;
                 if (item != null) GenPlace.TryPlaceThing(ThingMaker.MakeThing(item), c.PositionHeld, c.MapHeld, ThingPlaceMode.Near);
-                Messages.Message(pawn.LabelShortCap + "이(가) " + c.InnerPawn.LabelShortCap + "의 뇌에서 림켓링크를 뽑아냈다.", new TargetInfo(c.PositionHeld, c.MapHeld), MessageTypeDefOf.PositiveEvent, false);
+                Messages.Message(Lang.Tr(pawn.LabelShortCap + "이(가) " + c.InnerPawn.LabelShortCap + "의 뇌에서 림켓링크를 뽑아냈다."), new TargetInfo(c.PositionHeld, c.MapHeld), MessageTypeDefOf.PositiveEvent, false);
             };
             done.defaultCompleteMode = ToilCompleteMode.Instant;
             yield return done;
@@ -102,7 +103,7 @@ namespace Rimketmon
                 var h = RimketLink.LinkHediff(o);
                 if (h == null) continue;
                 try { o.health.RemoveHediff(h); } catch (System.Exception ex) { Log.Warning("[림켓몬] 원래 림켓링크 지우기: " + ex.Message); }
-                Messages.Message(o.LabelShortCap + "의 림켓링크가 사라졌다.", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message(Lang.Tr(o.LabelShortCap + "의 림켓링크가 사라졌다."), MessageTypeDefOf.NeutralEvent, false);
             }
             base.DoEffect(user);
         }

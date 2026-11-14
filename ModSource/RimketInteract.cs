@@ -42,7 +42,7 @@ namespace Rimketmon
             int d = c.Friendship - before;
             msg += k.Friend > 0 ? "친밀도 +" + d : "친밀도 " + d + "… " + c.Name + "이(가) 겁먹었다.";
             msg += " (" + c.Friendship + "/255)";
-            Messages.Message(msg, pawn, k.Friend < 0 ? MessageTypeDefOf.NegativeEvent : MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(msg), pawn, k.Friend < 0 ? MessageTypeDefOf.NegativeEvent : MessageTypeDefOf.PositiveEvent, false);
         }
 
         public static RimketCreature PartyFront() { var pc = PartyComponent.Instance; return pc != null ? System.Linq.Enumerable.FirstOrDefault(pc.PartyList()) : null; }
@@ -76,7 +76,7 @@ namespace Rimketmon
                 int k = i;
                 bool mean = RimketInteract.Kinds[k].Mean;
                 string label = c.Name + " " + RimketInteract.Kinds[k].Name + (mean ? " (친밀도 -10)" : "");
-                yield return new FloatMenuOption(label, () =>
+                yield return new FloatMenuOption(Lang.Tr(label), () =>
                 {
                     var job = JobMaker.MakeJob(def); job.count = k;
                     pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
@@ -103,7 +103,7 @@ namespace Rimketmon
 
         static void Ouch(Vector3 fp, Map map, RimketCreature c)
         {
-            MoteMaker.ThrowText(fp + new Vector3(0f, 0f, 0.7f), map, "…!", new Color(1f, 0.35f, 0.3f), 1.8f);
+            MoteMaker.ThrowText(fp + new Vector3(0f, 0f, 0.7f), map, Lang.Tr("…!"), new Color(1f, 0.35f, 0.3f), 1.8f);
             if (c != null) RimketWorldComponent.Cry(c, fp.ToIntVec3(), map);
         }
 
@@ -143,9 +143,9 @@ namespace Rimketmon
                 var cr = RimketInteract.PartyFront();
                 switch (kind)
                 {
-                    case RimketInteract.Play: if (done % 70 == 10) MoteMaker.ThrowText(fp + new Vector3(0f, 0f, 0.6f), map, "♪", new Color(1f, 0.85f, 0.4f), 1.5f); break;
+                    case RimketInteract.Play: if (done % 70 == 10) MoteMaker.ThrowText(fp + new Vector3(0f, 0f, 0.6f), map, Lang.Tr("♪"), new Color(1f, 0.85f, 0.4f), 1.5f); break;
                     case RimketInteract.Hug: if (done % 60 == 20) FleckMaker.ThrowMetaIcon(fp.ToIntVec3(), map, FleckDefOf.Heart); break;
-                    case RimketInteract.Snack: if (done % 80 == 15) MoteMaker.ThrowText(fp + new Vector3(0f, 0f, 0.5f), map, "냠냠", Color.white, 1.4f); break;
+                    case RimketInteract.Snack: if (done % 80 == 15) MoteMaker.ThrowText(fp + new Vector3(0f, 0f, 0.5f), map, Lang.Tr("냠냠"), Color.white, 1.4f); break;
                     case RimketInteract.Brush: if (done % 50 == 10) FleckMaker.ThrowLightningGlow(fp + new Vector3(Rand.Range(-0.3f, 0.3f), 0f, Rand.Range(0f, 0.5f)), map, 0.4f); break;
                     case RimketInteract.Hit:
                         if (done == 28) Lunge(pawn, fp);      // 실제 근접 공격처럼 몸을 앞으로 내지른다

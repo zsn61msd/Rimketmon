@@ -134,7 +134,7 @@ namespace Rimketmon
                 {
                     cueFan = true; RimketAudio.PlayBgm("evolution_fanfare");
                     msg = "축하합니다! " + oldName + "은(는) " + to.Name + "(으)로 진화했다!";
-                    Find.LetterStack.ReceiveLetter("진화: " + to.Name, oldName + "은(는) " + to.Name + "(으)로 진화했다!", LetterDefOf.PositiveEvent);
+                    Find.LetterStack.ReceiveLetter(Lang.Tr("진화: " + to.Name), Lang.Tr(oldName + "은(는) " + to.Name + "(으)로 진화했다!"), LetterDefOf.PositiveEvent);
                 }
                 if (s > 900f + 2650f + 1500f + 4250f) Finish();
             }
@@ -167,7 +167,7 @@ namespace Rimketmon
             bool yes = Hot(bx + 6f, by + 4f, 78f, 13f), no = Hot(bx + 6f, by + 17f, 78f, 13f);
             g.Label("예 (진화 멈춤)", bx + 14f, by + 6f, 9f, yes ? new Color(1f, 0.95f, 0.5f) : Canvas.White, Canvas.WhiteShadow);
             g.Label("아니오", bx + 14f, by + 19f, 9f, no ? new Color(1f, 0.95f, 0.5f) : Canvas.White, Canvas.WhiteShadow);
-            if (Clicked(bx + 6f, by + 4f, 78f, 13f) || AcceptKey()) { mon.NoEvolve = true; Messages.Message(oldName + "의 진화를 멈췄다. (림켓몬 요약 화면에서 다시 켤 수 있다)", MessageTypeDefOf.NeutralEvent, false); Finish(); }
+            if (Clicked(bx + 6f, by + 4f, 78f, 13f) || AcceptKey()) { mon.NoEvolve = true; Messages.Message(Lang.Tr(oldName + "의 진화를 멈췄다. (림켓몬 요약 화면에서 다시 켤 수 있다)"), MessageTypeDefOf.NeutralEvent, false); Finish(); }
             else if (Clicked(bx + 6f, by + 17f, 78f, 13f) || CancelKey()) Finish();
         }
 
@@ -388,9 +388,9 @@ namespace Rimketmon
                 Find.WindowStack.Add(new Window_RimketEvolution(next, sp, () => RunQueue(party.Where(c => c != next).ToList(), done)));
             };
             if (cands.Count == 1) { go(cands[0]); return; }
-            var node = new DiaNode(next.Name + "이(가) 진화하려 한다! 어떤 모습으로 진화시킬까?");
-            foreach (var sp0 in cands) { var sp = sp0; node.options.Add(new DiaOption(sp.Name) { action = () => go(sp), resolveTree = true }); }
-            node.options.Add(new DiaOption("진화시키지 않는다") { action = () => go(null), resolveTree = true });
+            var node = new DiaNode(Lang.Tr(next.Name + "이(가) 진화하려 한다! 어떤 모습으로 진화시킬까?"));
+            foreach (var sp0 in cands) { var sp = sp0; node.options.Add(new DiaOption(Lang.Tr(sp.Name)) { action = () => go(sp), resolveTree = true }); }
+            node.options.Add(new DiaOption(Lang.Tr("진화시키지 않는다")) { action = () => go(null), resolveTree = true });
             Find.WindowStack.Add(new Dialog_NodeTree(node, true, false, "진화"));
         }
     }

@@ -8,7 +8,7 @@ namespace Rimketmon.Engine
     public static class Paradox
     {
         public const int FoeLevel = 150;         // 상대는 Lv.150 고정(내 림켓몬은 원래 레벨 그대로 → 위험이 있다)
-        public const int BringMax = 3;
+        public const int BringMax = 6;
         /// <summary>상대 후보: 종족값 600 이상인 기본 종족 + 폼(폼은 별개 종으로 나온다).</summary>
         static List<SpeciesInfo> pool;
         public static IList<SpeciesInfo> Pool
@@ -48,7 +48,14 @@ namespace Rimketmon.Engine
             return w;
         }
 
-        public static bool CanReceive(RimketCreature target) { return target != null; }     // 사람 림켓몬(마스터볼로 잡은 사람)에게도 쓸 수 있다
+        /// <summary>쐐기를 쓸 수 있는 대상: 림월드 동물·메카·사람(마스터볼로 잡은 사람)처럼 "껍데기"가 있는 림켓몬만. 포켓몬(사냥·알·진화로 얻은 본가 종족)에게는 쓸 수 없다.</summary>
+        public static bool CanReceive(RimketCreature target)
+        {
+            if (target == null) return false;
+            if (target.PawnId != 0 || target.Neutral) return true;
+            if (HasWedge(target)) { var p = target.WedgeBackup.Split('|'); if (p.Length > 1 && p[0] != p[1]) return true; }      // 이미 쐐기를 쓴 동물(원래 껍데기가 따로 있음)
+            return !string.IsNullOrEmpty(target.SpeciesId) && target.SpeciesId != target.Species;
+        }
 
         /// <summary>쐐기의 정보로 대상을 완전히 덮어쓴다: 종족·타입·종족값·개체값·성격·성별·특성·기술·티어. 레벨·경험치·친밀도·도구·이름·그림(림월드 동물)은 그대로.</summary>
         public static bool Apply(RimketCreature target, RimketCreature wedge)
@@ -67,6 +74,10 @@ namespace Rimketmon.Engine
             target.RecalculateStats(); target.FullHeal();
             return true;
         }
+
+        public const int RecombineCount = 3;
+        /// <summary>쐐기 재조합: 쐐기 3개를 넣으면 패러독스 상대와 같은 확률로 무작위 쐐기 1개가 나온다.</summary>
+        public static RimketCreature Recombine(IRng rng, EngineSettings s) { return MakeWedge(MakeFoe(rng, s)); }
 
         public static bool HasWedge(RimketCreature c) { return c != null && !string.IsNullOrEmpty(c.WedgeBackup); }
 
