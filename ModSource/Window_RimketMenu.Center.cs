@@ -242,7 +242,7 @@ namespace Rimketmon
                         int sl = pc.shinyCharm, rl = pc.rareCharm;
                         bool sMax = sl >= PartyComponent.ShinyCharmCost.Length, rMax = rl >= PartyComponent.RareCharmCost.Length;
                         string sOpt = sMax ? "이로치 부적 (최고 단계)" : "이로치 부적 ×" + pc.ShinyMultiplier + "→×" + PartyComponent.ShinyCharmMult[sl + 1] + " (" + PartyComponent.ShinyCharmCost[sl] + " BP)";
-                        string rOpt = rMax ? "레어 부적 (최고 단계)" : "레어 부적 ×" + pc.RareMultiplier + "→×" + PartyComponent.RareCharmMult[rl + 1] + " (" + PartyComponent.RareCharmCost[rl] + " BP)";
+                        string rOpt = rMax ? "레어 부적 (최고 단계)" : "레어 부적 " + rl + "→" + (rl + 1) + "단계 (" + PartyComponent.RareCharmCost[rl] + " BP)";
                         Say(() => Ask(new[] { sOpt, rOpt, "그만두기" }, i =>
                         {
                             if (i == 2) { Say(ToWalk, "언제든 다시 오게나."); return; }
@@ -253,7 +253,7 @@ namespace Rimketmon
                             if (shiny) pc.shinyCharm = sl + 1; else pc.rareCharm = rl + 1;
                             RimketAudio.PlaySe("upgrade");
                             if (shiny) Say(ToWalk, "자, 이로치 부적을 갈고닦아 주었네!", "이제 사냥에서 이로치를 만날 확률이 ×" + pc.ShinyMultiplier + "(이)라네.");
-                            else Say(ToWalk, "자, 레어 부적을 갈고닦아 주었네!", "이제 사냥에서 드문 포켓몬(드묾·아주 드묾·극히 드묾)을 만날 확률이 ×" + pc.RareMultiplier + "(이)라네.");
+                            else Say(ToWalk, "자, 레어 부적을 갈고닦아 주었네!", "이제 사냥에서 드묾 ×" + pc.RareTierMult[0] + " · 아주 드묾 ×" + pc.RareTierMult[1] + " · 극히 드묾 ×" + pc.RareTierMult[2] + "(이)라네.");
                         }), "허허, 나는 이로치 아저씨일세.", "색이 다른 포켓몬… 이로치를 본 적 있나? 보통은 2048마리 중 한 마리 꼴이지.",
                             "BP를 넉넉히 주면 부적을 갈고닦아 주겠네. 이로치 부적은 이로치를, 레어 부적은 드문 포켓몬을 더 자주 만나게 해 주지.");
                         break;

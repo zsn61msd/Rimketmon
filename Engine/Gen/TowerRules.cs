@@ -51,6 +51,9 @@ namespace Rimketmon.Engine
         public static int RegularMinLevel(int tier) { return TierMinLevel(tier) + RegularLevelBoost; }
         public static int RegularMaxLevel(int tier) { return Math.Min(TierMaxLevel(tier) - 1, RegularMinLevel(tier) + RegularLevelSpan - 1); }
 
+        /// <summary>입장료(은): 1~10층 시작 100, 10층마다 50씩(91층 시작 550).</summary>
+        public static int EntryFee(int startFloor) { return 100 + 50 * ((Clamp(startFloor) - 1) / 10); }
+
         /// <summary>일반 트레이너가 도구를 지닐 확률: 1층 15% → 100층 75%.</summary>
         public static double RegularItemChance(int floor) { return 0.15 + 0.6 * (Clamp(floor) - 1) / 99.0; }
 

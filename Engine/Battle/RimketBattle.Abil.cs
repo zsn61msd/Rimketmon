@@ -639,6 +639,33 @@ namespace Rimketmon.Engine
 
         // ------------------------------------------------------------------ 적 AI: 변화 기술의 가치(0~1, 공격기 기대 피해에 곱해 비교)
 
+        /// <summary>
+        /// 오토(배틀타워): 플레이어 쪽 행동을 기본 AI로 고른다. 전투 난수(rng)를 건드리지 않게 따로 받은 난수만 쓴다
+        /// (100층 미리 예측 AI의 재생이 어긋나지 않게). 기술 → 교체(쓰러졌을 때, 남은 HP가 많은 쪽) → 기본 공격/발버둥 순.
+        /// </summary>
+        public BattleAction AutoPlayerAction(IRng pick)
+        {
+            var acts = LegalActions();
+            var me = Player.Active; var tgt = Foe.Active;
+            var moves = acts.Where(a => a.Kind == ActionKind.UseMove).ToList();
+            if (moves.Count > 0 && me != null && tgt != null)
+            {
+                var legal = new HashSet<Move>(moves.Where(a => a.Index >= 0 && a.Index < me.C.Moves.Count).Select(a => me.C.Moves[a.Index].Move));
+                var ch = EnemyAI.Choose(me, tgt, s, pick, m => legal.Contains(m), m => AiStatusValue(Player, me, tgt, m));
+                if (ch != null && ch.Slot != null)
+                {
+                    int i = me.C.Moves.IndexOf(ch.Slot);
+                    foreach (var a in moves) if (a.Index == i) return a;
+                }
+                return moves[0];
+            }
+            var sw = acts.Where(a => a.Kind == ActionKind.Switch).ToList();
+            if (sw.Count > 0)
+                return sw.OrderByDescending(a => { var c = a.Index >= 0 && a.Index < Player.Party.Count ? Player.Party[a.Index] : null; return c == null || c.MaxHp <= 0 ? 0.0 : c.Hp / (double)c.MaxHp; }).First();
+            foreach (var a in acts) if (a.Kind == ActionKind.BasicAttack || a.Kind == ActionKind.Struggle) return a;
+            return acts.First(a => a.Kind != ActionKind.Disconnect && a.Kind != ActionKind.UseItem);
+        }
+
         private double AiStatusValue(BattleSide side, Fighter self, Fighter target, Move m)
         {
             if (m.Dud) return HasLiveAlly(side, self) ? 0.35 : 0;

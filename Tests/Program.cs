@@ -52,6 +52,52 @@ internal static class Program
         Check(withItem > total / 2, "95층 일반 트레이너는 대부분 도구를 지닌다", withItem + "/" + total);
     }
 
+    private static void TestTowerAutoAndFee()
+    {
+        Console.WriteLine("\n[배틀타워: 입장료 · 오토 AI]");
+        Check(TowerRules.EntryFee(1) == 100 && TowerRules.EntryFee(10) == 100 && TowerRules.EntryFee(11) == 150 && TowerRules.EntryFee(91) == 550, "입장료 100 + 10층마다 50", TowerRules.EntryFee(91).ToString());
+        var s = new EngineSettings();
+        int bad = 0, games = 0, wins = 0;
+        for (int g = 0; g < 30; g++)
+        {
+            var rng = new SystemRng(100 + g);
+            var mine = TowerBuilder.BuildRegularParty(30, rng, s);
+            var foe = TowerBuilder.BuildRegularParty(30, rng, s);
+            var col = Col("정착민", 1.0, 3, s);
+            var b = RimketBattle.Trainer(new SystemRng(500 + g), s, mine, col, "타워", foe, null);
+            b.DeferExp = true;
+            var pick = new SystemRng(900 + g);
+            for (int t = 0; t < 300 && !b.IsOver; t++)
+            {
+                var a = b.AutoPlayerAction(pick);
+                bool legal = b.LegalActions().Any(x => x.Kind == a.Kind && x.Index == a.Index);
+                if (!legal || a.Kind == ActionKind.Disconnect || a.Kind == ActionKind.UseItem) { bad++; break; }
+                b.Act(a);
+            }
+            games++; if (b.IsOver && b.Result.End == BattleEnd.Victory) wins++;
+        }
+        Check(bad == 0, "오토 AI는 규칙에 맞는 행동만(항복·아이템 없음)", bad + "건");
+        Check(wins > 0, "오토 AI가 같은 수준 상대에게 이기기도 한다", wins + "/" + games);
+        // 오토의 선택은 전투 난수를 쓰지 않는다: 같은 시드 + 같은 행동이면 같은 결과
+        var r1 = new SystemRng(42); var p1 = TowerBuilder.BuildRegularParty(20, r1, s); var f1 = TowerBuilder.BuildRegularParty(20, r1, s);
+        var r2 = new SystemRng(42); var p2 = TowerBuilder.BuildRegularParty(20, r2, s); var f2 = TowerBuilder.BuildRegularParty(20, r2, s);
+        var b1 = RimketBattle.Trainer(new SystemRng(7), s, p1, Col("a", 1.0, 3, s), "t", f1, null);
+        var b2 = RimketBattle.Trainer(new SystemRng(7), s, p2, Col("a", 1.0, 3, s), "t", f2, null);
+        var q1 = new SystemRng(1); var q2 = new SystemRng(99999);
+        for (int t = 0; t < 200 && !b1.IsOver; t++) { var a = b1.AutoPlayerAction(q1); b1.AutoPlayerAction(q1); b1.Act(a); if (!b2.IsOver) b2.Act(a); }
+        Check(b1.Log.Count == b2.Log.Count && string.Join("|", b1.Log) == string.Join("|", b2.Log), "오토 선택이 전투 난수를 건드리지 않는다(미리 예측 AI 재생 안전)");
+    }
+
+    private static void TestRareCharmTiers()
+    {
+        Console.WriteLine("\n[레어 부적: 등급별 배율]");
+        var w = HuntCatalog.Weights(new double[] { 18, 35, 47 }); double sum = w.Sum();
+        double[] pct = w.Select(x => x / sum * 100).ToArray();
+        Check(Math.Abs(pct[2] - 40) < 1 && Math.Abs(pct[3] - 15) < 1 && Math.Abs(pct[4] - 4) < 0.3, "최고 단계: 드묾 40% · 아주 드묾 15% · 극히 드묾 4%", string.Join(" / ", pct.Select(x => x.ToString("0.0"))));
+        var w1 = HuntCatalog.Weights(6.0); var w2 = HuntCatalog.Weights(new double[] { 6, 6, 6 });
+        Check(w1.SequenceEqual(w2), "예전 단계(셋 동일 배율)는 확률이 그대로");
+    }
+
     private static void Check(bool ok, string name, string detail = "")
     {
         if (ok) { passed++; Console.WriteLine("  [PASS] " + name + (detail != "" ? "  " + detail : "")); }
@@ -225,6 +271,8 @@ internal static class Program
         TestGym();
         TestTowerDeferredExp();
         TestTowerRegularBoost();
+        TestTowerAutoAndFee();
+        TestRareCharmTiers();
         Console.WriteLine("== 12. 대량 무작위 전투(오류/무한루프 검사) ==");
         Fuzz(false);
         Console.WriteLine("== 12b. 지닌 도구를 섞은 대량 전투 ==");

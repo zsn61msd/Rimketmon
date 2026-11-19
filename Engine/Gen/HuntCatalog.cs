@@ -66,16 +66,23 @@ namespace Rimketmon.Engine
         public static double[] Weights(double rareMult = 1.0)
         {
             double m = Math.Max(1.0, rareMult);
-            return new[] { TierWeight[0], TierWeight[1], TierWeight[2] * m, TierWeight[3] * m, TierWeight[4] * m };
+            return Weights(new[] { m, m, m });
+        }
+        /// <summary>등급별 레어 부적 배율(드묾·아주 드묾·극히 드묾 각각). 높은 단계는 높은 등급에 더 크게 곱한다.</summary>
+        public static double[] Weights(double[] tierMult)
+        {
+            double a = Math.Max(1.0, tierMult[0]), b = Math.Max(1.0, tierMult[1]), c = Math.Max(1.0, tierMult[2]);
+            return new[] { TierWeight[0], TierWeight[1], TierWeight[2] * a, TierWeight[3] * b, TierWeight[4] * c };
         }
 
         public static string Roll(HuntBiome b, int time, IRng rng, double rareMult = 1.0) { int t; return Roll(b, time, rng, out t, rareMult); }
 
         /// <summary>등장 등급(0 흔함 ~ 4 극히 드묾)도 함께 돌려준다.</summary>
-        public static string Roll(HuntBiome b, int time, IRng rng, out int rolledTier, double rareMult = 1.0)
+        public static string Roll(HuntBiome b, int time, IRng rng, out int rolledTier, double rareMult = 1.0) { double m = Math.Max(1.0, rareMult); return Roll(b, time, rng, out rolledTier, new[] { m, m, m }); }
+        public static string Roll(HuntBiome b, int time, IRng rng, out int rolledTier, double[] tierMult)
         {
             rolledTier = -1;
-            var w = Weights(rareMult); double sum = 0; foreach (var x in w) sum += x;
+            var w = Weights(tierMult); double sum = 0; foreach (var x in w) sum += x;
             double v = rng.NextDouble() * sum; int tier = 4;
             for (int t = 0; t < 5; t++) { if (v < w[t]) { tier = t; break; } v -= w[t]; }
             tier = Effective(b, tier, time);
@@ -98,10 +105,11 @@ namespace Rimketmon.Engine
         }
 
         /// <summary>등장표용: 그 시간에 각 종족이 나올 확률(등급 확률 ÷ 그 등급 종족 수, 빈 등급은 아래 등급에 합친다).</summary>
-        public static List<KeyValuePair<string, double>> Table(HuntBiome b, int time, out List<int> tiers, double rareMult = 1.0)
+        public static List<KeyValuePair<string, double>> Table(HuntBiome b, int time, out List<int> tiers, double rareMult = 1.0) { double m = Math.Max(1.0, rareMult); return Table(b, time, out tiers, new[] { m, m, m }); }
+        public static List<KeyValuePair<string, double>> Table(HuntBiome b, int time, out List<int> tiers, double[] tierMult)
         {
             var prob = new Dictionary<string, double>(); var tierOf = new Dictionary<string, int>();
-            var w = Weights(rareMult); double sum = 0; foreach (var x in w) sum += x;
+            var w = Weights(tierMult); double sum = 0; foreach (var x in w) sum += x;
             for (int t = 0; t < 5; t++)
             {
                 int e = Effective(b, t, time); if (e < 0) continue;

@@ -111,3 +111,7 @@
 ^(\\d+)층 챔피언: (\\d+)마리 · Lv\\.(\\d+)$	Floor $1 champion: $2 mons · Lv.$3
 ^(\\d+)층 강적: (\\d+)마리 · Lv\\.(\\d+)$	Floor $1 boss: $2 mons · Lv.$3
 ^승리 (\\d+)~(\\d+) BP · (\\d+)층까지 이기면 \\+(\\d+) BP$	Win $1–$2 BP · +$4 BP for clearing up to floor $3
+^입장료 은 (\\d+) \\(창고 (\\d+)\\)$	Entry fee: $1 silver (stock $2)
+^(\\d+)층부터 도전할까\\? \\(입장료 은 (\\d+)\\)(.*)$	Start from floor $1? (Entry fee $2 silver)$3
+^레어 부적 (\\d+)→(\\d+)단계 \\((\\d+) BP\\)$	Rare Charm Lv.$1→$2 ($3 BP)
+^이제 사냥에서 드묾 ×(.+) · 아주 드묾 ×(.+) · 극히 드묾 ×(.+)\\(이\\)라네\\.$	Now hunts give Rare ×$1 · Very rare ×$2 · Ultra rare ×$3.

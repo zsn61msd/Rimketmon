@@ -427,6 +427,32 @@ namespace Rimketmon
             d.layer = WindowLayer.Super;
             Find.WindowStack.Add(d);
         }
+        /// <summary>배틀타워 오토: 입력을 받을 수 있는 순간마다 기본 AI가 내 행동을 고른다(전투 난수와 따로 둔 난수로).</summary>
+        private bool AutoPlay { get { return TowerRun.Auto && TowerRun.Running && battle.DeferExp && !Online; } }
+        private readonly IRng autoRng = new SystemRng(Environment.TickCount);
+        private bool autoStopped;      // 이 배틀에서 오토를 멈췄다(다시 켤 수 있게 배지를 남긴다)
+        private void DrawAutoBadge(Canvas g)
+        {
+            bool on = AutoPlay;
+            g.Round(4f, 4f, 58f, 13f, on ? new Color(0.2f, 0.55f, 0.32f, 0.92f) : new Color(0.3f, 0.3f, 0.35f, 0.9f));
+            g.Label(on ? "AUTO ■ 멈춤" : "AUTO ▶ 켜기", 8f, 5.5f, 7.5f, Canvas.White, Canvas.WhiteShadow);
+            if (Clicked(g, 4f, 4f, 58f, 13f))
+            {
+                TowerRun.Auto = !on; autoStopped = on;
+                RimketAudio.PlaySe(on ? "gui_sel_cancel" : "gui_sel_decision");
+                if (on) Messages.Message(Lang.Tr("오토를 멈췄다. 직접 조종한다."), MessageTypeDefOf.NeutralEvent, false);
+            }
+        }
+
+        private void PumpAuto()
+        {
+            if (!AutoPlay || battle.IsOver) return;
+            if (!InputReady) { advanceRequested = true; return; }      // 문장 넘김도 자동
+            if (heldAct != null) return;
+            heldAct = null; mode = Mode.Main;
+            DoAct(battle.AutoPlayerAction(autoRng));
+        }
+
         private void PumpQuit()
         {
             if (!quitPending || battle.IsOver) { quitPending = false; return; }
@@ -727,7 +753,7 @@ namespace Rimketmon
 
         /// <summary>온라인 배틀이 열려 있는 동안은 양쪽 화면 속도를 맞추려고 연출·체력바를 1배속으로 고정한다(설정 무시).</summary>
         internal static bool OnlineOpen;
-        private static float Speed { get { return OnlineOpen ? RimketmonSettings.GameSpeedMult[2] : RimketmonMod.Settings.Speed; } }      // 온라인은 항상 '빠름'
+        private static float Speed { get { return OnlineOpen ? RimketmonSettings.GameSpeedMult[2] : (TowerRun.Auto && TowerRun.Running) ? RimketmonSettings.GameSpeedMult[3] : RimketmonMod.Settings.Speed; } }      // 온라인은 '빠름', 타워 오토는 '터보'      // 온라인은 항상 '빠름'
         private static float HpRateNow { get { return OnlineOpen ? RimketmonSettings.HpBarRate[0] : RimketmonMod.Settings.HpRate; } }
         private static bool MoveAnimsOn { get { return OnlineOpen || RimketmonMod.Settings.moveAnimations; } }
         private static float Sec(float ms) { return ms / 1000f / Speed; }
@@ -993,7 +1019,8 @@ namespace Rimketmon
         {
             if (RimketClock.Paused) return;
             inRect = RimketFrame.Begin(this, inRect);
-            PumpQuit();      // 바깥 틀(이동·크기·초기화)을 그리고 캔버스 영역만 받는다
+            PumpQuit();
+            PumpAuto();      // 바깥 틀(이동·크기·초기화)을 그리고 캔버스 영역만 받는다
             var cv = new Canvas(inRect);
             float now = RimketClock.Now;
             float introK = PR.Linear((now - openTime) / IntroSec);
@@ -1018,6 +1045,7 @@ namespace Rimketmon
             DrawFieldBadges(g, introK);
             DrawBottom(g, now);
             DrawTopTools(g);
+            if (AutoPlay || (TowerRun.Running && battle.DeferExp && !Online && autoStopped)) DrawAutoBadge(g);
             if (RimketBuild.Dev) DrawDevTools(g);
             if (Online) OnlineChat.Draw(g, Session, 166f, 2f, 150f);      // 온라인: 채팅(오른쪽 위, 속도 버튼 왼쪽)
 

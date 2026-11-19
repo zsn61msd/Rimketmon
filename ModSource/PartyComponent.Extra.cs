@@ -33,16 +33,25 @@ namespace Rimketmon
         public int huntTrips, huntCaught;
         /// <summary>이로치 아저씨에게 산 이로치 부적 단계(0~5).</summary>
         public int shinyCharm;
-        public static readonly int[] ShinyCharmCost = { 1000, 2000, 3000, 4000, 5000 };
-        public static readonly double[] ShinyCharmMult = { 1, 3, 5, 8, 12, 16 };
+        /// <summary>부적 단계별 가격(두 부적 같은 표, 11단계, 마지막 20000).</summary>
+        public static readonly int[] CharmCost = { 1000, 2000, 3000, 4000, 5000, 7000, 9000, 11000, 14000, 17000, 20000 };
+        public static int[] ShinyCharmCost { get { return CharmCost; } }
+        public static readonly double[] ShinyCharmMult = { 1, 3, 5, 8, 12, 16, 24, 32, 48, 64, 96, 128 };      // 최고 1/16
         /// <summary>레어 부적: 사냥에서 드묾·아주 드묾·극히 드묾 등급이 나올 확률 배율.</summary>
         public int rareCharm;
         /// <summary>도구·나무열매 뽑기에서 이미 나온 것(다시 나오지 않는다).</summary>
         public HashSet<string> gachaDrawn = new HashSet<string>();
         private List<string> gachaDrawnList;
-        public static readonly int[] RareCharmCost = { 1000, 2000, 3000, 4000, 5000 };
-        public static readonly double[] RareCharmMult = { 1, 1.5, 2, 3, 4, 6 };
-        public double RareMultiplier { get { return RareCharmMult[Math.Max(0, Math.Min(RareCharmMult.Length - 1, rareCharm))]; } }
+        public static int[] RareCharmCost { get { return CharmCost; } }
+        /// <summary>레어 부적 단계별 등급 배율(드묾, 아주 드묾, 극히 드묾). 6단계까지는 셋이 같고, 그 뒤로는 높은 등급일수록 더 크게.</summary>
+        public static readonly double[][] RareCharmTiers =
+        {
+            new double[] { 1, 1, 1 }, new double[] { 1.5, 1.5, 1.5 }, new double[] { 2, 2, 2 }, new double[] { 3, 3, 3 }, new double[] { 4, 4, 4 }, new double[] { 6, 6, 6 },
+            new double[] { 7, 8, 9 }, new double[] { 8, 10, 12 }, new double[] { 10, 16, 20 }, new double[] { 12, 20, 26 }, new double[] { 14, 25, 32 }, new double[] { 18, 35, 47 },
+        };
+        public double[] RareTierMult { get { return RareCharmTiers[Math.Max(0, Math.Min(RareCharmTiers.Length - 1, rareCharm))]; } }
+        /// <summary>표시용: 극히 드묾 배율.</summary>
+        public double RareMultiplier { get { return RareTierMult[2]; } }
         public double ShinyMultiplier { get { return ShinyCharmMult[Math.Max(0, Math.Min(ShinyCharmMult.Length - 1, shinyCharm))]; } }
 
         // ---- 도감: 만난 종 / 잡은 종(포켓몬은 종족 id, 림월드 동물은 하나로 묶은 "RIMWORLD", ?티어는 "???")

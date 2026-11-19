@@ -61,7 +61,7 @@ namespace Rimketmon
 
             // ---- 오른쪽: 등장표(지금 시간대)
             List<int> tiers;
-            var table = HuntCatalog.Table(b, time, out tiers, pc.RareMultiplier);
+            var table = HuntCatalog.Table(b, time, out tiers, pc.RareTierMult);
             g.Window(win, 100f, 4f, 216f, 126f);
             g.Label(b.Name + " · 지금은 " + HuntCatalog.TimeNames[time] + " 등장표", 108f, 8f, 9f, new Color(1f, 0.92f, 0.5f), Canvas.WhiteShadow);
             const int cols = 7; const float cw = 29f, ch = 32f, tx0 = 106f, ty0 = 21f; const int vis = 3;
@@ -101,7 +101,7 @@ namespace Rimketmon
                 if (got) g.ImgRegion(PR.Tex("ui/pb_sheet"), 0, 210, 12, 12, 10f, 137.5f, 0f, 0f, 0.75f, 1f, 0f);
                 g.Label((sp != null ? sp.Name : table[huntHover].Key) + (got ? " (잡아 봄)" : "") + "  ·  " + HuntCatalog.TierNames[tiers[huntHover]] + "  ·  " + (table[huntHover].Value * 100).ToString("0.##") + "%  ·  포획률 " + RimketBattle.CatchRateOf(table[huntHover].Key) + (HuntCatalog.SpawnFormCount(table[huntHover].Key) > 1 ? "  ·  모습 " + HuntCatalog.SpawnFormCount(table[huntHover].Key) + "가지 중 하나" : ""), got ? 20f : 10f, 137f, 9.5f, Canvas.White, Canvas.WhiteShadow);
             }
-            else g.Label("입장 " + HuntCost + " BP (보유 " + pc.bp + ") · 한 번에 " + HuntBattles + "번 배틀 · 이로치 확률 " + (pc.ShinyMultiplier > 1 ? "1/2048 ×" + pc.ShinyMultiplier : "1/2048") + (pc.RareMultiplier > 1 ? " · 희귀 ×" + pc.RareMultiplier : ""), 10f, 137f, 9f, Canvas.White, Canvas.WhiteShadow);
+            else g.Label("입장 " + HuntCost + " BP (보유 " + pc.bp + ") · 한 번에 " + HuntBattles + "번 배틀 · 이로치 확률 " + "1/" + Math.Max(1, (int)Math.Round(2048 / pc.ShinyMultiplier)) + (pc.rareCharm > 0 ? " · 레어 부적 Lv." + pc.rareCharm : ""), 10f, 137f, 9f, Canvas.White, Canvas.WhiteShadow);
             g.Label("볼(" + (pawn != null ? pawn.LabelShortCap : "림켓링크 없음") + "의 소지품): 몬스터 " + balls[0] + " · 슈퍼 " + balls[1] + " · 하이퍼 " + balls[2] + " · 마스터 " + balls[3], 10f, 150f, 8f, new Color(0.85f, 0.9f, 1f), Canvas.WhiteShadow);
             g.Label("쓰러뜨리면 잡을 수 없다. 체력을 깎고 상태이상을 걸어 볼을 던지자.", 10f, 162f, 7f, new Color(0.8f, 0.95f, 0.8f), Canvas.WhiteShadow);
             bool can = pawn != null && pc.bp >= HuntCost && pc.ActiveParty().Any(c => !c.IsFainted) && balls.Sum() > 0;
@@ -154,7 +154,7 @@ namespace Rimketmon
             var rng = new GameRng();
             var map = pawn.Map ?? Find.AnyPlayerHomeMap;
             int time = HuntCatalog.TimeOf(map != null ? GenLocalDate.HourFloat(map) : 12f);
-            int rTier; string id = HuntCatalog.Roll(biome, time, rng, out rTier, pc.RareMultiplier);
+            int rTier; string id = HuntCatalog.Roll(biome, time, rng, out rTier, pc.RareTierMult);
             SpeciesInfo sp;
             if (id == null || !SpeciesCatalog.TryGet(id, out sp)) { End(); return; }
             int cap = pc.LevelCap;

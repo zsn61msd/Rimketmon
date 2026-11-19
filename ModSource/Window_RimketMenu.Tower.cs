@@ -67,15 +67,27 @@ namespace Rimketmon
             var party = pc.ActiveParty(); party.RemoveAll(c => c.IsFainted);
             bool can = party.Count > 0;
             g.Label("파티 " + party.Count + "마리 · 선두 " + (can ? party[0].Name + " Lv." + party[0].Level : "없음"), 10f, 137f, 9f, Canvas.White, Canvas.WhiteShadow);
-            g.Label(can ? "도전하면 " + start + "층의 트레이너와 먼저 싸운다." : "싸울 수 있는 림켓몬이 없다. 센터에서 회복하자.", 10f, 150f, 8f, dim, Canvas.WhiteShadow);
+            int fee = TowerRules.EntryFee(start);
+            g.Label(can ? "입장료 은 " + fee + " (창고 " + (SilverBank.PayMap() != null ? SilverBank.Count(SilverBank.PayMap()) : 0) + ")" : "싸울 수 있는 림켓몬이 없다. 센터에서 회복하자.", 10f, 150f, 8f, dim, Canvas.WhiteShadow);
+            // 오토모드: 100층을 처음 정복하면 열린다
+            bool autoOpen = pc.towerBest >= TowerRules.Floors;
+            if (autoOpen)
+            {
+                g.Round(150f, 151f, 86f, 15f, TowerRun.Auto ? new Color(0.25f, 0.55f, 0.35f, 0.9f) : new Color(0f, 0f, 0f, 0.35f));
+                g.Label((TowerRun.Auto ? "■ " : "□ ") + "오토로 도전", 156f, 153f, 8.5f, Canvas.White, Canvas.WhiteShadow);
+                if (Clicked(150f, 151f, 86f, 15f)) { TowerRun.Auto = !TowerRun.Auto; RimketAudio.PlaySe("gui_sel_decision"); }
+            }
+            else TowerRun.Auto = false;
             float bx = 262f, by = 154f;
             g.Label("도전", bx, by, 13f, can ? Canvas.White : new Color(0.5f, 0.5f, 0.55f), Canvas.WhiteShadow);
             if (can) g.Cursor(bx - 6f, by + 8f, 0.5f, 0.5f);
             if (can && (Clicked(bx - 10f, by - 3f, 50f, 18f) || AcceptKey()))
             {
                 int startFloor = start;
-                AskConfirm(startFloor + "층부터 도전할까?", () =>
+                AskConfirm(Lang.Tr(startFloor + "층부터 도전할까? (입장료 은 " + fee + ")") + (TowerRun.Auto ? "\n" + Lang.Tr("오토: 기본 AI가 대신 싸우고 멈추지 않고 올라간다.") : ""), () =>
                 {
+                    var map = SilverBank.PayMap();
+                    if (map == null || !SilverBank.TryPay(map, fee)) { Messages.Message(Lang.Tr("은이 부족합니다 (" + fee + " 필요)."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
                     pc.towerRuns++;
                     Close();
                     TowerRun.Start(startFloor, RimketLink.FindLinkPawn() ?? PawnsFinder.AllMaps_FreeColonistsSpawned.FirstOrDefault());
@@ -150,8 +162,13 @@ namespace Rimketmon
         /// <summary>층 사이 결과 화면(림켓몬 창의 배틀타워 화면이 그린다). null이면 평소 화면.</summary>
         internal sealed class ResultPanel { public string Title; public List<string> Lines = new List<string>(); public bool CanContinue; public int NextFloor; }
         internal static ResultPanel Panel;
+        /// <summary>오토모드: 내 포켓몬을 기본 AI가 조종하고, 층 사이에서도 멈추지 않는다(새 기술은 배우지 않는다).</summary>
+        internal static bool Auto;
+        /// <summary>지금 타워 도전 중인가(배틀창이 오토·터보를 판단할 때).</summary>
+        internal static bool Running { get { return floor > 0; } }
         private static void ShowPanel(ResultPanel p)
         {
+            if (Auto && p.CanContinue) { Panel = null; Next(); return; }      // 오토: 결과 화면 없이 바로 다음 층
             Panel = p;
             if (!Find.WindowStack.IsOpen<Window_RimketMenu>()) Find.WindowStack.Add(Window_RimketMenu.OpenAtTower());
         }
@@ -240,6 +257,7 @@ namespace Rimketmon
             b.DeferredExp.Clear();
             int i = 0;
             Action step = null;
+            if (TowerRun.Auto) { then(); return; }      // 오토: 새 기술은 배우지 않고 넘긴다
             step = () => { if (i >= ups.Count) { then(); return; } var u = ups[i++]; Dialog_LearnMove.RunLevelUp(u.Key, u.Value, step); };
             step();
         }

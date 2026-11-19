@@ -316,6 +316,7 @@ namespace Rimketmon
         private bool dragging;
         private bool dragMoved;                 // 우클릭을 누른 채 실제로 끌었는지(끌지 않고 뗐으면 빠른 메뉴)
         private Vector2 dragAccum;
+        private Vector2 dragMouse0, dragIcon0;      // 누른 순간의 마우스·아이콘 위치(UI 좌표). 이동량은 이 기준점에서 잰다
 
         /// <summary>최소화된 림켓몬을 다시 여는 탭(화면 아래 가운데)과 몬스터볼 아이콘.</summary>
         private void DrawRestoreTab()
@@ -362,18 +363,18 @@ namespace Rimketmon
             if (over) TooltipHandler.TipRegion(r, Lang.Tr(removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : noLink ? "림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)" : "림켓몬\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)"));
 
             var e = Event.current;
-            if (e.type == EventType.MouseDown && over && e.button == 1) { dragging = true; dragMoved = false; dragAccum = Vector2.zero; e.Use(); }
+            if (e.type == EventType.MouseDown && over && e.button == 1) { dragging = true; dragMoved = false; dragAccum = Vector2.zero; dragMouse0 = e.mousePosition; dragIcon0 = new Vector2(x, y); e.Use(); }
             else if (dragging && e.type == EventType.MouseDrag)
             {
-                Vector2 d = e.delta;
+                // 이벤트의 delta는 화면 픽셀이라 UI 배율이 1이 아니면 마우스보다 더 움직였다. 같은 좌표계(UI)의 마우스 위치 차이로 계산한다
+                Vector2 d = e.mousePosition - dragMouse0;
                 if (!dragMoved)
                 {
-                    dragAccum += d;
-                    if (dragAccum.magnitude < 5f) { e.Use(); return; }      // 클릭 중 손떨림은 끌기로 치지 않는다
-                    dragMoved = true; d = dragAccum;
+                    if (d.magnitude < 5f) { e.Use(); return; }      // 클릭 중 손떨림은 끌기로 치지 않는다
+                    dragMoved = true;
                 }
-                s.iconX = Mathf.Clamp(x + d.x, 0f, UI.screenWidth - size);
-                s.iconY = Mathf.Clamp(y + d.y, 0f, UI.screenHeight - size);
+                s.iconX = Mathf.Clamp(dragIcon0.x + d.x, 0f, UI.screenWidth - size);
+                s.iconY = Mathf.Clamp(dragIcon0.y + d.y, 0f, UI.screenHeight - size);
                 e.Use();
             }
             else if (dragging && e.type == EventType.MouseUp)

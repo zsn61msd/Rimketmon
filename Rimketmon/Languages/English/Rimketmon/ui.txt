@@ -1659,3 +1659,12 @@ Esc: 뒤로	Esc: Back
 숨겨 둔 림켓몬 창을 다시 엽니다 (멈춘 곳부터 이어서)	Reopen the hidden RimKéMoN window (continues where it stopped)
 5층마다 회복 · 가방 아이템 사용 금지	Full heal every 5 floors · no bag items
 지면 도전 끝 · 경험치는 전투가 끝난 뒤 받는다	Lose once and the run ends · EXP is paid after each battle
+★ 이로치 포켓몬입니다! 카드로 바꾸면 이 이로치 포켓몬은 사라집니다.	★ This is a shiny Pokémon! Turning it into a card removes this shiny Pokémon.
+★ 이 포켓몬은 월드(지도)에서는 이로치 색이 보이지 않습니다. (메뉴·배틀에서는 보임)	★ This Pokémon's shiny colors don't show on the map (they do show in menus and battles).
+오토: 기본 AI가 대신 싸우고 멈추지 않고 올라간다.	Auto: the default AI fights for you and keeps climbing without stopping.
+오토로 도전	Auto challenge
+AUTO ■ 멈춤	AUTO ■ Stop
+AUTO ▶ 켜기	AUTO ▶ Start
+오토를 멈췄다. 직접 조종한다.	Auto stopped. You're in control.
+레어 부적 Lv.	Rare Charm Lv.
+입장 	Entry 

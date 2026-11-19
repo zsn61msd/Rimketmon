@@ -218,6 +218,9 @@ namespace Rimketmon
         }
 
         // ------------------------------------------------------------------ 포켓몬 → 카드 / 카드 제거(PC 메뉴)
+        /// <summary>지도에서 걷는 그림의 이로치판이 일반판과 똑같은 종(=월드에서 이로치 색이 안 보임). Tests가 그림을 비교해 이 목록이 맞는지 확인한다.</summary>
+        internal static readonly HashSet<string> NoWorldShiny = new HashSet<string> { "HISUI_TYPHLOSION", "MINIOR" };
+
         private void AskConvertToCard(PartyComponent pc, ExposableCreature e)
         {
             if (!PokeCards.CanConvert(e.C)) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }
@@ -226,7 +229,13 @@ namespace Rimketmon
             if (pc.bp < cost) { Messages.Message(Lang.Tr("BP가 부족합니다. (필요 " + cost + " BP, 보유 " + pc.bp + " BP)"), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
             if (pc.All.Contains(e)) { Messages.Message(Lang.Tr("파티에 있는 림켓몬은 카드로 바꿀 수 없습니다. 먼저 PC 박스에 맡겨 주세요."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }      // 따라다니는 몸체가 남지 않도록 PC 박스에 있는 것만
             string name = e.C.Name;
-            AskConfirm(name + "을(를) 카드로 바꿀까요? (-" + cost + " BP)\n포켓몬은 사라지고 카드가 됩니다. (보유 " + pc.bp + " BP, 되돌릴 수 없음)", () =>
+            string warn = "";
+            if (e.C.Shiny > 0)
+            {
+                warn = "★ 이로치 포켓몬입니다! 카드로 바꾸면 이 이로치 포켓몬은 사라집니다.\n";
+                if (NoWorldShiny.Contains(e.C.Species)) warn += "★ 이 포켓몬은 월드(지도)에서는 이로치 색이 보이지 않습니다. (메뉴·배틀에서는 보임)\n";
+            }
+            AskConfirm(warn + name + "을(를) 카드로 바꿀까요? (-" + cost + " BP)\n포켓몬은 사라지고 카드가 됩니다. (보유 " + pc.bp + " BP, 되돌릴 수 없음)", () =>
             {
                 var p = PartyComponent.Instance;
                 if (!PokeCards.CanConvert(e.C) || p.All.Contains(e)) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }
