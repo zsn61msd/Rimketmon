@@ -4,8 +4,9 @@
 #   1.6용은 림월드 1.6(유니티)의 Managed DLL을, 1.7용은 림월드 1.7(새 엔진)의 Assembly-CSharp·UnityStubs를 참조한다.
 set -e
 PROJ16="$1"; PROJ17="$2"; OUT="$3"; ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-dotnet build "$PROJ16" -c Release --no-restore -p:DefineConstants=RIMKET_RELEASE -o "$OUT/dll16" >/dev/null
-dotnet build "$PROJ17" -c Release --no-restore "-p:DefineConstants=RIMKET_RELEASE%3BRW17" -o "$OUT/dll17" >/dev/null
+rm -f "$OUT/Rimketmon_release.zip" "$OUT/dll16/Rimketmon.dll" "$OUT/dll17/Rimketmon.dll"      # 빌드가 실패하면 예전 결과물이 남지 않게
+dotnet build "$PROJ16" -c Release --no-restore --no-incremental -p:DefineConstants=RIMKET_RELEASE -o "$OUT/dll16" > "$OUT/build16.log" 2>&1 || { grep -E " error " "$OUT/build16.log"; echo "1.6 배포판 빌드 실패" >&2; exit 1; }      # 매번 처음부터(개발용과 중간 폴더를 같이 쓰므로 예전 DLL이 섞이지 않게)
+dotnet build "$PROJ17" -c Release --no-restore --no-incremental "-p:DefineConstants=RIMKET_RELEASE%3BRW17" -o "$OUT/dll17" > "$OUT/build17.log" 2>&1 || { grep -E " error " "$OUT/build17.log"; echo "1.7 배포판 빌드 실패" >&2; exit 1; }
 rm -rf "$OUT/Rimketmon"; cp -r "$ROOT/Rimketmon" "$OUT/Rimketmon"
 mkdir -p "$OUT/Rimketmon/1.6/Assemblies" "$OUT/Rimketmon/1.7/Assemblies"
 cp "$OUT/dll16/Rimketmon.dll" "$OUT/Rimketmon/1.6/Assemblies/Rimketmon.dll"

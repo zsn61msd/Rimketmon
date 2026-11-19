@@ -98,6 +98,21 @@ namespace Rimketmon
             Say(StartHeal, "정신이 드셨나요? 쓰러지신 걸 보고 여기로 모셔 왔어요.", "림켓몬부터 바로 치료해 드릴게요.");
         }
 
+        /// <summary>깜깜해진 뒤 센터에서 깨어난다: 간호사 앞에서 시작하고, 림켓몬은 이미 모두 치료돼 있다.
+        /// 대사는 실제 치료가 끝났을 때(CenterHeal의 마지막 단계)와 똑같이 이어진다: 감사 인사 → 고개 숙임 → "또 오세요!"</summary>
+        private void CenterWakeHealed()
+        {
+            CenterEnter();
+            if (cenNoLink) return;
+            cenGx = 7; cenGy = 4; cenFace = 0;
+            var pc = PartyComponent.Instance;
+            if (pc != null) pc.HealAll();
+            Messages.Message(Lang.Tr("림켓몬을 모두 회복시켰다!"), MessageTypeDefOf.PositiveEvent, false);
+            var nurse = Npc("nurse");
+            healStage = 2; machineAnim = false; machineBalls = 0; nurse.Dir = 2;
+            Say(() => { nurse.Pat = 3; healT0 = Now; healStage = 3; CenterSet(CS.Heal); }, "기다려 주셔서 감사합니다.", "림켓몬이 모두 건강해졌습니다.");
+        }
+
         private void CenterLeave()
         {
             cenBgmOn = false; RimketAudio.StopBgm();
@@ -158,6 +173,7 @@ namespace Rimketmon
             }
             if (cenTurn > 0f) { cenTurn -= dt; return; }
             int want = -1;
+            if (RimketTime.KeysBlocked) return;      // 월드를 조작 중이면 센터 안 캐릭터는 걷지 않는다
             if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) want = 0;
             else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) want = 2;
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) want = 3;
@@ -448,19 +464,21 @@ namespace Rimketmon
             // 선택창(원작처럼 메시지 오른쪽 위)
             int n = cenChoices.Length;
             float h = 10f + n * 15f;
-            g.Window(win, 238f, 130f - h, 78f, h);
+            float tw = 0f; for (int i = 0; i < n; i++) tw = Mathf.Max(tw, g.Measure(Lang.Tr(cenChoices[i]), 11f));
+            float bw = Mathf.Clamp(tw + 34f, 78f, 316f), bx = 316f - bw;      // 글자 길이에 맞춰 왼쪽으로 넓힌다(잘리지 않게)
+            g.Window(win, bx, 130f - h, bw, h);
             int before = cenCursor;
             for (int i = 0; i < n; i++)
             {
                 float y = 130f - h + 6f + i * 15f;
-                if (Hot(242f, y - 2f, 72f, 14f)) cenCursor = i;
-                g.Label(cenChoices[i], 262f, y, 11f, Canvas.White, Canvas.WhiteShadow);
-                if (Clicked(242f, y - 2f, 72f, 14f)) { cenCursor = i; Choose(i); return; }
+                if (Hot(bx + 4f, y - 2f, bw - 6f, 14f)) cenCursor = i;
+                g.Label(cenChoices[i], bx + 24f, y, 11f, Canvas.White, Canvas.WhiteShadow);
+                if (Clicked(bx + 4f, y - 2f, bw - 6f, 14f)) { cenCursor = i; Choose(i); return; }
             }
             if (UpKey()) cenCursor = (cenCursor + n - 1) % n;
             if (DownKey()) cenCursor = (cenCursor + 1) % n;
             if (cenCursor != before) RimketAudio.PlaySe("gui_sel_cursor");
-            g.Cursor(250f, 130f - h + 12f + cenCursor * 15f, 0.5f, 0.5f);
+            g.Cursor(bx + 12f, 130f - h + 12f + cenCursor * 15f, 0.5f, 0.5f);
             if (AcceptKey() || Key(KeyCode.Space)) { Choose(cenCursor); return; }
             if (CancelKey()) { RimketAudio.PlaySe("gui_sel_cancel"); Choose(n - 1); }
         }

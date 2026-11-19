@@ -11,13 +11,13 @@ namespace Rimketmon
     /// </summary>
     internal sealed class Window_RimketEncounter : Window
     {
-        private readonly Pawn visitor; private readonly Action go; private readonly string line;
+        private readonly Pawn visitor; private readonly Action go; private readonly string line; private string lineTr;
         private readonly float t0; private bool sfx, done;
         private const float BangAt = 0.45f, TalkAt = 1.35f, TypeSec = 0.035f;
 
         public Window_RimketEncounter(Pawn visitor, Action go)
         {
-            this.visitor = visitor; this.go = go; t0 = Time.realtimeSinceStartup;
+            this.visitor = visitor; this.go = go; t0 = RimketClock.Now;
             line = visitor.LabelShortCap + ": 눈이 마주쳤으니 승부다! 림켓몬을 꺼내!";
             forcePause = true; doWindowBackground = false; drawShadow = false; absorbInputAroundWindow = true;
             closeOnCancel = false; closeOnAccept = false; closeOnClickedOutside = false; preventCameraMotion = true; doCloseX = false;
@@ -35,7 +35,7 @@ namespace Rimketmon
         {
             if (visitor == null || !visitor.Spawned || visitor.Dead) { if (!done) { done = true; Close(); } return; }
             Face();
-            float t = Time.realtimeSinceStartup - t0;
+            float t = RimketClock.Now - t0;
             Vector2 head = (visitor.DrawPos + new Vector3(0f, 0f, 1.15f)).MapToUIPosition();
             var oldFont = Text.Font; var oldAnchor = Text.Anchor; var oldColor = GUI.color;
 
@@ -56,14 +56,15 @@ namespace Rimketmon
             }
             if (t >= TalkAt)
             {
-                int chars = Mathf.Clamp(Mathf.FloorToInt((t - TalkAt) / TypeSec), 0, line.Length);
+                if (lineTr == null) lineTr = Rimketmon.Engine.Lang.Tr(line);      // 번역한 뒤에 글자 수를 센다(잘린 한글 조각은 번역이 안 돼 깜빡인다)
+                int chars = Mathf.Clamp(Mathf.FloorToInt((t - TalkAt) / TypeSec), 0, lineTr.Length);
                 // 말풍선은 배틀 메시지 창과 같은 그림·색(window_1, 흰 글자)으로
                 float w = Mathf.Min(720f, UI.screenWidth - 40f), h = w * 48f / 320f;
                 var box = new Rect(Mathf.Clamp(head.x - w / 2f, 20f, UI.screenWidth - w - 20f), Mathf.Min(UI.screenHeight - h - 20f, head.y + 150f), w, h);
                 var cv = new Canvas(box, w / 320f);
                 cv.Window(PR.Tex("ui/windows/window_1"), 0f, 0f, 320f, 48f);
-                cv.Wrap(line.Substring(0, chars), 12f, 9f, 296f, 11f, Canvas.White, Canvas.WhiteShadow);
-                bool typed = chars >= line.Length;
+                cv.Wrap(lineTr.Substring(0, chars), 12f, 9f, 296f, 11f, Canvas.White, Canvas.WhiteShadow);
+                bool typed = chars >= lineTr.Length;
                 if (typed && (int)(t * 2f) % 2 == 0) cv.Label("▼", 306f, 34f, 8f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperRight);
                 var ev = Event.current;
                 bool press = (ev.type == EventType.MouseDown && ev.button == 0) || (ev.type == EventType.KeyDown && (ev.keyCode == KeyCode.Return || ev.keyCode == KeyCode.KeypadEnter || ev.keyCode == KeyCode.Space || ev.keyCode == KeyCode.Z));

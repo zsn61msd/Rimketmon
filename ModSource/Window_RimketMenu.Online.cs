@@ -323,7 +323,7 @@ namespace Rimketmon
             if (oMsg != null) g.Label(oMsg, 160f, 128f, 7.5f, Canvas.RedC, Canvas.RedSh, TextAnchor.UpperCenter);
 
             var ev = Event.current;
-            if (!Locked && ev.type == EventType.KeyDown)
+            if (!Locked && !RimketTime.KeysBlocked && ev.type == EventType.KeyDown)
             {
                 if (ev.keyCode == KeyCode.Backspace) { if (codeBuf.Length > 0) codeBuf = codeBuf.Substring(0, codeBuf.Length - 1); ev.Use(); }
                 else if (ev.keyCode == KeyCode.Return || ev.keyCode == KeyCode.KeypadEnter) { ev.Use(); if (ok) OnlineJoin(pc); }

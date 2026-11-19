@@ -29,6 +29,7 @@ namespace Rimketmon
         {
             MonPic remote;
             if (OnlinePics.TryGet(c, facingEast, out remote)) return remote;      // 온라인 상대가 보낸 그림(모드·DLC 종족도 보이게)
+            c = Eff(c);      // 카드를 적용했으면 카드 속 포켓몬 모습으로
             if (c != null && c.Shiny > 0 && c.SpeciesId == c.Species)
             {
                 // 이로치 포켓몬: 그 등급의 포켓로그 그림(첫 프레임)
@@ -92,7 +93,29 @@ namespace Rimketmon
         }
 
         /// <summary>그림 조회 id. ?티어 쐐기를 맞은 개체는 원래 모습(SpeciesId) 그대로, 순수 ?티어는 투명(그 위에 미싱노 효과만 그린다).</summary>
-        public static string SprId(RimketCreature c) { return c == null ? null : c.SpeciesId; }
+        public static string SprId(RimketCreature c) { c = Eff(c); return c == null ? null : c.SpeciesId; }
+
+        // ---- 포켓몬 카드: 적용된 카드가 있으면 그림을 찾을 때 "카드 속 포켓몬"인 것처럼 다룬다(종족=그림 id, 이로치=카드의 이로치)
+        static readonly Dictionary<string, RimketCreature> cardProxy = new Dictionary<string, RimketCreature>();
+        /// <summary>그림 조회용 개체: 카드가 없으면 자기 자신, 있으면 카드 속 포켓몬 모습의 (캐시된) 대리 개체.</summary>
+        public static RimketCreature Eff(RimketCreature c)
+        {
+            if (c == null || !c.HasCard) return c;
+            string k = c.CardSpecies + "|" + c.CardShiny + "|" + c.Gender;
+            RimketCreature p;
+            if (!cardProxy.TryGetValue(k, out p))
+            {
+                p = new RimketCreature { SpeciesId = c.CardSpecies, Species = c.CardSpecies, Shiny = c.CardShiny, Gender = c.Gender, Name = c.Name, Look = "" };
+                cardProxy[k] = p;
+            }
+            return p;
+        }
+        /// <summary>그림에 쓸 이로치 등급(포켓몬 모습일 때만, 림월드 동물 모습이면 0).</summary>
+        public static int ShinyOf(RimketCreature c)
+        {
+            var e = Eff(c);
+            return e != null && e.SpeciesId == e.Species ? e.Shiny : 0;
+        }
 
         /// <summary>?티어인가(원래 모습 위에 미싱노 효과를 씌운다).</summary>
         public static bool Glitched(RimketCreature c) { return c != null && MysteryGen.IsMystery(c.Species); }
@@ -115,6 +138,7 @@ namespace Rimketmon
         public static MonPic GetDir(RimketCreature c, int dir)
         {
             if (dir == 1 || dir == 3) return GetFor(c, false);
+            c = Eff(c);
             string key = SprId(c) + "|D" + dir;
             if (MysteryGen.IsMystery(c.SpeciesId)) return default(MonPic);     // 순수 ?티어: 몸 그림 없음
             MonPic pic;
@@ -207,6 +231,7 @@ namespace Rimketmon
         {
             try
             {
+                c = Eff(c);
                 if (c == null || c.PawnId != 0 || string.IsNullOrEmpty(c.SpeciesId) || MysteryGen.IsMystery(c.SpeciesId)) return default(MonPic);
                 var def = DefDatabase<ThingDef>.GetNamedSilentFail(c.SpeciesId);
                 PawnKindDef kind = def != null && def.race != null ? def.race.AnyPawnKind : null;
@@ -266,6 +291,7 @@ namespace Rimketmon
         {
             try
             {
+                c = Eff(c);
                 if (c == null || c.PawnId != 0 || string.IsNullOrEmpty(c.SpeciesId) || MysteryGen.IsMystery(c.SpeciesId)) return false;
                 var def = DefDatabase<ThingDef>.GetNamedSilentFail(c.SpeciesId);
                 PawnKindDef kind = def != null && def.race != null ? def.race.AnyPawnKind : null;

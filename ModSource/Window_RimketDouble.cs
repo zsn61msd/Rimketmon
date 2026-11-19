@@ -13,7 +13,7 @@ namespace Rimketmon
     /// (싱글 화면의 기술 연출은 없다. HP 바는 로그 진행에 맞춰 줄어든다.)
     /// 방장은 엔진의 Player 쪽, 손님(mirror)은 Foe 쪽을 '내 쪽'으로 본다.
     /// </summary>
-    internal sealed class Window_RimketDouble : PrWindow
+    internal sealed class Window_RimketDouble : PrWindow, IRimketLive
     {
         private readonly RimketBattle battle;
         private readonly OnlineSession session;
@@ -42,8 +42,10 @@ namespace Rimketmon
         public Window_RimketDouble(RimketBattle battle, OnlineSession session, bool mirror, Action<RimketBattle> onFinished)
         {
             this.battle = battle; this.session = session; this.mirror = mirror; this.onFinished = onFinished;
-            shown = Math.Min(1, battle.Log.Count); lineAt = Time.realtimeSinceStartup;
+            shown = Math.Min(1, battle.Log.Count); lineAt = RimketClock.Now;
         }
+
+        protected override bool FreezeTime { get { return RimketTime.FreezeFor(battle); } }
 
         public override void PostOpen() { base.PostOpen(); RimketAudio.PlayBgm("battle_rival_3"); }
         public override void PostClose()
@@ -59,7 +61,7 @@ namespace Rimketmon
         protected override void DrawCanvas(Canvas g)
         {
             var win = PR.Tex("ui/windows/window_1");
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             session.Tick(now);
             AdvanceLog(now);
 
@@ -144,7 +146,7 @@ namespace Rimketmon
             string line = shown > 0 && shown <= battle.Log.Count ? battle.Log[shown - 1] : "";
             g.Wrap(line, 12f, 141f, 296f, 16f, Canvas.White, Canvas.WhiteShadow);
             g.Label("Enter / 클릭: 다음", 314f, 168f, 6.5f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperRight);
-            if (AcceptKey() || Clicked(0f, 132f, 320f, 48f)) { if (shown < battle.Log.Count) { shown++; lineAt = Time.realtimeSinceStartup; } }
+            if (AcceptKey() || Clicked(0f, 132f, 320f, 48f)) { if (shown < battle.Log.Count) { shown++; lineAt = RimketClock.Now; } }
         }
 
         private void DrawAborted(Canvas g, Texture2D win)
@@ -192,7 +194,7 @@ namespace Rimketmon
             {
                 wasNeed = false;
                 g.Window(win, 0f, 132f, 320f, 48f);
-                g.Label("상대의 선택을 기다리는 중" + new string('.', 1 + (int)(Time.realtimeSinceStartup * 2f) % 3), 160f, 148f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
+                g.Label("상대의 선택을 기다리는 중" + new string('.', 1 + (int)(RimketClock.Now * 2f) % 3), 160f, 148f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
                 return;
             }
             if (!wasNeed) { wasNeed = true; BeginInput(); }
@@ -292,6 +294,14 @@ namespace Rimketmon
                 DrawChoice(g, x, y, 148f, name, ok, () => { var a = pendingMove.Value; a.Target = cc; Commit(a); });
             }
             if (CancelKey()) { targetChoices = null; pendingMove = null; }
+        }
+
+        /// <summary>창 위 닫기 버튼: 항복 확인을 띄운다(예를 누르면 항복).</summary>
+        internal void RequestCloseFromFrame()
+        {
+            if (battle == null || battle.IsOver) return;
+            if (battle.LegalActions().Any(a => a.Kind == ActionKind.Disconnect)) surrenderAsk = true;
+            else Messages.Message(Lang.Tr("지금은 항복할 수 없다. 내 차례에 다시 눌러 주세요."), MessageTypeDefOf.RejectInput, false);
         }
 
         private void DrawSurrender(Canvas g)

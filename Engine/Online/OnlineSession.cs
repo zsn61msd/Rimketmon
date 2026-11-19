@@ -88,11 +88,11 @@ namespace Rimketmon.Engine
             var f = msg.Split('|');
             if (State == OnlineState.Over && f[0] != "CHAT" && f[0] != "AGAIN" && f[0] != "PIC" && f[0] != "BYE") return;      // 끝난 판의 늦은 메시지는 버린다
             // 채팅·초상화는 대전 진행과 상관없이 언제든 받는다(상태 해시에 들어가지 않는다)
-            if (f[0] == "CHAT") { string t = msg.Length > 5 ? msg.Substring(5) : ""; if (t.Length > 0) { Chat.Add(new KeyValuePair<bool, string>(false, t)); ChatVersion++; } return; }
+            if (f[0] == "CHAT") { string t = msg.Length > 5 ? msg.Substring(5) : ""; if (t.Length > 300) t = t.Substring(0, 300); if (t.Length > 0) { Chat.Add(new KeyValuePair<bool, string>(false, t)); if (Chat.Count > 300) Chat.RemoveRange(0, Chat.Count - 300); ChatVersion++; } return; }      // 길이·개수 상한
             if (f[0] == "PIC" && f.Length >= 4) { OnPicture(f); return; }
             if (f[0] == "MPIC" && f.Length >= 6) { OnMonPicture(f); return; }
             // 상대 인사를 받기 전에 도착한 파티·선출 메시지는 잠시 모아 두었다가 인사를 받은 뒤 처리한다(순서가 뒤바뀌어도 잃지 않게)
-            if (!helloGot && f[0] != "HELLO" && f[0] != "ERR") { early.Add(msg); return; }
+            if (!helloGot && f[0] != "HELLO" && f[0] != "ERR") { if (early.Count < 500) early.Add(msg); return; }      // 인사 전 대기열은 500개까지
             switch (f[0])
             {
                 case "HELLO": OnHello(f); break;

@@ -24,7 +24,7 @@ namespace Rimketmon
         private string descKey = "";
         private float blinkT0;
 
-        private static float Now { get { return Time.realtimeSinceStartup; } }
+        private static float Now { get { return RimketClock.Now; } }
 
         private void OpenSummary()
         {

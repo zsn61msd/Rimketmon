@@ -89,6 +89,8 @@ namespace Rimketmon
         private CallResult<LobbyCreated_t> crCreated;
         private CallResult<LobbyMatchList_t> crList;
         private CallResult<LobbyEnter_t> crEnter;
+        private CSteamID peer;                                   // 대전 상대(처음 메시지를 보낸 로비 멤버)
+        private float rateStart; private int rateCount; private bool rateWarned;
         private Callback<LobbyChatMsg_t> cbChat;
         private Callback<LobbyChatUpdate_t> cbUpdate;
         private CSteamID lobby;
@@ -196,6 +198,9 @@ namespace Rimketmon
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void RegisterChat()
         {
+            peer = default(CSteamID); rateCount = 0; rateWarned = false;      // 새 방: 상대 고정 초기화
+            if (cbChat != null) { cbChat.Dispose(); cbChat = null; }      // 두 번 등록되지 않게
+            if (cbUpdate != null) { cbUpdate.Dispose(); cbUpdate = null; }
             cbChat = Callback<LobbyChatMsg_t>.Create(OnChat);
             cbUpdate = Callback<LobbyChatUpdate_t>.Create(OnUpdate);
         }
@@ -226,6 +231,11 @@ namespace Rimketmon
             var buf = new byte[4096];
             int n = SteamMatchmaking.GetLobbyChatEntry(lobby, (int)m.m_iChatID, out who, buf, buf.Length, out type);
             if (who == me || n <= 0) return;                               // 내가 보낸 메시지는 되돌아오므로 무시한다
+            if (peer.m_SteamID == 0) peer = who;                           // 처음 말을 건 상대로 고정하고
+            else if (who != peer) return;                                  // 그 밖의 사람이 보낸 메시지는 버린다
+            float now = UnityEngine.Time.realtimeSinceStartup;              // 메시지 폭주 제한: 1초에 120개까지
+            if (now - rateStart > 1f) { rateStart = now; rateCount = 0; }
+            if (++rateCount > 120) { if (!rateWarned) { rateWarned = true; Log.Warning("[림켓몬] 온라인: 상대 메시지가 너무 많아 일부를 버렸다."); } return; }
             if (Session == null && IsHost) HostAccept();                   // 입장 알림보다 첫 메시지가 먼저 온 경우
             if (Session == null) return;
             int len = Array.IndexOf(buf, (byte)0); if (len < 0 || len > n) len = n;
@@ -244,7 +254,7 @@ namespace Rimketmon
             bool left = (change & ((uint)EChatMemberStateChange.k_EChatMemberStateChangeLeft | (uint)EChatMemberStateChange.k_EChatMemberStateChangeDisconnected
                          | (uint)EChatMemberStateChange.k_EChatMemberStateChangeKicked | (uint)EChatMemberStateChange.k_EChatMemberStateChangeBanned)) != 0;
             if (entered && IsHost && Session == null) HostAccept();
-            else if (left && Session != null) Session.OpponentLeft();
+            else if (left && Session != null && (peer.m_SteamID == 0 || who == peer)) Session.OpponentLeft();      // 대전 상대가 나갔을 때만
             else if (left && IsHost && Session == null) { /* 들어오다 나간 사람: 계속 기다린다 */ }
         }
 

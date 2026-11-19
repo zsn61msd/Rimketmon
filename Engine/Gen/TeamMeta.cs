@@ -61,8 +61,8 @@ namespace Rimketmon.Engine
             using (var w = new StreamWriter(tmp, false, new System.Text.UTF8Encoding(false)))
                 foreach (var kv in stat.OrderBy(k => k.Key, StringComparer.Ordinal))
                     w.WriteLine(kv.Key + "\t" + kv.Value[0].ToString(CultureInfo.InvariantCulture) + "\t" + kv.Value[1].ToString(CultureInfo.InvariantCulture));
-            if (File.Exists(path)) File.Delete(path);
-            File.Move(tmp, path);
+            if (File.Exists(path)) File.Replace(tmp, path, path + ".bak", true);      // 원자적으로 바꾸고 이전 것은 .bak로 남긴다(지우고 옮기는 사이에 꺼져도 잃지 않게)
+            else File.Move(tmp, path);
         }
 
         public static TeamMeta Load(string path)

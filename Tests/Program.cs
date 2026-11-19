@@ -17,6 +17,41 @@ internal static class Program
 {
     private static int passed, failed;
 
+    private static void TestTowerDeferredExp()
+    {
+        Console.WriteLine("\n[배틀타워: 경험치는 전투 뒤 몰아서]");
+        var s = new EngineSettings();
+        var col = Col("정착민", 1.0, 3, s);
+        var mine = Mk("MAGIKARP", 5, null, "TACKLE"); mine.MaxHp = 9999; mine.Hp = 9999;
+        var foe1 = Mk("GEODUDE", 30, null, "TACKLE"); foe1.Hp = 1;
+        var foe2 = Mk("ONIX", 30, null, "TACKLE"); foe2.Hp = 1;
+        var b = RimketBattle.Trainer(new FixedRng(0.5), s, new[] { mine }, col, "타워", new[] { foe1, foe2 }, null);
+        b.DeferExp = true;
+        long exp0 = mine.Exp; int lv0 = mine.Level; int atk0 = mine.Atk;
+        for (int i = 0; i < 20 && !b.IsOver; i++) Use(b);
+        Check(b.IsOver && mine.Level == lv0 && mine.Exp == exp0 && mine.Atk == atk0, "전투 중에는 레벨·경험치·능력치가 그대로");
+        long got; b.DeferredExp.TryGetValue(mine, out got);
+        Check(got > 0, "쌓인 경험치가 기록된다", "+" + got);
+        int from = RimketBattle.GiveExp(mine, got, b.PlayerLevelCap);
+        Check(from == lv0 && mine.Level > lv0, "끝난 뒤 한꺼번에 주면 레벨이 오른다", "Lv." + lv0 + " → " + mine.Level);
+    }
+
+    private static void TestTowerRegularBoost()
+    {
+        Console.WriteLine("\n[배틀타워: 일반 트레이너 강화]");
+        int lo = 999, hi = 0;
+        for (int f = 1; f <= 9; f++) { lo = Math.Min(lo, TowerRules.RegularLevel(f)); hi = Math.Max(hi, TowerRules.RegularLevel(f)); }
+        Check(lo == 4 && hi == 9 && TowerRules.BossLevel(10) == 10, "1~9층 일반 Lv.4~9, 10층 강적 Lv.10", lo + "~" + hi);
+        bool under = true; for (int f = 1; f <= 100; f++) if (!TowerRules.IsBoss(f) && TowerRules.RegularLevel(f) >= TowerRules.BossLevel(f - f % 10 + 10 > 100 ? 100 : (f + 9) / 10 * 10)) under = false;
+        Check(under, "모든 층에서 일반 트레이너 레벨이 그 구간 강적보다 낮다");
+        int known = TowerBuilder.RegularItems.Count(id => ItemCatalog.Get(id) != null);
+        Check(known >= 8, "일반 트레이너 도구 목록이 실제 도구", known + "/" + TowerBuilder.RegularItems.Length);
+        Check(Math.Abs(TowerRules.RegularItemChance(1) - 0.15) < 1e-9 && Math.Abs(TowerRules.RegularItemChance(100) - 0.75) < 1e-9, "도구 확률 1층 15% → 100층 75%");
+        var rng = new SystemRng(7); int withItem = 0, total = 0;
+        for (int k = 0; k < 40; k++) foreach (var c in TowerBuilder.BuildRegularParty(95, rng, new EngineSettings())) { total++; if (c.Item != null) withItem++; }
+        Check(withItem > total / 2, "95층 일반 트레이너는 대부분 도구를 지닌다", withItem + "/" + total);
+    }
+
     private static void Check(bool ok, string name, string detail = "")
     {
         if (ok) { passed++; Console.WriteLine("  [PASS] " + name + (detail != "" ? "  " + detail : "")); }
@@ -154,7 +189,7 @@ internal static class Program
         TestOnline();
         TestOnlineDouble();
         TestOnlineSession();
-        TestOnlineTeamRules(); TestWedgeRemove();
+        TestOnlineTeamRules(); TestWedgeRemove(); TestPokeCards();
         TestBerryPrice();
         TestFoeEncoder();
         TestNeuralPolicy();
@@ -188,6 +223,8 @@ internal static class Program
         TestMystery();
         TestParadox();
         TestGym();
+        TestTowerDeferredExp();
+        TestTowerRegularBoost();
         Console.WriteLine("== 12. 대량 무작위 전투(오류/무한루프 검사) ==");
         Fuzz(false);
         Console.WriteLine("== 12b. 지닌 도구를 섞은 대량 전투 ==");
@@ -338,7 +375,7 @@ internal static class Program
             Check(ended >= 290, "랭크 배틀이 끝까지 진행됨: " + ended + "/300 (승 " + wins + ")");
             Check(itemOk == 0, "랭크 배틀에서 가방 아이템 사용 불가(항복은 가능)", "위반=" + itemOk);
             {
-                // 아무 조작도 하지 않을 때(45초 제한 → 자동 선택)의 진행: 첫 번째로 쓸 수 있는 기술/교체만 고르는 방식으로도 반드시 끝나야 한다
+                // 아무 조작도 하지 않을 때(항상 첫 번째로 쓸 수 있는 기술/교체만 고르는 경우)의 진행: 이런 방식으로도 반드시 끝나야 한다
                 int idleEnded = 0, stuck = 0; string stuckWhy = "";
                 for (int n = 0; n < 300; n++)
                 {
@@ -443,7 +480,7 @@ internal static class Program
                 Check(string.Join(",", opp5.Party.Select(c => c.SpeciesId + "/" + c.Item + "/" + c.Ability)) != combo, "시즌이 끝나면 조합이 바뀐다");
             }
             Check(RankedLadder.RankName(900).StartsWith("몬스터볼급") && RankedLadder.RankName(1300).StartsWith("하이퍼볼급") && RankedLadder.RankName(1600).StartsWith("마스터볼급") && RankedLadder.SubRank(1000) >= 1 && RankedLadder.SubRank(1099) == 1 && RankedLadder.SubRank(1100) == 4, "등급 이름 + 세부 순위 (1000점: " + RankedLadder.RankName(1000) + ")");
-            Check(RankedLadder.BpReward(true, 1, 1000, 1000) == 100 && RankedLadder.BpReward(true, 6, 1000, 1000) == 475 && RankedLadder.BpReward(false, 0, 1000, 1000) == 35, "BP 보상: 승 100 / 연승 +75씩(최대 +375) / 패 35");
+            Check(RankedLadder.BpReward(true, 1, 1000, 1000) == 150 && RankedLadder.BpReward(true, 6, 1000, 1000) == 525 && RankedLadder.BpReward(false, 0, 1000, 1000) == 75, "BP 보상: 승 150 / 연승 +75씩(최대 +375) / 패 75");
             int ok = 0, countries = 0; var cs = new HashSet<string>(); var names = new HashSet<string>(); var fm = new Dictionary<string, int>();
             for (int n = 0; n < 400; n++)
             {
@@ -2071,6 +2108,29 @@ internal static class Program
         Check(back != null && back.Species == w2.Species, "쐐기를 빼면 지금 끼워진 쐐기를 돌려받는다");
         Check(mon.Species == sp0 && Paradox.Backup(mon) == before && mon.Level == lv && mon.Name == nm && !Paradox.HasWedge(mon), "쐐기를 빼면 처음 모습으로 돌아간다(레벨·이름 유지)");
         Check(Paradox.Remove(mon) == null, "쐐기가 없으면 뺄 것이 없다");
+    }
+
+    private static void TestPokeCards()
+    {
+        Console.WriteLine("== 포켓몬 카드 ==");
+        var rng = new SystemRng(91); var st = new EngineSettings();
+        var mon = RankedBuilder.Build("ou", 1, 50, rng, st)[0];      // 진짜 포켓몬(SpeciesId == Species)
+        Check(PokeCards.CanConvert(mon) && !PokeCards.CanApply(mon), "포켓몬은 카드로 바꿀 수 있고 카드를 적용받을 수 없다");
+        string cardSp = mon.Species; int cardSh = mon.Shiny;
+        var animal = RankedBuilder.Build("ou", 1, 40, rng, st)[0]; animal.SpeciesId = "Muffalo";      // 림월드 동물 껍데기
+        Check(!PokeCards.CanConvert(animal) && PokeCards.CanApply(animal), "림월드 동물은 카드를 적용받을 수 있고 카드로 바꿀 수는 없다");
+        var person = RankedBuilder.Build("ou", 1, 40, rng, st)[0]; person.PawnId = 5;
+        Check(!PokeCards.CanApply(person) && !PokeCards.CanConvert(person), "사람에게는 카드를 쓸 수 없다");
+        int hp = animal.BaseHp, atk = animal.BaseAtk; string sp0 = animal.Species; int nMoves = animal.Moves.Count;
+        string os; int osh;
+        Check(PokeCards.Apply(animal, cardSp, cardSh, out os, out osh) && animal.HasCard && animal.CardSpecies == cardSp && os == null, "카드를 적용하면 겉모습 정보가 붙는다");
+        Check(animal.Species == sp0 && animal.BaseHp == hp && animal.BaseAtk == atk && animal.Moves.Count == nMoves && animal.SpeciesId == "Muffalo", "능력치·기술·종족은 그대로다");
+        var other = RankedBuilder.Build("ou", 1, 40, rng, st)[0];
+        Check(PokeCards.Apply(animal, other.Species, 0, out os, out osh) && os == cardSp && animal.CardSpecies == other.Species, "다른 카드를 쓰면 이전 카드 정보를 돌려받는다");
+        string rs; int rsh;
+        Check(PokeCards.Remove(animal, out rs, out rsh) && rs == other.Species && !animal.HasCard && !PokeCards.Remove(animal, out rs, out rsh), "카드를 떼면 원래 모습으로 돌아간다");
+        var cl = animal.Clone(); PokeCards.Apply(animal, cardSp, 0, out os, out osh);
+        Check(animal.Clone().CardSpecies == cardSp && !cl.HasCard, "복사해도 카드 정보가 따라간다");
     }
 
     private static void TestOnlineTeamRules()

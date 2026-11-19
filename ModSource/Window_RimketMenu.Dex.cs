@@ -153,7 +153,7 @@ namespace Rimketmon
             {
                 if (cs)
                 {
-                    bool anim = cur.Key != PartyComponent.DexRimworld && cur.Key != PartyComponent.DexMystery && PkAnim.DrawFit(g, fid, false, 0, 47f, 61f, 68f, 68f, Time.realtimeSinceStartup);
+                    bool anim = cur.Key != PartyComponent.DexRimworld && cur.Key != PartyComponent.DexMystery && PkAnim.DrawFit(g, fid, false, 0, 47f, 61f, 68f, 68f, RimketClock.Now);
                     if (!anim) { g.Tint = tint; g.ImgFit(pic, flip, 47f, 61f, 68f, 68f); g.Tint = Color.white; }
                 }
                 else g.Label("?", 47f, 50f, 26f, new Color(0.5f, 0.6f, 0.58f), new Color(0f, 0f, 0f, 0f), TextAnchor.UpperCenter);
@@ -248,7 +248,7 @@ namespace Rimketmon
                 var mp = RimSprite.GetFor(c, false);
                 var person = c.PawnId != 0 ? PersonArt.PawnOf(c) : null;
                 if (person != null) PersonArt.Draw(g, person, x - 6f, y, 36f, 36f, Rot4.South, false);
-                else if (PkAnim.SheetFor(c) != null) PkAnim.DrawFit(g, RimSprite.SprId(c), false, RimSprite.SprId(c) == c.Species ? c.Shiny : 0, x + 16f, y + 18f, 40f, 36f, Time.realtimeSinceStartup + i * 0.37f);
+                else if (PkAnim.SheetFor(c) != null) PkAnim.DrawFit(g, RimSprite.SprId(c), false, RimSprite.ShinyOf(c), x + 16f, y + 18f, 40f, 36f, RimketClock.Now + i * 0.37f);
                 else if (mp.Valid) { g.Tint = mp.Tint; g.ImgFit(mp.Tex, mp.Flip, x + 16f, y + 18f, 40f, 36f); g.Tint = Color.white; }
                 if (RimSprite.Glitched(c)) Window_RimketBattle.DrawGlitch(g, x + 16f, y + 36f, 1f, 36f, 34f);
                 g.Label(c.Name + (c.Shiny > 0 ? " ★" : ""), x + 16f, y + 38f, 8f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);

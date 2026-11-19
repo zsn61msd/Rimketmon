@@ -176,7 +176,7 @@ namespace Rimketmon
             // 아이콘은 슬롯 안쪽(이름 왼쪽 칸)에 투명 여백을 잘라 꽉 채워 가운데 정렬한다
             if (mp.Valid && PkAnim.SheetFor(c) != null)
             {
-                string aid = RimSprite.SprId(c); int ash = aid == c.Species ? c.Shiny : 0;
+                string aid = RimSprite.SprId(c); int ash = RimSprite.ShinyOf(c);
                 if (main) PkAnim.DrawFit(g, aid, false, ash, sx + 13f, sy + 19f, 21f, 22f, Now); else PkAnim.DrawFit(g, aid, false, ash, sx + 11f, sy + 12f, 18f, 18f, Now);
             }
             else if (mp.Valid) { mp = FlyingOr(c, mp); g.Tint = mp.Tint; if (main) g.ImgFit(mp.Tex, mp.Flip, sx + 13f, sy + 19f, 21f, 22f); else g.ImgFit(mp.Tex, mp.Flip, sx + 11f, sy + 12f, 18f, 18f); g.Tint = Color.white; }

@@ -311,9 +311,9 @@ namespace Rimketmon
         private List<ExposableCreature> pdTargets = new List<ExposableCreature>();
         private void ParadoxTargets(PartyComponent pc)
         {
-            pdTargets = pc.All.Concat(pc.Box).Where(e => Paradox.CanReceive(e.C)).ToList();
-            if (pdTargets.Count == 0) { Messages.Message(Lang.Tr("쐐기를 쓸 수 있는 림켓몬이 없습니다. (포켓몬에게는 쓸 수 없고, 림월드 동물·사람에게만 쓸 수 있습니다)"), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
-            pdS = PD.Target; pdTarget = 0; pdTargetScroll = 0; RimketAudio.PlaySe("gui_sel_decision");
+            if (!pc.All.Concat(pc.Box).Any(e => Paradox.CanReceive(e.C))) { Messages.Message(Lang.Tr("쐐기를 쓸 수 있는 림켓몬이 없습니다. (포켓몬에게는 쓸 수 없고, 림월드 동물·사람에게만 쓸 수 있습니다)"), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
+            if (pdWedge < 0 || pdWedge >= pc.Wedges.Count) return;
+            BeginPick(Pick.Wedge, pc.Wedges[pdWedge].C, null);      // PC 화면으로 넘어가 거기서 대상을 고른다
         }
 
         // ---- 대상 고르기

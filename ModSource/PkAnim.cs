@@ -181,6 +181,7 @@ namespace Rimketmon
         public static PkSheet SheetFor(RimketCreature c, bool back = false)
         {
             if (c == null || c.PawnId != 0) return null;
+            c = RimSprite.Eff(c);      // 카드 적용: 카드 속 포켓몬 시트
             string id = RimSprite.SprId(c);
             if (string.IsNullOrEmpty(id) || Rimketmon.Engine.MysteryGen.IsMystery(id)) return null;
             return Get(id, back, id == c.Species ? c.Shiny : 0);

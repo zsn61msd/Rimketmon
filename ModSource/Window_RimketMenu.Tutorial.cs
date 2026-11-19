@@ -98,7 +98,7 @@ namespace Rimketmon
                 "가끔 방문자들끼리 림켓몬 승부를 벌이기도 해. 구경하는 것도 재미있을 거야."),
             new Faq("랭크전은?",
                 "6마리 중에서 3마리를 골라 싸우는 승부야. 이기면 점수가 오르고 등급도 올라가.",
-                "도구는 쓸 수 없고, 한 턴에 45초 안에 정해야 해. 이기면 BP도 받을 수 있어."),
+                "도구는 쓸 수 없어. 이기면 BP도 받을 수 있어."),
             new Faq("온라인 배틀은?",
                 "친구와 방 코드로 만나서 싸우는 거야. 한 명이 방을 만들고 6글자 코드를 알려 주면, 다른 한 명이 그 코드를 입력해서 들어와.",
                 "규칙은 랭크전과 같아. 싱글은 3마리, 더블은 4마리를 골라. 점수와 BP는 변하지 않으니까 마음 편히 겨뤄 봐. 둘 다 스팀으로 게임을 켜야 하고, 모드 버전이 같아야 해."),
@@ -130,7 +130,7 @@ namespace Rimketmon
 
         private void TutorialEnter()
         {
-            tuS = TuState.Ask; tuCursor = 0; tuScroll = 0; tuQ = -1; tuPage = 0; tuGreeted = false; tuT0 = Time.realtimeSinceStartup;
+            tuS = TuState.Ask; tuCursor = 0; tuScroll = 0; tuQ = -1; tuPage = 0; tuGreeted = false; tuT0 = RimketClock.Now;
         }
 
         private string TuLine()
@@ -176,8 +176,8 @@ namespace Rimketmon
             g.Window(win, dx, dy, dw, dh);
             g.Label("세레나", dx + 10f, dy + 5f, 9f, Canvas.PinkC, Canvas.PinkSh);
             g.Fill(dx + 10f, dy + 16f, dw - 22f, 0.6f, new Color(1f, 1f, 1f, 0.25f));
-            string line = TuLine();
-            int shown = Mathf.Clamp((int)((Time.realtimeSinceStartup - tuT0) * 45f), 0, line.Length);
+            string line = Rimketmon.Engine.Lang.Tr(TuLine());      // 번역한 뒤에 자른다(잘린 한글은 번역이 안 돼 깜빡인다)
+            int shown = Mathf.Clamp((int)((RimketClock.Now - tuT0) * 45f), 0, line.Length);
             g.Wrap(line.Substring(0, shown), dx + 10f, dy + 20f, dw - 22f, 8.5f, Canvas.White, Canvas.WhiteShadow);
             bool done = shown >= line.Length;
             if (tuS == TuState.Talk && done) g.Label(tuPage < Faqs[tuQ].A.Length - 1 ? "▼" : "■", dx + dw - 14f, dy + dh - 14f, 8f, Canvas.White, Canvas.WhiteShadow);
@@ -194,17 +194,17 @@ namespace Rimketmon
                 if (AcceptKey() || Clicked(dx, dy, dw, dh))
                 {
                     if (!done) tuT0 = -999f;                                   // 글자를 한꺼번에 보인다
-                    else if (tuPage < Faqs[tuQ].A.Length - 1) { tuPage++; tuT0 = Time.realtimeSinceStartup; RimketAudio.PlaySe("gui_sel_decision"); }
+                    else if (tuPage < Faqs[tuQ].A.Length - 1) { tuPage++; tuT0 = RimketClock.Now; RimketAudio.PlaySe("gui_sel_decision"); }
                     else if (tuQ == Faqs.Length - 1) { view = View.Menu; }      // 마지막 질문("고마워")은 대화를 끝낸다
-                    else { tuS = TuState.Ask; tuGreeted = true; tuT0 = Time.realtimeSinceStartup; }
+                    else { tuS = TuState.Ask; tuGreeted = true; tuT0 = RimketClock.Now; }
                 }
-                if (CancelKey()) { tuS = TuState.Ask; tuGreeted = true; tuT0 = Time.realtimeSinceStartup; RimketAudio.PlaySe("gui_sel_cancel"); }
+                if (CancelKey()) { tuS = TuState.Ask; tuGreeted = true; tuT0 = RimketClock.Now; RimketAudio.PlaySe("gui_sel_cancel"); }
             }
         }
 
         private void TuAsk(int i)
         {
-            tuQ = i; tuPage = 0; tuS = TuState.Talk; tuT0 = Time.realtimeSinceStartup; RimketAudio.PlaySe("gui_sel_decision");
+            tuQ = i; tuPage = 0; tuS = TuState.Talk; tuT0 = RimketClock.Now; RimketAudio.PlaySe("gui_sel_decision");
         }
 
         /// <summary>메인 메뉴 상단의 세레나 얼굴 버튼.</summary>

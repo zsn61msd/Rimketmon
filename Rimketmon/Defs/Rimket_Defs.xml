@@ -57,9 +57,9 @@
     <stackLimit>10</stackLimit>
     <statBases>
             <Mass>0.4</Mass>
-      <MarketValue>60</MarketValue>
+      <MarketValue>45</MarketValue>
     </statBases>
-    <tradeability>All</tradeability>
+    <tradeability>Sellable</tradeability>
   </ThingDef>
 
   <ThingDef ParentName="ResourceBase">
@@ -76,9 +76,9 @@
     <stackLimit>10</stackLimit>
     <statBases>
             <Mass>0.4</Mass>
-      <MarketValue>160</MarketValue>
+      <MarketValue>95</MarketValue>
     </statBases>
-    <tradeability>All</tradeability>
+    <tradeability>Sellable</tradeability>
   </ThingDef>
 
   <ThingDef ParentName="ResourceBase">
@@ -95,9 +95,9 @@
     <stackLimit>10</stackLimit>
     <statBases>
             <Mass>0.4</Mass>
-      <MarketValue>480</MarketValue>
+      <MarketValue>130</MarketValue>
     </statBases>
-    <tradeability>All</tradeability>
+    <tradeability>Sellable</tradeability>
   </ThingDef>
 
   <ThingDef ParentName="ResourceBase">
@@ -116,7 +116,7 @@
             <Mass>0.4</Mass>
       <MarketValue>1600</MarketValue>
     </statBases>
-    <tradeability>All</tradeability>
+    <tradeability>Sellable</tradeability>
   </ThingDef>
 
 
@@ -322,11 +322,11 @@
     <workAmount>5000</workAmount>
     <ingredients>
       <li><filter><thingDefs><li>WoodLog</li></thingDefs></filter><count>10</count></li>
-      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>1</count></li>
+      <li><filter><thingDefs><li>Steel</li></thingDefs></filter><count>30</count></li>
       <li><filter><categories><li>StoneChunks</li></categories></filter><count>1</count></li>
     </ingredients>
     <fixedIngredientFilter>
-      <thingDefs><li>WoodLog</li><li>ComponentIndustrial</li></thingDefs>
+      <thingDefs><li>WoodLog</li><li>Steel</li></thingDefs>
       <categories><li>StoneChunks</li></categories>
     </fixedIngredientFilter>
     <products><RimketGreatBall>1</RimketGreatBall></products>
@@ -347,11 +347,11 @@
     <workAmount>8000</workAmount>
     <ingredients>
       <li><filter><thingDefs><li>WoodLog</li></thingDefs></filter><count>10</count></li>
-      <li><filter><thingDefs><li>ComponentSpacer</li></thingDefs></filter><count>1</count></li>
+      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>2</count></li>
       <li><filter><categories><li>StoneChunks</li></categories></filter><count>1</count></li>
     </ingredients>
     <fixedIngredientFilter>
-      <thingDefs><li>WoodLog</li><li>ComponentSpacer</li></thingDefs>
+      <thingDefs><li>WoodLog</li><li>ComponentIndustrial</li></thingDefs>
       <categories><li>StoneChunks</li></categories>
     </fixedIngredientFilter>
     <products><RimketUltraBall>1</RimketUltraBall></products>
@@ -400,7 +400,7 @@
       <damageDef>Bomb</damageDef>
       <damageAmountBase>0</damageAmountBase>
       <speed>16</speed>
-      <arcHeightFactor>0.6</arcHeightFactor>
+      <arcHeightFactor>3</arcHeightFactor>
     </projectile>
   </ThingDef>
 
@@ -417,7 +417,7 @@
       <damageDef>Bomb</damageDef>
       <damageAmountBase>0</damageAmountBase>
       <speed>16</speed>
-      <arcHeightFactor>0.6</arcHeightFactor>
+      <arcHeightFactor>3</arcHeightFactor>
     </projectile>
   </ThingDef>
 
@@ -434,7 +434,7 @@
       <damageDef>Bomb</damageDef>
       <damageAmountBase>0</damageAmountBase>
       <speed>16</speed>
-      <arcHeightFactor>0.6</arcHeightFactor>
+      <arcHeightFactor>3</arcHeightFactor>
     </projectile>
   </ThingDef>
 
@@ -451,7 +451,7 @@
       <damageDef>Bomb</damageDef>
       <damageAmountBase>0</damageAmountBase>
       <speed>16</speed>
-      <arcHeightFactor>0.6</arcHeightFactor>
+      <arcHeightFactor>3</arcHeightFactor>
     </projectile>
   </ThingDef>
 

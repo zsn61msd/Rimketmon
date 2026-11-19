@@ -209,6 +209,7 @@ namespace Rimketmon
         public static float Linear(float k) { return Mathf.Clamp01(k); }
         public static float CubicOut(float k) { k = Mathf.Clamp01(k); float u = 1f - k; return 1f - u * u * u; }
         public static float CubicIn(float k) { k = Mathf.Clamp01(k); return k * k * k; }
+        public static float CubicInOut(float k) { k = Mathf.Clamp01(k); return k < 0.5f ? 4f * k * k * k : 1f - Mathf.Pow(-2f * k + 2f, 3f) / 2f; }
         public static float SineIn(float k) { k = Mathf.Clamp01(k); return 1f - Mathf.Cos(k * Mathf.PI / 2f); }
         public static float SineOut(float k) { k = Mathf.Clamp01(k); return Mathf.Sin(k * Mathf.PI / 2f); }
 
@@ -337,7 +338,7 @@ namespace Rimketmon
         /// <summary>선택 화살표: 제자리에서 좌우로 살짝 끄덕인다.</summary>
         public void Cursor(float x, float y, float ox, float oy)
         {
-            float bob = Mathf.Sin(Time.realtimeSinceStartup * 7f) * 1.2f;
+            float bob = Mathf.Sin(RimketClock.Now * 7f) * 1.2f;
             Img(PR.Tex("ui/cursor"), x + bob, y, ox, oy);
         }
 
@@ -661,22 +662,39 @@ namespace Rimketmon
             soundClose = null;
         }
 
-        public override Vector2 InitialSize
-        {
-            get
-            {
-                float w = Mathf.Min(UI.screenWidth - 40f, (UI.screenHeight - 40f) * 16f / 9f);
-                return new Vector2(w, w * 9f / 16f);
-            }
-        }
+        // 창 크기·위치는 RimketFrame이 정한다(끌어서 이동·크기 조절, 모드 설정에서 초기화)
+        public override Vector2 InitialSize { get { var r = RimketFrame.Outer(); return new Vector2(r.width, r.height); } }
+        protected override void SetInitialSizeAndPosition() { windowRect = RimketFrame.Outer(); }
         protected override float Margin { get { return 0f; } }
+        /// <summary>true면 림월드 시간·월드 조작을 허용하는 창(RimketTime 참고). IRimketLive 구현 창만 true.</summary>
+        protected bool LiveWorld { get { return this is IRimketLive && RimketTime.Enabled; } }
+        /// <summary>live 창이 지금 림월드 시간을 멈춰야 하는가(야생·방문자·어둠·???·온라인 배틀). 기본은 멈추지 않음.</summary>
+        protected virtual bool FreezeTime { get { return false; } }
 
-        public override void PostClose() { base.PostClose(); PR.ReleaseHiIfIdle(this); }      // 확대본 VRAM 반환
+
+        public override void PreOpen()
+        {
+            base.PreOpen();
+            if (this is IRimketLive) { RimketTime.OnOpen(); RimketTime.Apply(this, FreezeTime); }
+            else RimketTime.OnOpen();      // 연출·체육관 같은 항상 정지 창: 키 입력이 막힌 채 시작하지 않게
+        }
+        public override void WindowUpdate() { base.WindowUpdate(); RimketFrame.Tick(this); if (RimketClock.Paused) return; if (this is IRimketLive) RimketTime.Apply(this, FreezeTime); }      // 최소화 중엔 시간 조작도 하지 않는다
+        public override void ExtraOnGUI()
+        {
+            base.ExtraOnGUI();
+            if (RimketClock.Paused || !(this is IRimketLive)) return;
+            RimketTime.Track(this);
+            RimketTime.Apply(this, FreezeTime);
+        }
+
+        public override void PostClose() { base.PostClose(); if (this is IRimketLive) RimketTime.OnClose(this); PR.ReleaseHiIfIdle(this); }      // 확대본 VRAM 반환
 
         protected abstract void DrawCanvas(Canvas g);
 
         public override void DoWindowContents(Rect inRect)
         {
+            if (RimketClock.Paused) return;      // 최소화: 그리지도 입력을 받지도 않는다
+            inRect = RimketFrame.Begin(this, inRect);      // 바깥 틀(이동·크기·초기화)을 그리고 캔버스 영역만 받는다
             var cv = new Canvas(inRect);
             GUI.color = Color.black;
             GUI.DrawTexture(inRect, BaseContent.WhiteTex);
@@ -686,6 +704,7 @@ namespace Rimketmon
             Locked = false;
             DrawCanvas(G);
             Locked = false;
+            if (this is IRimketLive) RimketTime.DrawInactive(new Rect(0f, 0f, G.Area.width, G.Area.height));
             GUI.EndGroup();
         }
 
@@ -706,7 +725,7 @@ namespace Rimketmon
 
         protected static bool Key(params KeyCode[] keys)
         {
-            if (Locked || OnlineChat.Blocking || Event.current.type != EventType.KeyDown) return false;
+            if (Locked || OnlineChat.Blocking || RimketTime.KeysBlocked || Event.current.type != EventType.KeyDown) return false;
             foreach (var k in keys) if (Event.current.keyCode == k) { Event.current.Use(); return true; }
             return false;
         }

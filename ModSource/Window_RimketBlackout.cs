@@ -13,13 +13,13 @@ namespace Rimketmon
 
         public Window_RimketBlackout(string text, Action after)
         {
-            this.text = text; this.after = after; t0 = Time.realtimeSinceStartup;
+            this.text = Rimketmon.Engine.Lang.Tr(text); this.after = after; t0 = RimketClock.Now;
             RimketAudio.StopBgm();
         }
 
         protected override void DrawCanvas(Canvas g)
         {
-            float t = Time.realtimeSinceStartup - t0;
+            float t = RimketClock.Now - t0;
             g.Fill(0f, 0f, 320f, 180f, Color.black);
             int chars = Mathf.Clamp(Mathf.FloorToInt((t - FadeSec) / TypeSec), 0, text.Length);
             if (chars > 0) g.Label(text.Substring(0, chars), 160f, 82f, 12f, Canvas.White, new Color(0.2f, 0.2f, 0.2f), TextAnchor.UpperCenter);

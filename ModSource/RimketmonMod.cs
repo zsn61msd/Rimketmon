@@ -15,6 +15,7 @@ namespace Rimketmon
     public class RimketmonSettings : ModSettings
     {
         // ---- 규칙 ----
+        public bool neuralDamage = true;            // 끄면 배틀 결과로 정착민 뇌에 손상이 전혀 남지 않는다(끔 / 켬+사망 끔=비치명 / 켬+사망 켬=전체)
         public bool lethalDefeat = true;            // 패배(HP 0) 시 정착민 사망. 끄면 혼수 + 중증 영구 손상
         public bool captureGuaranteed = true;
         public bool clampTierOverflow = true;
@@ -40,12 +41,13 @@ namespace Rimketmon
         public bool foeSurrender = true;              // 랭크 상대가 항복하기도 한다
         public float foeTiltScale = 1f;               // 민망함·급소로 인한 항복 빈도 배율
         public float thinkTimeScale = 1f;             // 상대 생각 시간 배율
-        public bool rankedTimer = true;               // 랭크배틀 시간 제한(선출 90초·한 턴 45초). 끄면 시간 표시·시간 초과 자동 선택 없음(온라인은 그대로)
+        public bool liveWorldTime = true;             // 림켓몬 창이 떠 있어도 림월드 시간·월드를 조작(야생·방문자·어둠·???·온라인 배틀은 시간 정지). 끄면 예전처럼 전체 화면+항상 정지
 
         // ---- 배틀 연출(PokeRogue 설정 참고) ----
         public int language = -1;                   // 0 한국어 / 1 English / -1 아직 안 정함(림월드 언어를 따른다: 한국어면 한국어, 아니면 영어)
         public string languageCode = "";            // "ko" / "en" / 다른 언어 묶음 코드. 비어 있으면 아직 안 정함
         public bool languageAsked;                  // 처음 몬스터볼 아이콘을 눌렀을 때 언어를 물어봤는가
+        public bool keepPawnOnCapture = true;       // 볼에 넣은 우리 동물의 폰(훈련·장비·보철물)을 지우지 않고 보관했다가 그대로 꺼낸다(끄면 예전처럼 새로 만든다)
         private bool speedReset;
         public int gameSpeed = 1;                   // 0 느림 / 1 보통 / 2 빠름 / 3 터보
         public int hpBarSpeed = 0;                  // 0 보통 / 1 빠름 / 2 매우 빠름 / 3 즉시
@@ -64,6 +66,8 @@ namespace Rimketmon
         public bool humanTiming = true;             // 랭크 상대가 사람처럼 생각하는 시간을 쓴다
         public bool showBgmName = true;
         public float iconX = -1f, iconY = -1f;      // 우하단 림켓몬 아이콘 위치(우클릭 드래그로 이동, -1이면 기본 위치)             // 재생 중인 BGM 표시
+        public bool winFull = false;                        // 림켓몬 창 전체 화면(창 위 줄 버튼)
+        public float winW = -1f, winCx = -1f, winCy = -1f;   // 림켓몬 화면 창의 크기·위치(화면 대비 비율, -1이면 기본). RimketFrame이 쓴다
 
         // ---- 소리 ----
         public bool bgmEnabled = true;
@@ -93,6 +97,7 @@ namespace Rimketmon
         {
             base.ExposeData();
             Scribe_Values.Look(ref lethalDefeat, "lethalDefeat", true);
+            Scribe_Values.Look(ref neuralDamage, "neuralDamage", true);
             Scribe_Values.Look(ref captureGuaranteed, "captureGuaranteed", true);
             Scribe_Values.Look(ref clampTierOverflow, "clampTierOverflow", true);
             Scribe_Values.Look(ref partyLimit, "partyLimit", 6);
@@ -115,11 +120,16 @@ namespace Rimketmon
             Scribe_Values.Look(ref rankedRimworldShare, "rankedRimworldShare", 0.4f);
             Scribe_Values.Look(ref foeTiltScale, "foeTiltScale", 1f);
             Scribe_Values.Look(ref thinkTimeScale, "thinkTimeScale", 1f);
-            Scribe_Values.Look(ref rankedTimer, "rankedTimer", true);
+            Scribe_Values.Look(ref liveWorldTime, "liveWorldTime", true);
             Scribe_Values.Look(ref language, "language", -1);
             Scribe_Values.Look(ref languageAsked, "languageAsked", false);
             Scribe_Values.Look(ref languageCode, "languageCode", "");
+            Scribe_Values.Look(ref keepPawnOnCapture, "keepPawnOnCapture", true);
             if (Scribe.mode == LoadSaveMode.PostLoadInit && string.IsNullOrEmpty(languageCode) && language >= 0) languageCode = language == 1 ? "en" : "ko";      // 예전 설정 옮기기
+            // 버그 수정: 게임 안 설정창(예전 2칸 방식)은 language(0/1)만 고치고 languageCode는 그대로 둬서, 다음에 켤 때마다 처음 고른 언어로 되돌아갔다.
+            // 두 값이 어긋나 있으면(ko/en끼리) 설정창이 마지막으로 고친 language를 따른다. 다른 언어 묶음 코드(fr 등)는 건드리지 않는다.
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && language >= 0 && (languageCode == "ko" || languageCode == "en") && languageCode != (language == 1 ? "en" : "ko"))
+                languageCode = language == 1 ? "en" : "ko";
             Scribe_Values.Look(ref gameSpeed, "gameSpeed", 1);
             Scribe_Values.Look(ref speedReset, "speedReset", false);
             if (Scribe.mode == LoadSaveMode.LoadingVars && !speedReset) { gameSpeed = 1; speedReset = true; }   // 예전에 터보로 저장된 값을 보통(1배속)으로 되돌린다
@@ -140,6 +150,10 @@ namespace Rimketmon
             Scribe_Values.Look(ref showBgmName, "showBgmName", true);
             Scribe_Values.Look(ref iconX, "iconX", -1f);
             Scribe_Values.Look(ref iconY, "iconY", -1f);
+            Scribe_Values.Look(ref winFull, "winFull", false);
+            Scribe_Values.Look(ref winW, "winW", -1f);
+            Scribe_Values.Look(ref winCx, "winCx", -1f);
+            Scribe_Values.Look(ref winCy, "winCy", -1f);
             Scribe_Values.Look(ref bgmEnabled, "bgmEnabled", true);
             Scribe_Values.Look(ref sfxEnabled, "sfxEnabled", true);
             Scribe_Values.Look(ref masterVolume, "masterVolume", 1.0f);
@@ -227,7 +241,7 @@ namespace Rimketmon
             Lang.Set(s.languageCode);
         }
 
-        private static void PickLanguage(string code)
+        internal static void PickLanguage(string code)
         {
             var s = Settings; if (s == null) return;
             s.languageCode = code; s.language = code == "ko" ? 0 : 1; s.languageAsked = true; Lang.Set(code);
@@ -280,7 +294,7 @@ namespace Rimketmon
         public override void DoSettingsWindowContents(Rect inRect)
         {
             var s = Settings;
-            var view = new Rect(0f, 0f, inRect.width - 20f, 1700f);
+            var view = new Rect(0f, 0f, inRect.width - 20f, 1760f);      // 1700 → 1760: 창 위치·크기 되돌리기 줄(+32)이 늘어 맨 아래가 잘리지 않게
             Widgets.BeginScrollView(inRect, ref scroll, view);
             var l = new Listing_Standard();
             l.Begin(view);
@@ -293,8 +307,10 @@ namespace Rimketmon
             l.GapLine();
 
             l.Label(Lang.Tr("■ 규칙"));
-            l.CheckboxLabeled(Lang.Tr("패배 시 정착민 사망 (야생·어둠의 배틀. 체육관·랭크는 해당 없음)"), ref s.lethalDefeat);
+            l.CheckboxLabeled(Lang.Tr("배틀 후 정착민 신경 손상 (끄면 뇌 손상·혼수가 전혀 없음)"), ref s.neuralDamage);
+            if (s.neuralDamage) l.CheckboxLabeled(Lang.Tr("패배 시 정착민 사망 (야생·어둠의 배틀. 체육관·랭크는 해당 없음)"), ref s.lethalDefeat);
             l.CheckboxLabeled(Lang.Tr("승리 후 포획 항상 성공"), ref s.captureGuaranteed);
+            l.CheckboxLabeled(Lang.Tr("볼에 넣었다 꺼내도 동물의 훈련·장비·보철물 유지"), ref s.keepPawnOnCapture, Lang.Tr("끄면 예전처럼 볼에 넣을 때 동물을 지우고, 꺼낼 때 새로 만든다(훈련·장비·보철물이 사라진다). 우리 정착지 동물에만 적용된다."));
             l.Label(Lang.Tr("전투에 데려가는 림켓몬 수: ") + s.partyLimit);
             s.partyLimit = (int)l.Slider(s.partyLimit, 1, 6);
             l.GapLine();
@@ -329,13 +345,14 @@ namespace Rimketmon
             Pct(l, "감정적인 항복 빈도 (실수 뒤 민망함·급소)", ref s.foeTiltScale, 3f, "0%면 가망이 없을 때만 항복한다.");
             l.CheckboxLabeled(Lang.Tr("상대의 생각 시간"), ref s.humanTiming);
             Pct(l, "생각 시간 길이", ref s.thinkTimeScale, 3f, "상대가 기술·선출·다음 림켓몬을 고르는 데 쓰는 시간의 배율.");
-            l.CheckboxLabeled(Lang.Tr("랭크배틀 시간 제한 (선출 90초 · 한 턴 45초)"), ref s.rankedTimer, Lang.Tr("끄면 시간이 표시되지 않고, 시간이 지나도 자동으로 고르지 않는다. 온라인 배틀은 상대와 맞춰야 해서 항상 켜져 있다."));
+            l.CheckboxLabeled(Lang.Tr("림켓몬 창이 열려 있어도 림월드 시간·월드 조작"), ref s.liveWorldTime, Lang.Tr("켜면 창이 조금 작아지고 림월드 시간이 흐른다. 창 밖(월드)을 누르면 월드를, 창 안을 누르면 림켓몬을 조작한다. 야생동물·방문자·어둠의 배틀·???·온라인 배틀 중에는 시간이 멈추고 조작할 수 없다. 끄면 예전처럼 전체 화면에서 시간이 항상 멈춘다."));
             l.GapLine();
 
             l.Label(Lang.Tr("■ 배틀 연출"));
             Choice(l, Lang.Tr("게임 속도"), s.gameSpeed, v => s.gameSpeed = v, RimketmonSettings.GameSpeedNames);
             Choice(l, Lang.Tr("HP 바 속도"), s.hpBarSpeed, v => s.hpBarSpeed = v, RimketmonSettings.HpBarNames);
             if (l.ButtonTextLabeled(Lang.Tr("화면 오른쪽 아래 림켓몬 버튼 위치"), Lang.Tr("기본 위치로 되돌리기"))) { s.iconX = s.iconY = -1f; s.Write(); }      // 엉뚱한 곳에 옮겼을 때
+            if (l.ButtonTextLabeled(Lang.Tr("림켓몬 창(배틀·메뉴) 위치·크기"), Lang.Tr("기본 위치·크기로 되돌리기"))) RimketFrame.ResetSaved();      // 창을 엉뚱한 곳/크기로 옮겼거나 조작이 안 될 때
             l.CheckboxLabeled(Lang.Tr("메시지 클릭으로 넘기기"), ref s.manualMessageClear);
             l.CheckboxLabeled(Lang.Tr("피해 숫자 표시"), ref s.damageNumbers);
             l.CheckboxLabeled(Lang.Tr("상대 HP 수치 표시"), ref s.showFoeHp);

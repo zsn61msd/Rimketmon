@@ -22,6 +22,7 @@ namespace Rimketmon
 
         private void OpenBox()
         {
+            boxPick = Pick.None; pickWedge = null; pickCard = null;
             view = View.Box; boxPage = 0; boxZone = 1; boxIdx = 0; partyIdx = 0; boxMenu = false; boxSwap = false; boxSwapMon = null; boxSortMenu = false;
             carry = null; pressMon = null; pressActive = false;
             var pc = PartyComponent.Instance; if (pc != null) { pc.NormalizeBox(); var first = pc.Box.OrderBy(e => e.BoxSlot).FirstOrDefault(); if (first != null && pc.All.Count == 0) { boxZone = 0; boxPage = first.BoxSlot / BoxSize; } }
@@ -44,7 +45,7 @@ namespace Rimketmon
             var c = e.C;
             var person = c.PawnId != 0 ? PersonArt.PawnOf(c) : null;
             if (person != null) { PersonArt.Draw(g, person, cx - w / 2f, cy - h / 2f, w, h, Rot4.West, true); return; }
-            if (PkAnim.SheetFor(c) != null && PkAnim.DrawFit(g, RimSprite.SprId(c), false, RimSprite.SprId(c) == c.Species ? c.Shiny : 0, cx, cy, w, h, Now)) return;
+            if (PkAnim.SheetFor(c) != null && PkAnim.DrawFit(g, RimSprite.SprId(c), false, RimSprite.ShinyOf(c), cx, cy, w, h, Now)) return;
             var mp = RimSprite.GetFor(c, false);
             if (mp.Valid) mp = FlyingOr(c, mp);
             if (mp.Valid) { g.Tint = mp.Tint; g.ImgFit(mp.Tex, mp.Flip, cx, cy, w, h); g.Tint = Color.white; }
@@ -94,6 +95,7 @@ namespace Rimketmon
                 DrawBoxIcon(g, e, 22f, y + 8f, 18f, 17f);
                 g.Label(e.C.Name, 34f, y + 1f, 8.5f, Canvas.White, Canvas.WhiteShadow);
                 g.Label("Lv." + e.C.Level, 34f, y + 10f, 7f, dark, Canvas.WhiteShadow);
+                if (boxPick != Pick.None && !PickValid(e)) g.Round(PartyX, y - 1f, PartyW, PartyH, new Color(0f, 0f, 0f, 0.55f));      // 고르기 모드: 대상이 아니면 어둡게
             }
 
             // ---- 오른쪽: 박스
@@ -132,6 +134,7 @@ namespace Rimketmon
                 var e = BoxMonAt(pc, i);
                 bool cur = !boxMenu && boxZone == 0 && boxIdx == i;
                 if (e != null && e != carry) DrawBoxIcon(g, e, x + (GridCW - 1f) / 2f, y + (GridCH - 1f) / 2f, 26f, 20f);
+                if (e != null && boxPick != Pick.None && !PickValid(e)) g.Round(x, y, GridCW - 1f, GridCH - 1f, new Color(0f, 0f, 0f, 0.55f));
                 if (e != null && e == carry) g.Round(x, y, GridCW - 1f, GridCH - 1f, new Color(0f, 0f, 0f, 0.35f));
                 if (carry != null && !modalOpen && Hot(x, y, GridCW - 1f, GridCH - 1f)) g.Round(x, y, GridCW - 1f, GridCH - 1f, new Color(1f, 0.9f, 0.3f, 0.25f));
                 if (cur) { g.Fill(x, y, GridCW - 1f, 1.5f, Canvas.White); g.Fill(x, y + GridCH - 2.5f, GridCW - 1f, 1.5f, Canvas.White); g.Fill(x, y, 1.5f, GridCH - 1f, Canvas.White); g.Fill(x + GridCW - 2.5f, y, 1.5f, GridCH - 1f, Canvas.White); }
@@ -142,7 +145,8 @@ namespace Rimketmon
             var sel = boxZone == 1 ? PartyMonAt(pc, partyIdx) : BoxMonAt(pc, boxIdx);
             int hz, hi;
             if (!boxMenu && SlotUnderMouse(out hz, out hi) && Event.current.type == EventType.MouseMove) { boxZone = hz; if (hz == 1) partyIdx = hi; else boxIdx = hi; }
-            if (carry != null) g.Label(carry.C.Name + "을(를) 들고 있다 — 놓을 칸을 고르세요 (Enter / 클릭, Esc 취소)", 14f, 156f, 8.5f, new Color(1f, 0.95f, 0.5f), Canvas.WhiteShadow);
+            if (boxPick != Pick.None) g.Label(PickPrompt(), 14f, 156f, 8.5f, new Color(1f, 0.95f, 0.5f), Canvas.WhiteShadow);
+            else if (carry != null) g.Label(carry.C.Name + "을(를) 들고 있다 — 놓을 칸을 고르세요 (Enter / 클릭, Esc 취소)", 14f, 156f, 8.5f, new Color(1f, 0.95f, 0.5f), Canvas.WhiteShadow);
             else if (boxSwap) g.Label("교체할 림켓몬 선택", 14f, 156f, 9f, Canvas.White, Canvas.WhiteShadow);
             else if (sel != null)
             {
@@ -153,6 +157,7 @@ namespace Rimketmon
             else g.Label("Enter 선택 · 드래그로 옮기기 · Q/E 박스 · R 정렬 · Esc", 14f, 156f, 8f, dark, Canvas.WhiteShadow);
 
             if (boxMenu) { DrawBoxMenu(g, win, pc, sel); return; }
+            if (boxPick != Pick.None) { HandleBoxPick(g, pc, sel); return; }      // 카드·쐐기를 쓸 대상 고르기
 
             // ---- 마우스: 누르기 → (움직이면) 집기 → 놓기 / (제자리에서 떼면) 메뉴
             HandleBoxMouse(g, pc);
@@ -273,8 +278,8 @@ namespace Rimketmon
             RimketAudio.PlaySe("gui_sel_decision");
             boxMenuItems.Clear(); boxSortMenu = false;
             boxMenuItems.Add("이동");
-            if (boxZone == 1) { if (pc.All.Count > 1) boxMenuItems.Add("박스에 맡기기"); boxMenuItems.Add("요약"); boxMenuItems.Add("지닌 도구"); if (Paradox.HasWedge(sel != null ? sel.C : null)) boxMenuItems.Add("쐐기 제거"); }
-            else { if (pc.All.Count < PartyComponent.PartyMax) boxMenuItems.Add("파티에 데려가기"); boxMenuItems.Add("파티와 교체"); boxMenuItems.Add("요약"); boxMenuItems.Add("지닌 도구"); if (Paradox.HasWedge(sel != null ? sel.C : null)) boxMenuItems.Add("쐐기 제거"); boxMenuItems.Add("방생"); }
+            if (boxZone == 1) { if (pc.All.Count > 1) boxMenuItems.Add("박스에 맡기기"); boxMenuItems.Add("요약"); boxMenuItems.Add("지닌 도구"); if (Paradox.HasWedge(sel != null ? sel.C : null)) boxMenuItems.Add("쐐기 제거"); if (sel.C.HasCard) boxMenuItems.Add("카드 제거"); }
+            else { if (pc.All.Count < PartyComponent.PartyMax) boxMenuItems.Add("파티에 데려가기"); boxMenuItems.Add("파티와 교체"); boxMenuItems.Add("요약"); boxMenuItems.Add("지닌 도구"); if (Paradox.HasWedge(sel != null ? sel.C : null)) boxMenuItems.Add("쐐기 제거"); if (sel.C.HasCard) boxMenuItems.Add("카드 제거"); if (PokeCards.CanConvert(sel.C)) boxMenuItems.Add("카드로 전환"); boxMenuItems.Add("방생"); }
             boxMenuItems.Add("취소");
             boxMenu = true; boxMenuCursor = 0;
         }
@@ -327,6 +332,8 @@ namespace Rimketmon
                 case "파티와 교체": boxSwap = true; boxSwapMon = sel; boxZone = 1; partyIdx = 0; break;
                 case "요약": selected = sel; OpenSummary(); sumFromBox = true; break;
                 case "쐐기 제거": AskRemoveWedge(sel); break;
+                case "카드 제거": AskRemoveCard(pc, sel); break;
+                case "카드로 전환": AskConvertToCard(pc, sel); break;
                 case "지닌 도구": selected = sel; OpenSummary(); sumFromBox = true; summaryPage = 1; OpenItemPick(pc); break;      // 요약의 도구 화면을 바로 연다
                 case "방생":
                     AskConfirm(ReleaseAsk(sel), () => { Release(sel); boxIdx = Mathf.Clamp(boxIdx, 0, BoxSize - 1); }, "방생");

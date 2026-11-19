@@ -129,3 +129,14 @@
 명	
 종	
 위	
+카드	Cards
+적용	Apply
+카드 없음	No cards
+끌어서 이동	drag to move
+창 초기화	Reset window
+# 배틀타워
+배틀타워	Battle Tower
+시작 층	Start floor
+도전	Climb
+올라간다	Go up
+내려간다	Go down

@@ -98,11 +98,13 @@ namespace Rimketmon
             catch (System.Exception) { return 0; }
         }
 
-        /// <summary>이 동물을 상대로 던질 수 있는 가장 낮은 볼 등급(0~2). 티어 기준.</summary>
+        /// <summary>이 동물을 상대로 던질 수 있는 가장 낮은 볼 등급(0~3). 몬스터볼은 1~3티어, 슈퍼볼은 1~4티어, 하이퍼볼은 1~5티어까지.
+        /// 6티어와 우리 것이 아닌 메카는 마스터볼(3)로만 잡을 수 있다. 티어를 알 수 없으면(?티어) 하이퍼볼.</summary>
         public static int RequiredTier(Pawn animal)
         {
-            int t = TierOf(animal);      // 몬스터볼 1~2티어, 슈퍼볼 1~4티어, 하이퍼볼 전부(?티어는 하이퍼볼 이상)
-            return t >= 1 && t <= 2 ? 0 : t >= 3 && t <= 4 ? 1 : 2;
+            if (RimketMech.IsMech(animal) && animal.Faction != Faction.OfPlayer) return 3;
+            int t = TierOf(animal);
+            return t <= 0 ? 2 : t <= 3 ? 0 : t == 4 ? 1 : t == 5 ? 2 : 3;
         }
 
         private static int Count(Pawn pawn, int tier)

@@ -45,6 +45,7 @@ namespace Rimketmon
             if (s == null) { open = false; return; }
             if (s != lastSession) { lastSession = s; open = false; buf = ""; seenVersion = s.ChatVersion; }
             float now = Time.realtimeSinceStartup;
+            if (open && RimketTime.KeysBlocked) CloseNow();      // 월드를 눌렀으면 채팅 입력을 닫아 키가 월드로 가게 한다
             if (s.ChatVersion != seenVersion) { seenVersion = s.ChatVersion; newAt = now; if (s.Chat.Count > 0 && !s.Chat[s.Chat.Count - 1].Key) RimketAudio.PlaySe("gui_sel_cursor"); }
 
             // 버튼
@@ -53,7 +54,7 @@ namespace Rimketmon
             g.Box(x, y, bw, bh, open ? new Color(0.85f, 0.65f, 0.15f, 0.97f) : hot ? new Color(0.3f, 0.36f, 0.6f, 0.97f) : new Color(0.1f, 0.11f, 0.2f, 0.92f), open ? new Color(1f, 0.95f, 0.6f) : PanelEdge);
             g.Label("채팅 T", x + bw / 2f, y + 2f, 6.5f, Color.white, Shadow, TextAnchor.UpperCenter);
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && hot) { if (open) CloseNow(); else { open = true; focusNext = true; } Event.current.Use(); }
-            if (!open && Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.T && now - closedAt > 0.2f) { open = true; focusNext = true; Event.current.Use(); }
+            if (!open && !RimketTime.KeysBlocked && Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.T && now - closedAt > 0.2f) { open = true; focusNext = true; Event.current.Use(); }
 
             // 대화 줄(창 폭에 맞춰 줄바꿈)
             const float lh = 9f, fs = 7f;

@@ -35,6 +35,10 @@ namespace Rimketmon.Engine
         /// <summary>온라인 상대가 보내 온 그림("크기;발여백;가로보정;칸#base64 PNG"). [0] 앞모습, [1] 뒷모습. 비었으면 내 게임의 그림을 쓴다. 저장하지 않는다.</summary>
         public string[] RemotePic;
         public string Look = "";          // 림월드 동물의 실제 색필터 "RRGGBB|RRGGBB"(1색|2색). 비면 종 기본색
+        /// <summary>카드로 적용한 겉모습: 포켓몬 종족 id(비면 없음)와 이로치 등급. 능력치·기술에는 영향이 없다.</summary>
+        public string CardSpecies;
+        public int CardShiny;
+        public bool HasCard { get { return !string.IsNullOrEmpty(CardSpecies); } }
         public int Level;
         public long Exp;                  // 누적 경험치(레벨^3). 레벨은 배지 상한으로 고정되므로 표시/기록용이고, 상한을 넘겨 쌓이지는 않는다.
 

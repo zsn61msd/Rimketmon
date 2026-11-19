@@ -17,7 +17,6 @@ namespace Rimketmon
         private List<RimketCreature> rMine;
         private readonly List<int> rPick = new List<int>();
         private int rCursor;
-        private const float RankedPreviewSeconds = 90f;
         private bool rWon, rRankUp; private int rDelta, rBp, rOldRating;
         private static readonly Color RDark = new Color(0.12f, 0.12f, 0.16f);
 
@@ -25,7 +24,7 @@ namespace Rimketmon
 
         private void RankedSet(RS s)
         {
-            rs = s; rsT0 = Time.realtimeSinceStartup; rCursor = 0; rWaitUntil = -1f;
+            rs = s; rsT0 = RimketClock.Now; rCursor = 0; rWaitUntil = -1f;
             if (s == RS.Pick) rOppPickAt = rsT0 + (float)HumanPlay.PickSeconds(new GameRng()) * RimketmonMod.Settings.thinkTimeScale;
         }
         // 상대도 선출에 시간을 쓴다: 내가 먼저 끝내면 잠깐 기다린다(최대 15초)
@@ -33,7 +32,7 @@ namespace Rimketmon
         private const float MaxPickWait = 15f;
         private void BeginLaunch(PartyComponent pc)
         {
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             if (RimketmonMod.Settings.humanTiming && now < rOppPickAt) { rWaitUntil = Mathf.Min(rOppPickAt, now + MaxPickWait); return; }
             LaunchRanked(pc);
         }
@@ -42,7 +41,7 @@ namespace Rimketmon
         {
             pc.EnsureStarterBp();
             Backdrop(g, 0.55f);
-            float t = Time.realtimeSinceStartup - rsT0;
+            float t = RimketClock.Now - rsT0;
             switch (rs)
             {
                 case RS.Home: RankedHome(g, win, pc); break;
@@ -141,7 +140,7 @@ namespace Rimketmon
             Rand.PushState(0x54594E);
             try
             {
-                p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Villager, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true,
+                p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Villager, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false,
                     fixedGender: Gender.Male, fixedBiologicalAge: 42f, fixedChronologicalAge: 42f));
                 p.Name = new NameTriple("Tynan", "Tynan", "Sylvester");
                 var ch = DefDatabase<BackstoryDef>.GetNamedSilentFail("TynanCustomChildhood");
@@ -245,8 +244,8 @@ namespace Rimketmon
             if (rWaitUntil > 0f)
             {
                 g.Window(win, 70f, 66f, 180f, 48f);
-                g.Label("상대가 선출하는 중" + new string('.', 1 + (int)(Time.realtimeSinceStartup * 2f) % 3), 160f, 84f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
-                if (Time.realtimeSinceStartup >= rWaitUntil) { rWaitUntil = -1f; LaunchRanked(pc); }
+                g.Label("상대가 선출하는 중" + new string('.', 1 + (int)(RimketClock.Now * 2f) % 3), 160f, 84f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
+                if (RimketClock.Now >= rWaitUntil) { rWaitUntil = -1f; LaunchRanked(pc); }
                 return;
             }
             g.Window(win, 4f, 4f, 180f, 172f);
@@ -270,16 +269,7 @@ namespace Rimketmon
             bool ready = rPick.Count == RankedRules.BringCount;
             DrawRankedButton(g, 10f, 138f, 80f, "배틀 시작", ready, () => { if (ready) BeginLaunch(pc); });
             DrawRankedButton(g, 96f, 138f, 80f, "취소", true, () => { rs = RS.Home; });
-            bool timed = RimketmonMod.Settings.rankedTimer;
-            float left = RankedPreviewSeconds - (Time.realtimeSinceStartup - rsT0);
-            g.Label("선택 " + rPick.Count + "/3" + (timed ? "   " + Mathf.Max(0, Mathf.CeilToInt(left)) + "초" : ""), 94f, 160f, 8f, timed && left < 15f ? Canvas.RedC : Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
-            if (timed && left <= 0f)
-            {
-                // 시간이 지나면 남은 자리를 앞에서부터 채워서 시작한다(같은 종족/도구는 건너뜀)
-                for (int k = 0; k < rMine.Count && rPick.Count < RankedRules.BringCount; k++)
-                    if (!rPick.Contains(k) && RankedRules.ClauseViolation(rMine, rPick, k) == null) rPick.Add(k);
-                if (rPick.Count == RankedRules.BringCount) { LaunchRanked(pc); return; }
-            }
+            g.Label("선택 " + rPick.Count + "/3", 94f, 160f, 8f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);      // 선출 시간 제한은 없다
 
             // 오른쪽: 상대 미리보기
             g.Window(win, 188f, 4f, 128f, 172f);

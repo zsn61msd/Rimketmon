@@ -67,7 +67,7 @@ namespace Rimketmon
         private static float duckUntil;
         /// <summary>팡파르(ME) 동안 BGM을 거의 끈다.</summary>
         public static void DuckBgm(float seconds) { duckUntil = Time.realtimeSinceStartup + seconds; }
-        private static float Volume { get { return Mathf.Clamp01(RimketmonMod.Settings.bgmVolume * RimketmonMod.Settings.masterVolume) * (Time.realtimeSinceStartup < duckUntil ? 0.08f : 1f) * fadeMul; } }
+        private static float Volume { get { return Mathf.Clamp01(RimketmonMod.Settings.bgmVolume * RimketmonMod.Settings.masterVolume) * (Time.realtimeSinceStartup < duckUntil ? 0.08f : 1f) * fadeMul * (RimketClock.Paused ? 0f : 1f); } }      // 최소화 중엔 소리 끔
 
         // ---- 부드러운 곡 바꾸기(메뉴 들판의 계절·날씨·시간대): 지금 곡을 줄이고(1.2초) 새 곡을 키운다(1.5초)
         private static float fadeMul = 1f, fadeLast = -1f; private static string fadePending;
@@ -287,6 +287,7 @@ namespace Rimketmon
         public static void PlayCryFor(Rimketmon.Engine.RimketCreature c, float volume = 1f)
         {
             if (c == null || !RimketmonMod.Settings.sfxEnabled) return;
+            c = RimSprite.Eff(c);      // 카드를 적용했으면 카드 속 포켓몬의 울음소리
             try
             {
                 var d = string.IsNullOrEmpty(c.SpeciesId) ? null : DefDatabase<ThingDef>.GetNamedSilentFail(c.SpeciesId);

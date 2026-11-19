@@ -17,7 +17,7 @@ namespace Rimketmon
             public RimketCreature C; public bool Fly; public float X, Y, TX, TY, Speed, Wait, Phase, Alt, AltT; public bool Right; public int Dir = 2;
             // 나는 림켓몬: 0 땅(쉬기·걷기) / 1 날기 / 2 내려앉기. 속도 벡터(VX, VY: 장면 픽셀/초)를 조금씩 꺾으며 날아다닌다
             public int State; public float StateT, VX, VY, FlapT, Glide, Bank;
-            public string Sheet; public bool SheetTried;      // 포켓몬 모습이면 걷는 그림(오버월드 4방향×4프레임)
+            public string Sheet; public bool SheetTried; public string SheetSig;      // SheetSig: 카드·종족·이로치가 바뀌면 걷는 그림을 다시 찾는다      // 포켓몬 모습이면 걷는 그림(오버월드 4방향×4프레임)
         }
 
         private static readonly List<Walker> walkers = new List<Walker>();
@@ -25,6 +25,7 @@ namespace Rimketmon
 
         private static bool CanFly(RimketCreature c)
         {
+            if (c.HasCard) return false;      // 카드 속 포켓몬은 걷는 그림으로 나온다
             var def = DefDatabase<ThingDef>.GetNamedSilentFail(c.SpeciesId);
             if (def == null) return false;
             if (RimSprite.CanFly(c)) return true;
@@ -135,8 +136,8 @@ namespace Rimketmon
 
         internal static MeadowEnv Env()
         {
-            if (Time.realtimeSinceStartup - menvAt < 2f) return menv;
-            menvAt = Time.realtimeSinceStartup;
+            if (RimketClock.Now - menvAt < 2f) return menv;
+            menvAt = RimketClock.Now;
             var e = new MeadowEnv { Season = MSeason.Summer, Weather = MWeather.Clear, Hour = 12f };
             try
             {
@@ -192,7 +193,7 @@ namespace Rimketmon
 
         private void DrawMeadow(Canvas g, PartyComponent pc, float x, float y, float w, float h)
         {
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             float dt = meadowLast < 0f ? 0f : Mathf.Clamp(now - meadowLast, 0f, 0.05f);
             meadowLast = now;
 
@@ -320,10 +321,13 @@ namespace Rimketmon
                         continue;
                     }
                     // 포켓몬 모습: 배틀 그림이 아니라 걷는 그림(오버월드, 아래·왼쪽·오른쪽·위 × 4프레임)
-                    if (!wk.SheetTried)
+                    var effC = RimSprite.Eff(wk.C);
+                    string sig = (wk.C.HasCard ? "card:" : "") + (effC != null ? effC.Species + "/" + effC.Shiny : "");
+                    if (!wk.SheetTried || wk.SheetSig != sig)      // 들판에 있던 동물에 나중에 카드를 적용해도 곧바로 걷는 그림으로
                     {
-                        wk.SheetTried = true;
-                        if (DefDatabase<ThingDef>.GetNamedSilentFail(wk.C.SpeciesId) == null) wk.Sheet = PokeBody.SheetId(wk.C);
+                        wk.SheetTried = true; wk.SheetSig = sig; wk.Sheet = null;
+                        if (wk.C.HasCard) { wk.Fly = false; wk.Alt = 0f; }      // 카드 속 포켓몬은 걷는다(날던 중이었으면 내려놓는다)
+                        if (wk.C.HasCard || DefDatabase<ThingDef>.GetNamedSilentFail(wk.C.SpeciesId) == null) wk.Sheet = PokeBody.SheetId(wk.C);
                     }
                     var ftex = wk.Sheet != null ? PR.Tex(wk.Sheet) : null;
                     if (ftex != null)
@@ -368,7 +372,7 @@ namespace Rimketmon
                         sy = fpic.Valid ? 1f : 1f + 0.12f * flap;        // 프레임이 없으면 눌림으로 날갯짓 흉내
                         ang = Mathf.Clamp(wk.Bank, -14f, 14f) * Mathf.Clamp01(wk.Alt * 2f);
                     }
-                    else if (moving) lift = Mathf.Abs(Mathf.Sin(now * 9f + wk.Phase)) * 1.6f;   // 걸을 때 통통
+                    else if (moving && !wk.C.HasCard) lift = Mathf.Abs(Mathf.Sin(now * 9f + wk.Phase)) * 1.6f;   // 걸을 때 통통(카드 포켓몬은 튀지 않는다)
                     else sy = 1f + 0.03f * Mathf.Sin(now * 3f + wk.Phase);                       // 숨쉬기
                     // 원본은 왼쪽을 본다: 오른쪽으로 갈 때만 뒤집는다
                     bool side = wk.Dir == 1 || wk.Dir == 3;
@@ -377,7 +381,9 @@ namespace Rimketmon
                     if (fpic.Valid) { c.Tint = fpic.Tint; c.Img(fpic.Tex, wk.X, footY - lift, 0.5f, 0.6f, sc, 1f, fpic.Flip, ang, sy); NameTag(c, wk, footY - lift - fpic.Tex.height * sc * 0.6f); }
                     else
                     {
-                        c.Tint = pic.Tint; c.Img(pic.Tex, wk.X, footY + dyOff - lift, 0.5f, 1f, sc, 1f, flip, ang, sy);
+                        var cardSheet = wk.C.HasCard ? PkAnim.SheetFor(wk.C) : null;      // 걷는 그림이 없는 카드 포켓몬: 배틀용 움직이는 그림
+                        if (cardSheet != null && cardSheet.SrcW == pic.Tex.width && cardSheet.SrcH == pic.Tex.height) PkAnim.DrawLikeStill(c, cardSheet, wk.X, footY + dyOff, 0.5f, 1f, sc, 1f, now);
+                        else { c.Tint = pic.Tint; c.Img(pic.Tex, wk.X, footY + dyOff - lift, 0.5f, 1f, sc, 1f, flip, ang, sy); }
                         var bnd = RimSprite.Bounds(pic.Tex);
                         NameTag(c, wk, footY + dyOff - lift - (pic.Tex.height - bnd[1]) * sc * sy);
                     }

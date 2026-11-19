@@ -3,32 +3,24 @@
   <name>RimKéMoN</name>
   <author>RimGall</author>
   <packageId>rimgall.rimketmon</packageId>
-  <modVersion>0.1.0</modVersion>
+  <url>https://github.com/zsn61msd/Rimketmon</url>
   <supportedVersions>
     <li>1.6</li>
     <li>1.7</li>
   </supportedVersions>
-  <description>RimKéMoN turns RimWorld's animals and people into collectible battle monsters.
+  <description>GitHub: https://github.com/zsn61msd/Rimketmon
 
-Link a colonist with the RimketLink, catch the creatures that roam your map, and fight turn-based battles inspired by the main-series games: gyms and the league, a Pokémon Center and mart, ranked battles, hunting runs, paradox battles with gene wedges, and online battles against other players.
-
-Every animal gets its own level, tier, typing, ability and moves, and colonists can fight with stats drawn from their psylink and psychic sensitivity.
-
-This is an unofficial fan mod. It is not affiliated with Nintendo, Creatures, GAME FREAK or The Pokémon Company; all rights to the original material belong to their respective owners.
-
-[Credits]
-- PokeRogue (pagefaultgames): animated Pokémon sprites and shinies (pokerogue-assets), move animations, arenas, UI, balls, trainer art, BGM, sound effects, cries, Korean/English text, biome spawn tables, gym leader / Elite Four / champion teams
-- Generation 9 Pack v3.3.8 (Eevee Expo, eeveeexpo.com/resources/1101): species, move, ability and item data, evolution methods, item icons, overworld follower sprites, height data
-- Pokémon Feral F Sevii Update Gen9 Korean v0.4: door open/close and exclamation sound effects
-- pokefirered (pret decompilation): Pokémon Center and Poké Mart maps, tiles, NPCs, emoticons
-- PokeAPI: Korean names and descriptions (species, moves, abilities, items), Pokédex categories and entries
-- Bulbagarden Archives: HGSS / Pt trainer animations
-- github.com/coopscollectionbiz-debug/Poke-discord-bot: HGSS / Pt trainer animation GIF collection
-- Smogon usage statistics (github.com/pkmn/smogon): ranked opponent teams
-- Pokémon Champions rules and numbers reference: ChampDex, Serebii, Vandal, battlenest.jp
-- RimWorld (Ludeon Studios)
-
-See CREDITS.md in the mod folder for the full list.</description>
+[References]
+- PokeRogue (pagefaultgames)
+- Generation 9 Pack v3.3.8 (Eevee Expo)
+- Pokémon Feral F Sevii Update Gen9 Korean v0.4
+- pokefirered (pret)
+- PokeAPI
+- Bulbagarden Archives
+- github.com/coopscollectionbiz-debug/Poke-discord-bot
+- Smogon usage statistics (github.com/pkmn/smogon)
+- ChampDex, Serebii, Vandal, battlenest.jp
+- RimWorld (Ludeon Studios)</description>
   <loadAfter>
     <li>Ludeon.RimWorld.Royalty</li>
   </loadAfter>

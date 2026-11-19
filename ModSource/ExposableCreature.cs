@@ -11,10 +11,12 @@ namespace Rimketmon
     {
         public RimketCreature C = new RimketCreature();
         public int BoxSlot = -1;        // PC 보관함에서의 칸 번호(0~1199). 파티에 있으면 -1
+        public Pawn StoredPawn;         // 볼에 넣을 때 지우지 않고 월드 폰으로 보관한 우리 동물의 폰(훈련·장비·보철물 유지). 없으면 null(예전 세이브·꺼 둔 경우)
 
         public void ExposeData()
         {
             Scribe_Values.Look(ref BoxSlot, "boxSlot", -1);
+            Scribe_References.Look(ref StoredPawn, "storedPawn");
             Scribe_Values.Look(ref C.SpeciesId, "species");
             Scribe_Values.Look(ref C.Species, "refSpecies");
             Scribe_Values.Look(ref C.Ability, "ability");
@@ -24,6 +26,8 @@ namespace Rimketmon
             Scribe_Values.Look(ref C.Name, "name");
             Scribe_Values.Look(ref C.Look, "look", "");
             Scribe_Values.Look(ref C.WedgeBackup, "wedgeBackup", null);
+            Scribe_Values.Look(ref C.CardSpecies, "cardSpecies", null);
+            Scribe_Values.Look(ref C.CardShiny, "cardShiny", 0);
             Scribe_Values.Look(ref C.Neutral, "neutral", false);
             Scribe_Values.Look(ref C.PawnId, "pawnId", 0);
             Scribe_Values.Look(ref C.MechFoe, "mechFoe", false);

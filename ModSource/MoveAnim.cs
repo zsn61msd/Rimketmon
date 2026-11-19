@@ -217,6 +217,8 @@ namespace Rimketmon
 
         readonly AnimDef def;
         readonly AnimActor user, target;
+        internal AnimActor User { get { return user; } }       // 지도 위 연출이 좌표를 매 프레임 고칠 때 쓴다(리플렉션 대신)
+        internal AnimActor Target { get { return target; } }
         readonly bool selfTarget;
         readonly float start, speed;
         int soundIdx;
@@ -237,6 +239,19 @@ namespace Rimketmon
 
         /// <summary>애니메이션 중 진짜 스프라이트는 숨기고(사본이 대신 그려진다) 그래픽을 올린다.</summary>
         public bool HidesActors(float now) { return !Done(now); }
+
+        /// <summary>지금 프레임이 이 배우(사용자 또는 대상)의 사본 칸을 갖고 있는가. 있을 때만 진짜 스프라이트를 숨긴다
+        /// (보이지 않는 칸도 포함: 공중날기·구멍파기처럼 일부러 숨기는 기술). 시작 전 대기·끝 여백에는 진짜 스프라이트가 그대로 보인다.</summary>
+        public bool DrawsActor(float now, bool isUser)
+        {
+            float t = (now - start) * speed;
+            if (t < 0f) return false;
+            int f = Mathf.FloorToInt(t / FrameSec);
+            if (f >= def.Frames.Count) return false;
+            int want = isUser ? 0 : 1;
+            foreach (var c in def.Frames[f]) if (c.Target == want) return true;
+            return false;
+        }
 
         public void Draw(Canvas g, float now)
         {

@@ -47,7 +47,7 @@ namespace Rimketmon
         public static void DrawOn(Vector3 center, int seed)
         {
             if (!EnsureMats()) return;
-            int step = (int)(Time.realtimeSinceStartup / 0.12f);
+            int step = (int)(RimketClock.Now / 0.12f);
             var rng = new System.Random(step * 7919 + seed);
             Vector3 c = center; c.y = AltitudeLayer.MetaOverlays.AltitudeFor();
             const float W = 1.05f, H = 1.45f, Bottom = -0.45f;
@@ -74,8 +74,8 @@ namespace Rimketmon
         static float lastScan = -10f; static Map lastMap;
         static void RefreshMystery(Map map)
         {
-            if (map == lastMap && Time.realtimeSinceStartup - lastScan < 1f) return;
-            lastScan = Time.realtimeSinceStartup; lastMap = map; mysteryPawns.Clear();
+            if (map == lastMap && RimketClock.Now - lastScan < 1f) return;
+            lastScan = RimketClock.Now; lastMap = map; mysteryPawns.Clear();
             try
             {
                 var pc = PartyComponent.Instance;

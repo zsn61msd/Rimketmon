@@ -8,7 +8,7 @@ namespace Rimketmon.Engine
         /// <summary>이 소비 아이템을 party 번호의 림켓몬에게 지금 쓸 수 있는가(효과가 없으면 쓸 수 없다).</summary>
         public bool CanUseItem(string itemId, int partyIndex)
         {
-            if (Ranked || IsOver || Phase != BattlePhase.Party || PendingSwitch) return false;
+            if (Ranked || NoItems || IsOver || Phase != BattlePhase.Party || PendingSwitch) return false;
             var info = Consumables.Get(itemId);
             if (info == null || partyIndex < 0 || partyIndex >= Player.Party.Count) return false;
             var c = Player.Party[partyIndex];

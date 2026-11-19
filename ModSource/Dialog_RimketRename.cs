@@ -15,6 +15,7 @@ namespace Rimketmon
         {
             name = cur ?? ""; this.done = done; this.cancel = cancel;
             doCloseX = true; forcePause = true; absorbInputAroundWindow = true; closeOnClickedOutside = false;
+            closeOnAccept = false;      // 기본값(true)이면 Enter가 창만 닫고 PostClose의 cancel로 처리되어 이름이 안 바뀐다(확인 버튼·DoWindowContents의 Enter 처리를 쓴다)
             layer = WindowLayer.Super;      // 림켓몬 메뉴(최상단 층) 앞에 떠야 보이고 입력된다
         }
 
@@ -24,15 +25,16 @@ namespace Rimketmon
         {
             Text.Font = GameFont.Small;
             Widgets.Label(new Rect(0f, 0f, r.width, 28f), Lang.Tr("새 이름 (최대 " + MaxLen + "자)"));
+            // Enter는 입력칸이 먹기 전에 먼저 본다(림월드 기본 이름 창과 같은 순서). 입력칸이 Enter를 먹으면 Enter로는 확정이 안 된다.
+            bool enter = Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
+            if (enter) Event.current.Use();
             GUI.SetNextControlName("RimketRenameField");
             string t = Widgets.TextField(new Rect(0f, 32f, r.width, 32f), name);
             if (t.Length > MaxLen) t = t.Substring(0, MaxLen);
             name = t;
             if (!focused) { UI.FocusControl("RimketRenameField", this); focused = true; }
-            bool enter = Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
             if (Widgets.ButtonText(new Rect(0f, r.height - 34f, r.width / 2f - 4f, 34f), Lang.Tr("확인")) || enter)
             {
-                if (enter) Event.current.Use();
                 finished = true; Close();
                 done?.Invoke(name.Trim());
             }

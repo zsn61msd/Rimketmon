@@ -62,7 +62,7 @@ namespace Rimketmon
         public static PawnKindDef KindFor(RimketCreature c)
         {
             if (c == null || c.PawnId != 0) return null;
-            if (!DebugPokeOnly && !string.IsNullOrEmpty(c.SpeciesId))
+            if (!DebugPokeOnly && !c.HasCard && !string.IsNullOrEmpty(c.SpeciesId))
             {
                 var d = DefDatabase<ThingDef>.GetNamedSilentFail(c.SpeciesId);
                 if (d != null && d.race != null && !d.race.Humanlike && d.defName != BodyDefName)
@@ -447,6 +447,7 @@ namespace Rimketmon
         {
             if (RimketUninstall.Removed) return;
             try { PokeBody.DrawAll(); } catch (Exception) { }
+            try { PokeBody.DrawCardPawns(); } catch (Exception) { }
             try { GlitchDraw.DrawAll(); } catch (Exception) { }
             try { FollowerUpdate(); } catch (Exception ex) { Log.WarningOnce("[림켓몬] 따라다니기 그리기: " + ex, 99117731); }
         }
@@ -694,8 +695,7 @@ namespace Rimketmon
         AnimActor[] animActors;
         static AnimActor GetActor(MoveAnimPlayer p, bool user)
         {
-            var f = typeof(MoveAnimPlayer).GetField(user ? "user" : "target", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            return (AnimActor)f.GetValue(p);
+            return p == null ? null : (user ? p.User : p.Target);
         }
 
         /// <summary>기술 연출을 지도 위(두 림켓몬의 화면 위치)에 그린다.</summary>
@@ -739,7 +739,7 @@ namespace Rimketmon
 
         static PawnKindDef AnimalKind(RimketCreature c)
         {
-            if (RimketWorldComponent.DebugPokeOnly || c == null || c.PawnId != 0 || string.IsNullOrEmpty(c.SpeciesId)) return null;
+            if (RimketWorldComponent.DebugPokeOnly || c == null || c.HasCard || c.PawnId != 0 || string.IsNullOrEmpty(c.SpeciesId)) return null;      // 카드를 적용했으면 포켓몬 모습(걷는 그림)으로
             var d = DefDatabase<ThingDef>.GetNamedSilentFail(c.SpeciesId);
             if (d == null || d.race == null || d.race.Humanlike || d.defName == RimketWorldComponent.BodyDefName) return null;
             return DefDatabase<PawnKindDef>.AllDefs.FirstOrDefault(x => x.race == d);
@@ -834,12 +834,13 @@ namespace Rimketmon
         static Dictionary<string, float> heights;
         static Mesh[] meshes;
 
-        public static void Clear() { bodies.Clear(); }
+        public static void Clear() { bodies.Clear(); cardPawns.Clear(); cardMap = null; }
         public static void Register(Pawn p, string sheet) { if (p != null && sheet != null) bodies[p] = sheet; }
 
         /// <summary>이 림켓몬의 걷는 그림 이름(없으면 null). ?티어처럼 그림이 없는 종족은 꺼낼 수 없다.</summary>
         public static string SheetId(RimketCreature c)
         {
+            c = RimSprite.Eff(c);      // 카드 적용: 카드 속 포켓몬의 걷는 그림
             if (c == null || string.IsNullOrEmpty(c.Species)) return null;
             if (MysteryGen.IsMystery(c.Species))       // ?쐐기: 원래 모습으로 걷는다(순수 ?티어는 그림 없음)
             {
@@ -909,6 +910,90 @@ namespace Rimketmon
             pos.z += size * 0.22f;      // 발이 칸 가운데쯤에 오도록 위로 조금 올린다
             var q = spin == 0f ? Quaternion.identity : Quaternion.AngleAxis(spin, Vector3.up);
             Graphics.DrawMesh(FrameMesh(row, col), Matrix4x4.TRS(pos, q, new Vector3(size, 1f, size)), mat, 0);
+        }
+
+        // ---- 포켓몬 카드를 적용한 정착지 동물: 폰은 그대로 두고(일·이동·먹이 등은 원래 동물), 그림만 카드 속 포켓몬의 걷는 그림으로 바꿔 그린다.
+        static readonly List<Pawn> cardPawns = new List<Pawn>();
+        static Map cardMap; static int cardScan = -999;
+        static System.Reflection.FieldInfo drawField; static System.Reflection.MethodInfo drawReg, drawDereg; static bool drawLookup;
+
+        // 림월드 버전마다 "그리는 물건 목록"의 이름이 다를 수 있어, 컴파일 시점에 묶이지 않도록 리플렉션으로 찾는다(못 찾으면 원래 그림이 겹쳐 보일 뿐 오류는 나지 않는다).
+        static void LookupDrawApi()
+        {
+            if (drawLookup) return; drawLookup = true;
+            var f = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+            drawField = typeof(DynamicDrawManager).GetField("drawThings", f);
+            drawReg = typeof(DynamicDrawManager).GetMethod("RegisterDrawable", f, null, new[] { typeof(Thing) }, null);
+            drawDereg = typeof(DynamicDrawManager).GetMethod("DeRegisterDrawable", f, null, new[] { typeof(Thing) }, null);
+            if (drawField == null && drawDereg == null) Log.Warning("[림켓몬] 이 림월드 버전에서 지도의 \"그리는 물건 목록\"을 찾지 못했습니다. 카드를 적용한 정착지 동물은 원래 동물 그림 위에 포켓몬 그림이 겹쳐 보입니다.");
+        }
+
+        /// <summary>원래 동물 그림이 그려지지 않게 지도의 "그리는 물건 목록"에서 뺀다(다시 지도에 들어오면 림월드가 넣으므로 주기적으로 다시 뺀다).</summary>
+        static void HideDrawable(Pawn p, Map map)
+        {
+            try
+            {
+                var mgr = map.dynamicDrawManager; if (mgr == null) return;
+                LookupDrawApi();
+                var set = drawField != null ? drawField.GetValue(mgr) as HashSet<Thing> : null;
+                if (set != null) { set.Remove(p); return; }
+                if (drawDereg != null) drawDereg.Invoke(mgr, new object[] { p });      // (목록에서 빼는 일은 여러 번 해도 안전하다)
+            }
+            catch (Exception ex) { Log.WarningOnce("[림켓몬] 카드 적용 동물의 원래 그림 숨기기: " + ex.Message, 99117732); }
+        }
+
+        static void ShowDrawable(Pawn p)
+        {
+            try
+            {
+                if (p == null || p.Map == null) return;
+                var mgr = p.Map.dynamicDrawManager; if (mgr == null) return;
+                LookupDrawApi();
+                var set = drawField != null ? drawField.GetValue(mgr) as HashSet<Thing> : null;
+                if (set != null) { set.Add(p); return; }
+                if (drawReg != null) drawReg.Invoke(mgr, new object[] { p });
+            }
+            catch (Exception) { }
+        }
+
+        static void RefreshCardPawns(Map map)
+        {
+            var next = new List<Pawn>();
+            foreach (var p in map.mapPawns.AllPawnsSpawned)
+            {
+                if (p == null || p.RaceProps == null || bodies.ContainsKey(p)) continue;
+                var comp = p.TryGetComp<CompRimket>();
+                if (comp == null || comp.data == null || comp.data.C == null || !comp.data.C.HasCard || SheetId(comp.data.C) == null) continue;
+                next.Add(p);
+            }
+            foreach (var old in cardPawns) if (old != null && old.Spawned && !next.Contains(old)) ShowDrawable(old);      // 카드를 뗀 동물은 원래 모습으로
+            cardPawns.Clear(); cardPawns.AddRange(next);
+            foreach (var p in cardPawns) HideDrawable(p, map);
+        }
+
+        /// <summary>카드가 붙은 개체가 지도에 나왔거나 바뀌었다: 다음 프레임에 곧바로 다시 훑는다(원래 동물 그림이 잠깐이라도 보이지 않게).</summary>
+        public static void CardChanged() { cardScan = -999; }
+
+        public static void DrawCardPawns()
+        {
+            var map = Find.CurrentMap; if (map == null || RimWorld.Planet.WorldRendererUtility.WorldRendered) return;
+            int f = Time.frameCount;
+            if (cardMap != map || f - cardScan > 6 || f < cardScan) { cardScan = f; cardMap = map; RefreshCardPawns(map); }
+            if (cardPawns.Count == 0) return;
+            int tick = Find.TickManager.TicksGame;
+            foreach (var p in cardPawns)
+            {
+                if (p == null || p.Destroyed || !p.Spawned || p.Map != map || p.Position.Fogged(map)) continue;
+                var comp = p.TryGetComp<CompRimket>();
+                var c = comp != null && comp.data != null ? comp.data.C : null;
+                if (c == null || !c.HasCard) continue;
+                string sheet = SheetId(c); if (sheet == null) continue;
+                int row = p.Rotation == Rot4.South ? 0 : p.Rotation == Rot4.West ? 1 : p.Rotation == Rot4.East ? 2 : 3;
+                bool moving = p.pather != null && p.pather.MovingNow;
+                int col = moving ? (tick / 8) % 4 : 0;
+                Vector3 pos = p.DrawPos; pos.y = AltitudeLayer.Pawn.AltitudeFor();
+                DrawSheet(sheet, pos, row, col);
+            }
         }
 
         static readonly List<Pawn> dead = new List<Pawn>();

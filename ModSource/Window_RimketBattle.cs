@@ -34,9 +34,9 @@ namespace Rimketmon
 
     /// <summary>
     /// 포켓로그(Phaser) 배틀 화면을 옮긴 전투 창. 320×180 가상 캔버스 위에 아레나·스프라이트·정보 상자·메시지/명령 창을 포켓로그의
-    /// 좌표와 시간(게임 속도 1배 기준 ms ÷ 설정 배속)대로 그린다. 게임 시간은 forcePause로 정지된다.
+    /// 좌표와 시간(게임 속도 1배 기준 ms ÷ 설정 배속)대로 그린다. 배틀 중에는 림월드 시간이 정지된다(RimketTime.cs).
     /// </summary>
-    public class Window_RimketBattle : Window
+    public class Window_RimketBattle : Window, IRimketLive
     {
         private enum Mode { Main, Fight, Switch, Item, ItemTarget, Surrender }
 
@@ -78,7 +78,7 @@ namespace Rimketmon
         {
             if (Online) { Session.Submit(a); return; }
             // 랭크: 상대가 아직 고르는 중이면 내 선택을 잡아 두고 기다린다(양쪽이 동시에 고르는 것처럼)
-            if (HumanWait && a.Kind != ActionKind.Disconnect && Time.realtimeSinceStartup < oppReadyAt) { heldAct = a; return; }
+            if (HumanWait && a.Kind != ActionKind.Disconnect && RimketClock.Now < oppReadyAt) { heldAct = a; return; }
             battle.Act(a);
         }
         /// <summary>
@@ -417,6 +417,23 @@ namespace Rimketmon
         }
         private bool CanSurrenderNow { get { return Online || battle.CanSurrender; } }
 
+        /// <summary>창 위 닫기 버튼: 한 번 묻고, 닫는다고 하면 입력을 받을 수 있는 순간에 항복(도망)한다.</summary>
+        private bool quitPending;
+        internal void RequestCloseFromFrame()
+        {
+            if (battle.IsOver || quitPending) return;      // 끝나는 중이면 결과 처리가 알아서 창을 닫는다
+            var d = Dialog_MessageBox.CreateConfirmation(Lang.Tr(battle.Paradox || battle.HuntMode || !CanSurrenderNow ? "창을 닫을까요?\n닫으면 도망친 것으로(패배) 처리됩니다." : "창을 닫을까요?\n닫으면 항복한 것으로(패배) 처리됩니다."),
+                () => { quitPending = true; }, true, Lang.Tr("배틀"));
+            d.layer = WindowLayer.Super;
+            Find.WindowStack.Add(d);
+        }
+        private void PumpQuit()
+        {
+            if (!quitPending || battle.IsOver) { quitPending = false; return; }
+            if (!InputReady) return;
+            if (Online || battle.LegalActions().Any(a => a.Kind == ActionKind.Disconnect)) { quitPending = false; heldAct = null; mode = Mode.Main; DoSurrender(); }
+        }
+
         private readonly Pawn thrower;
         private readonly Action<RimketBattle> onFinished;
         private bool resolved;
@@ -431,7 +448,7 @@ namespace Rimketmon
         private bool advanceRequested;
         private MoveAnimPlayer anim;
         private SideView animUser, animTarget;
-        private bool AnimBusy { get { return pendingMove.HasValue || (anim != null && !anim.Done(Time.realtimeSinceStartup)); } }
+        private bool AnimBusy { get { return pendingMove.HasValue || (anim != null && !anim.Done(RimketClock.Now)); } }
         // ---- 진행 템포(원작 대전 영상 기준): 기술 이름을 읽을 시간 → 연출 → HP 바 → 결과 문장, 쓰러짐 → 빈 자리 → 다음 림켓몬
         private BattleEvent? pendingMove; private float pendingMoveAt;      // 기술 이름이 뜬 뒤 조금 있다가 연출을 시작한다
         private int preDelayFor = -1; private float preDelayVal;             // 다음 줄을 띄우기 전에 두는 뜸(줄마다 한 번 계산)
@@ -443,7 +460,7 @@ namespace Rimketmon
         private void PumpLearn()
         {
             if (learnOpen) return;
-            if (learnQueue.Count == 0) { holdUntil = Time.realtimeSinceStartup; return; }
+            if (learnQueue.Count == 0) { holdUntil = RimketClock.Now; return; }
             var next = learnQueue.Dequeue();
             Move m; try { m = MoveCatalog.Get(next.Value); } catch (Exception) { m = null; }
             if (m == null) { PumpLearn(); return; }
@@ -540,7 +557,7 @@ namespace Rimketmon
             if (tex == null) return;
             if (TrainerAnimated(foeTrainerSprite)) { c.Img(tex, x, yFoot, 0.5f, 1f, 1f, alpha, false, 0f); return; }
             // 프레임이 한 장뿐인 트레이너(포켓로그 원본도 한 장): 숨쉬듯 아주 살짝 늘었다 줄었다
-            float br = 1f + 0.018f * Mathf.Sin(Time.realtimeSinceStartup * 2.4f);
+            float br = 1f + 0.018f * Mathf.Sin(RimketClock.Now * 2.4f);
             c.Img(tex, x, yFoot, 0.5f, 1f, 1f, alpha, false, 0f, br);
         }
 
@@ -548,7 +565,7 @@ namespace Rimketmon
         internal static void DrawGlitch(Canvas c, float x, float yFoot, float alpha, float w = 60f, float h = 84f)
         {
             var mn = PR.Tex("mon/MISSINGNO_f");
-            int step = (int)(Time.realtimeSinceStartup / 0.12f);
+            int step = (int)(RimketClock.Now / 0.12f);
             var rng = new System.Random(step * 7919 + 17 + (int)x);
             float top = yFoot - h;
             if (mn != null)
@@ -601,7 +618,7 @@ namespace Rimketmon
             soundAppear = null;
             soundClose = null;
             lastPhase = battle.Phase;
-            openTime = Time.realtimeSinceStartup;
+            openTime = RimketClock.Now;
             revealed = Math.Min(1, battle.Log.Count);
             lineStart = openTime + IntroSec;
 
@@ -691,19 +708,19 @@ namespace Rimketmon
 
         private static bool TrainerAnimated(string id) { return id != null && TrainerFrameCount(id) > 1; }
 
-        public override Vector2 InitialSize
-        {
-            get
-            {
-                float w = Mathf.Min(UI.screenWidth - 40f, (UI.screenHeight - 40f) * 16f / 9f);
-                return new Vector2(w, w * 9f / 16f);
-            }
-        }
+        // 창 크기·위치는 RimketFrame이 정한다(끌어서 이동·크기 조절, 모드 설정에서 초기화)
+        public override Vector2 InitialSize { get { var r = RimketFrame.Outer(); return new Vector2(r.width, r.height); } }
+        protected override void SetInitialSizeAndPosition() { windowRect = RimketFrame.Outer(); }
         protected override float Margin { get { return 0f; } }
+
+        /// <summary>배틀 중에는 림월드 시간 정지 + 시간 조작 시도 차단(RimketTime 참고).</summary>
+        private void ApplyTime() { RimketTime.Apply(this, RimketTime.FreezeFor(battle)); }
+        public override void ExtraOnGUI() { base.ExtraOnGUI(); if (RimketClock.Paused) return; RimketTime.Track(this); ApplyTime(); }
 
         public override void PreOpen()
         {
             base.PreOpen();
+            RimketTime.OnOpen(); ApplyTime();
             OnlineOpen = Online;
             RimketAudio.StartBgm();
         }
@@ -721,10 +738,13 @@ namespace Rimketmon
         public override void WindowUpdate()
         {
             base.WindowUpdate();
+            RimketFrame.Tick(this);
+            if (RimketClock.Paused) { RimketAudio.Maintain(); return; }      // 최소화: 배틀이 그 자리에 멈춘다
+            ApplyTime();
             RimketAudio.Maintain();
-            if (Online) Session.Tick(Time.realtimeSinceStartup);
+            if (Online) Session.Tick(RimketClock.Now);
 
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             float dt = Time.unscaledDeltaTime;
             bool introDone = now - openTime >= IntroSec;
 
@@ -801,17 +821,22 @@ namespace Rimketmon
             }
         }
 
+        private string trSrc, trOut, trCode;      // 번역 캐시(번역은 정규식을 돌려서 매 프레임 부르면 무겁다)
+
+        /// <summary>지금 보여줄 메시지. 영어 모드에서 타자 효과가 한글 원문을 먼저 자르면 번역이 안 돼 한글이 깜빡이므로, 먼저 번역하고 그 글로 글자 수를 센다.</summary>
         private string CurrentLine()
         {
             if (revealed <= 0 || revealed > battle.Log.Count) return "";
-            return HpText.Replace(battle.Log[revealed - 1], "");   // HP 수치는 메시지가 아니라 HP 바 옆에 실시간으로 표시한다
+            string raw = HpText.Replace(battle.Log[revealed - 1], "");   // HP 수치는 메시지가 아니라 HP 바 옆에 실시간으로 표시한다
+            if (raw != trSrc || Lang.Code != trCode) { trSrc = raw; trCode = Lang.Code; trOut = Lang.Tr(raw); }
+            return trOut;
         }
 
         private static readonly System.Text.RegularExpressions.Regex HpText = new System.Text.RegularExpressions.Regex(@"\s*\(HP[^)]*\)");
 
         private int TypedChars()
         {
-            float t = Time.realtimeSinceStartup - lineStart;
+            float t = RimketClock.Now - lineStart;
             if (t < 0f) return 0;
             return Mathf.FloorToInt(t * Speed / TypeSecPerChar);
         }
@@ -819,7 +844,7 @@ namespace Rimketmon
         private void Apply(BattleEvent e)
         {
             var v = e.PlayerSide ? ally : foe;
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             switch (e.Kind)
             {
                 case BattleEventKind.SendOut:
@@ -839,7 +864,7 @@ namespace Rimketmon
                     v.CryAt = (!v.Person && v.Thrown) ? now + ThrowDelay(v, e.PlayerSide) + Sec(650f + 250f) : -1f;
                     if (v.Thrown) Hold(v.InfoTime + Sec(550f));      // 다 나와서 이름표가 뜬 뒤에 다음 문장(등장 특성 등)
                     if (!v.Person && PartyComponent.Instance != null) PartyComponent.Instance.DexSee(e.Who.C);      // 도감: 만났다
-                    if (!v.Person && e.Who.C.Shiny > 0 && e.Who.C.SpeciesId == e.Who.C.Species)
+                    if (!v.Person && RimSprite.ShinyOf(e.Who.C) > 0)
                     {
                         shinyFx.RemoveAll(x => x.Key == v);
                         shinyFx.Add(new KeyValuePair<SideView, float>(v, Mathf.Max(now, v.InfoTime - Sec(200f))));
@@ -953,21 +978,24 @@ namespace Rimketmon
         {
             get
             {
-                float now = Time.realtimeSinceStartup;
+                float now = RimketClock.Now;
                 if (now - openTime < IntroSec) return true;
                 float t = Sec(750f + 650f + 250f + 1000f);
                 return (ally.Visible && ally.Thrown && now - ally.AppearTime < t) || (foe.Visible && foe.Thrown && now - foe.AppearTime < t);
             }
         }
 
-        private bool InputReady { get { return !AnimBusy && Time.realtimeSinceStartup >= holdUntil && revealed >= battle.Log.Count && evIndex >= Evs.Count && !Animating && TypedChars() >= CurrentLine().Length; } }
+        private bool InputReady { get { return !AnimBusy && RimketClock.Now >= holdUntil && revealed >= battle.Log.Count && evIndex >= Evs.Count && !Animating && TypedChars() >= CurrentLine().Length; } }
 
         // ------------------------------------------------------------------ 그리기
 
         public override void DoWindowContents(Rect inRect)
         {
+            if (RimketClock.Paused) return;
+            inRect = RimketFrame.Begin(this, inRect);
+            PumpQuit();      // 바깥 틀(이동·크기·초기화)을 그리고 캔버스 영역만 받는다
             var cv = new Canvas(inRect);
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             float introK = PR.Linear((now - openTime) / IntroSec);
 
             // 바깥 검은 띠
@@ -996,12 +1024,13 @@ namespace Rimketmon
             // 메시지 수동 넘김: 화면 어디를 눌러도 / 스페이스
             if (RimketmonMod.Settings.manualMessageClear && revealed <= battle.Log.Count)
             {
-                if (!OnlineChat.Blocking && (Event.current.type == EventType.MouseDown || (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)))
+                if (!OnlineChat.Blocking && (Event.current.type == EventType.MouseDown || (!RimketTime.KeysBlocked && Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)))
                 { if (!InputReady) { advanceRequested = true; Event.current.Use(); } }
             }
 
             float fade = Mathf.Clamp01((now - openTime) / 0.35f);
             if (fade < 1f) g.Fill(0f, 0f, 320f, 180f, new Color(0f, 0f, 0f, 1f - fade));
+            RimketTime.DrawInactive(new Rect(0f, 0f, cv.Area.width, cv.Area.height));
             GUI.EndGroup();
         }
 
@@ -1012,7 +1041,7 @@ namespace Rimketmon
             g.Img(PR.TexOrFrame("arena/" + arena + "_b") ?? PR.Tex("arena/plains_b"), 20f + eoff, 0f, 0f, 0f);
             g.Img(PR.TexOrFrame("arena/" + arena + "_a") ?? PR.Tex("arena/plains_a"), poff, 0f, 0f, 0f);
             if (arenaNight) g.Fill(0f, 0f, 320f, 180f, new Color(0.05f, 0.08f, 0.25f, 0.38f));   // 밤: 배경에 푸른 어둠
-            if (introK >= 1f) DrawTerrainTint(g, Time.realtimeSinceStartup);
+            if (introK >= 1f) DrawTerrainTint(g, RimketClock.Now);
         }
 
         // ---- 상대 쪽
@@ -1154,7 +1183,7 @@ namespace Rimketmon
         private void DrawMon(Canvas g, SideView v, float x, float y, bool back, float now, float sincePop)
         {
             if (v.FaintTime > 0f && now - v.FaintTime > Sec(520f)) return;
-            if (AnimBusy && (v == animUser || v == animTarget)) return;
+            if (anim != null && !anim.Done(now) && ((v == animUser && anim.DrawsActor(now, true)) || (v == animTarget && anim.DrawsActor(now, false)))) return;      // 연출이 사본을 그리는 프레임에만 숨긴다
             if (!back && battle.HuntMode && capStart >= 0f)
             {
                 // 사냥 포획: 볼이 열려 빨려 들어간 뒤부터 안 보이고, 빠져나오면 다시 나타난다
@@ -1203,7 +1232,7 @@ namespace Rimketmon
                     if (MysteryGen.IsMystery(v.F.Shown.Species)) DrawGlitch(c, x + dx, y, alpha, pw, ph);
                     return;
                 }
-                var sheet = v.F.C != null ? PkAnim.Get(v.F.Shown.SpeciesId, back, v.F.Shown.SpeciesId == v.F.Shown.Species ? v.F.Shown.Shiny : 0) : null;
+                var sheet = v.F.C != null ? PkAnim.Get(RimSprite.SprId(v.F.Shown), back, RimSprite.ShinyOf(v.F.Shown)) : null;
                 if (sheet != null)
                 {
                     // 포켓로그와 같이 시트의 프레임을 순서대로(초당 10장) 돌려 그린다. 발끝(원본 크기 바닥 중앙)이 (x, y)
@@ -1571,12 +1600,12 @@ namespace Rimketmon
 
             if (battle.Phase == BattlePhase.Finished && ready) { DrawFinished(g, win); return; }
             if (showWin) { DrawWinChoice(g, win); return; }
-            if (!commandUp) { rankedTimerOn = false; return; }
+            if (!commandUp) { rankedTurnBegun = false; return; }
             if (heldAct.HasValue)
             {
-                if (Time.realtimeSinceStartup >= oppReadyAt || battle.IsOver) { var h = heldAct.Value; heldAct = null; if (!battle.IsOver) battle.Act(h); return; }
+                if (RimketClock.Now >= oppReadyAt || battle.IsOver) { var h = heldAct.Value; heldAct = null; if (!battle.IsOver) battle.Act(h); return; }
                 g.Window(win, 202f, 132f, 118f, 48f);
-                g.Label("상대가 고르는 중" + new string('.', 1 + (int)(Time.realtimeSinceStartup * 2f) % 3), 261f, 148f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
+                g.Label("상대가 고르는 중" + new string('.', 1 + (int)(RimketClock.Now * 2f) % 3), 261f, 148f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
                 return;
             }
             if (Online)
@@ -1588,7 +1617,7 @@ namespace Rimketmon
                 {
                     g.Window(win, 202f, 132f, 118f, 48f);
                     g.Label("상대의 선택을", 261f, 140f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
-                    g.Label("기다리는 중" + new string('.', 1 + (int)(Time.realtimeSinceStartup * 2f) % 3), 261f, 154f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
+                    g.Label("기다리는 중" + new string('.', 1 + (int)(RimketClock.Now * 2f) % 3), 261f, 154f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
                     return;
                 }
                 float left = (float)Session.SecondsLeft;
@@ -1596,19 +1625,13 @@ namespace Rimketmon
             }
             else if (battle.Ranked && !battle.Paradox && !battle.IsOver)
             {
-                // 랭크: 한 턴 45초. 시간이 지나면 첫 번째로 쓸 수 있는 기술(또는 교체)을 자동으로 고른다
-                if (!rankedTimerOn)
+                // 랭크: 내 쪽에는 시간 제한이 없다(예전의 한 턴 45초·시간 초과 자동 선택은 없앴다).
+                // 이번 턴이 시작될 때 한 번만 상대의 생각 시간을 정한다(내가 교체만 고르는 때에는 상대는 고를 게 없다)
+                if (!rankedTurnBegun)
                 {
-                    rankedTimerOn = true; rankedTurnStart = Time.realtimeSinceStartup;
-                    // 상대의 이번 턴 생각 시간(내가 교체만 고르는 때에는 상대는 고를 게 없다)
+                    rankedTurnBegun = true;
                     bool crit = (battle.ActiveFighter != null && battle.ActiveFighter.HpFraction < 0.35) || (battle.FoeFighter != null && battle.FoeFighter.HpFraction < 0.35);
-                    oppReadyAt = HumanWait && !battle.PendingSwitch ? rankedTurnStart + (float)HumanPlay.ThinkSeconds(new GameRng(), battle.Turn + 1, crit) * RimketmonMod.Settings.thinkTimeScale : -1f;
-                }
-                if (RimketmonMod.Settings.rankedTimer)      // 설정에서 끄면 시간 제한 없음(상대의 생각 시간은 그대로)
-                {
-                    float left = RankedTurnSeconds - (Time.realtimeSinceStartup - rankedTurnStart);
-                    g.Label(Mathf.Max(0, Mathf.CeilToInt(left)) + "초", 316f, 124f, 9f, left < 10f ? Canvas.RedC : Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperRight);
-                    if (left <= 0f) { rankedTimerOn = false; mode = Mode.Main; AutoRankedAct(); return; }
+                    oppReadyAt = HumanWait && !battle.PendingSwitch ? RimketClock.Now + (float)HumanPlay.ThinkSeconds(new GameRng(), battle.Turn + 1, crit) * RimketmonMod.Settings.thinkTimeScale : -1f;
                 }
             }
 
@@ -1629,7 +1652,7 @@ namespace Rimketmon
                 if (SwitchMenuOpen()) return;      // 이미 열려 있으면 다시 열지 않는다
                 Find.WindowStack.Add(new Window_RimketMenu(battle, idx =>
                 {
-                    // 지금도 가능한 교체일 때만 적용한다(시간 초과 자동 선택 뒤에 늦게 눌러도 전투가 꼬이지 않게)
+                    // 지금도 가능한 교체일 때만 적용한다(전투 상태가 바뀐 뒤에 늦게 눌러도 전투가 꼬이지 않게)
                     if (battle.IsOver) return;
                     var act = MyLegal().FirstOrDefault(a => a.Kind == ActionKind.Switch && a.Index == idx);
                     if (act.Kind == ActionKind.Switch) DoAct(act);
@@ -1647,36 +1670,12 @@ namespace Rimketmon
             if (Clicked(g, 110f, 158f, 100f, 18f) || AcceptKey()) { if (AcceptKey()) Event.current.Use(); resolved = true; Close(); }
         }
 
-        private const float RankedTurnSeconds = 45f;
-        private bool rankedTimerOn; private float rankedTurnStart;
+        private bool rankedTurnBegun;      // 이번 턴의 상대 생각 시간을 이미 정했는가(명령창이 내려가면 false로)
 
-        private float lastAutoAct = -10f;
         private static bool SwitchMenuOpen() { return Find.WindowStack.Windows.OfType<Window_RimketMenu>().Any(w => w.IsBattleSwitch); }     // 배틀 중 교체용 메뉴만 센다(랭크/패러독스를 연 일반 메뉴는 제외)
-        private void CloseOpenSwitchMenus()
-        {
-            foreach (var w in Find.WindowStack.Windows.OfType<Window_RimketMenu>().Where(x => x.IsBattleSwitch).ToList()) w.Close(false);
-        }
-
-        private void AutoRankedAct()
-        {
-            if (Time.realtimeSinceStartup - lastAutoAct < 1.5f) return;     // 같은 프레임 연타 방지
-            lastAutoAct = Time.realtimeSinceStartup;
-            CloseOpenSwitchMenus();
-            var acts = MyLegal();
-            BattleAction pick = default(BattleAction); bool found = false;
-            if (MyPending) { foreach (var a in acts) if (a.Kind == ActionKind.Switch) { pick = a; found = true; break; } }
-            else
-            {
-                foreach (var a in acts) if (a.Kind == ActionKind.UseMove && MyBlocked(a.Index) == null) { pick = a; found = true; break; }
-                if (!found) foreach (var a in acts) if (a.Kind == ActionKind.Struggle) { pick = a; found = true; break; }
-            }
-            if (!found && acts.Count > 0) { pick = acts[0]; found = true; }
-            if (found) DoAct(pick);
-        }
-
         private void MoveCursorKeys(ref int cur, int count, int columns)
         {
-            if (Event.current.type != EventType.KeyDown || OnlineChat.Blocking) return;
+            if (Event.current.type != EventType.KeyDown || OnlineChat.Blocking || RimketTime.KeysBlocked) return;
             var k = Event.current.keyCode;
             int c = cur;
             if (k == KeyCode.LeftArrow || k == KeyCode.A) { if (c % columns > 0) c--; }
@@ -1687,8 +1686,8 @@ namespace Rimketmon
             cur = c; Event.current.Use();
         }
 
-        private bool AcceptKey() { return !OnlineChat.Blocking && Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Z); }
-        private bool CancelKey() { return !OnlineChat.Blocking && Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Escape || Event.current.keyCode == KeyCode.X || Event.current.keyCode == KeyCode.Backspace); }
+        private bool AcceptKey() { return !OnlineChat.Blocking && !RimketTime.KeysBlocked && Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Z); }
+        private bool CancelKey() { return !OnlineChat.Blocking && !RimketTime.KeysBlocked && Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Escape || Event.current.keyCode == KeyCode.X || Event.current.keyCode == KeyCode.Backspace); }
 
         // ---- 메인 명령: 왼쪽 위 싸운다(기술 / 정착민은 기본 공격) · 오른쪽 위 아이템 · 왼쪽 아래 교체 · 오른쪽 아래 도망(접속 해제)
 
@@ -1784,7 +1783,7 @@ namespace Rimketmon
             if (items.Count == 0)
             {
                 bool owned = pc != null && Consumables.ShopOrder.Any(id => pc.BagCount(id) > 0);
-                g.Label(battle.Phase != BattlePhase.Party ? "지금은 아이템을 쓸 수 없다." : battle.Ranked ? "랭크전에서는 가방 아이템을 쓸 수 없다." : owned ? "가진 아이템이 지금은 효과가 없다." : "쓸 수 있는 아이템이 없다. (상점 「소비」에서 구매)", 18f, 146f, 13f, new Color(0.75f, 0.75f, 0.78f), Canvas.WhiteShadow);
+                g.Label(battle.Phase != BattlePhase.Party ? "지금은 아이템을 쓸 수 없다." : battle.Ranked ? "랭크전에서는 가방 아이템을 쓸 수 없다." : battle.NoItems ? "배틀타워에서는 가방 아이템을 쓸 수 없다." : owned ? "가진 아이템이 지금은 효과가 없다." : "쓸 수 있는 아이템이 없다. (상점 「소비」에서 구매)", 18f, 146f, 13f, new Color(0.75f, 0.75f, 0.78f), Canvas.WhiteShadow);
                 g.Label("우클릭: 뒤로", 312f, 171f, 6.5f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperRight);
                 if (CancelKey() || AcceptKey() || (Event.current.type == EventType.MouseDown && Event.current.button >= 0)) { Event.current.Use(); mode = Mode.Main; cursor = 1; }
                 return;
@@ -1956,7 +1955,7 @@ namespace Rimketmon
                     g.Wrap(desc, 8f, 140f - th, 227f, 7.5f, Canvas.White, Canvas.WhiteShadow);
                 }
             }
-            if (Time.realtimeSinceStartup - noPpMsgAt < 1.6f && noPpMsg != null)
+            if (RimketClock.Now - noPpMsgAt < 1.6f && noPpMsg != null)
             {
                 g.Box(4f, 116f, 235f, 13f, new Color(0.25f, 0.05f, 0.05f, 0.92f));
                 g.Label(noPpMsg, 10f, 118f, 8f, new Color(1f, 0.75f, 0.7f), Canvas.WhiteShadow);
@@ -1984,7 +1983,7 @@ namespace Rimketmon
         {
             RimketAudio.PlaySe("gui_sel_buzzer");
             noPpMsg = slot.Move.MaxPP >= 0 && slot.PP <= 0 ? "이 기술은 PP가 남아 있지 않다!" : "지금은 이 기술을 쓸 수 없다!";
-            noPpMsgAt = Time.realtimeSinceStartup;
+            noPpMsgAt = RimketClock.Now;
         }
 
         private static string TypeKey(ElementType t)
@@ -2161,6 +2160,7 @@ namespace Rimketmon
         public override void PostClose()
         {
             base.PostClose();
+            RimketTime.OnClose(this);
             PR.ReleaseHiIfIdle(this);
             if (Online) OnlineOpen = false;
             LastCloseFrame = Time.frameCount;

@@ -45,7 +45,7 @@ namespace Rimketmon
         {
             this.mon = mon; this.to = to; this.onDone = onDone; this.usedItem = usedItem; fromId = mon.Species;
             oldName = mon.Name;
-            start = Time.realtimeSinceStartup;
+            start = RimketClock.Now;
             msg = "어라…? " + oldName + "의 모습이…!";
             // 번갈아 바뀌는 단계: 1, 1.5, …, 15 (마지막을 빼고는 갔다가 돌아온다)
             float t = TCycle;
@@ -53,7 +53,7 @@ namespace Rimketmon
             cycleEnd = t;
         }
 
-        private float Ms { get { return (Time.realtimeSinceStartup - start) * 1000f; } }
+        private float Ms { get { return (RimketClock.Now - start) * 1000f; } }
 
         protected override void DrawCanvas(Canvas g)
         {
@@ -199,7 +199,7 @@ namespace Rimketmon
                 oldSheet = PkAnim.SheetFor(mon);
                 var tmp2 = mon.Clone(); tmp2.Species = tmp2.SpeciesId = to.Id; newSheet = PkAnim.SheetFor(tmp2);
             }
-            float tNow = Time.realtimeSinceStartup;
+            float tNow = RimketClock.Now;
             Action<Texture2D, MonPic, float, float> draw = (tex, pic, scale, alpha) =>
             {
                 if (tex == null || scale <= 0f || alpha <= 0f) return;

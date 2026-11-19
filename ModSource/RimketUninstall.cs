@@ -37,7 +37,7 @@ namespace Rimketmon
                 "· 모드가 만든 물건(볼·림켓링크 등), 건강 상태, 생각, 능력, 퀘스트, 연구 진행, 이벤트를 모두 정리합니다.\n" +
                 "· 진짜 포켓몬(림월드 몸이 없는 림켓몬)은 사라집니다.\n" +
                 "· 볼에 든 림월드 동물·메카·사람은 아래에서 고르세요.\n" +
-                "· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다."));
+                "· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다. 먼저 세이브를 다른 이름으로 저장해 두세요.\n모드를 아예 빼려면: 제거 → 저장 → 게임 종료 → 모드 끄기 순서로 하세요."));
             node.options.Add(new DiaOption(Lang.Tr("동물·메카·사람은 지도로 돌려보내고 제거")) { action = () => Execute(true), resolveTree = true });
             node.options.Add(new DiaOption(Lang.Tr("전부 없애고 제거")) { action = () => Execute(false), resolveTree = true });
             node.options.Add(new DiaOption(Lang.Tr("취소")) { resolveTree = true });
@@ -89,6 +89,10 @@ namespace Rimketmon
                     {
                         try { if (Find.WorldPawns.Contains(p)) Find.WorldPawns.RemovePawn(p); if (!p.Destroyed) p.Destroy(); } catch (Exception) { }
                     }
+                    foreach (var p in pc.FrozenPawnsList())      // 볼 보관소에 남은(돌려보내지 않은) 동물 폰
+                    {
+                        try { pc.ThawPawn(p); if (!p.Destroyed) p.Destroy(DestroyMode.Vanish); } catch (Exception) { }
+                    }
                 }
 
                 // 지도 위: 모드가 꺼낸 몸, 모드 물건, 모드 건강 상태·생각·능력, 림켓몬 정보
@@ -100,6 +104,11 @@ namespace Rimketmon
                 }
                 foreach (var car in Find.WorldObjects.Caravans) foreach (var p in car.PawnsListForReading.ToList()) CleanPawn(p, ref items);
                 foreach (var p in Find.WorldPawns.AllPawnsAliveOrDead.ToList()) { try { CleanPawn(p, ref items); } catch (Exception) { } }
+
+                // 그릇 안의 모드 물건: 수송 포드·선반·캐러밴·이동 중인 포드·월드 오브젝트
+                CleanContainers(ref items);
+                // 도전자 이벤트의 레터(알림·보관함)와 무리(Lord)
+                CleanLettersAndLords(ref items);
 
                 // 퀘스트
                 foreach (var q in Find.QuestManager.QuestsListForReading.ToList())
@@ -145,11 +154,48 @@ namespace Rimketmon
             if (def == null || def.race == null) return false;
             if (RimketMech.IsMechDef(def)) { RimketMech.SpawnReleased(def, false, cell(), map); return true; }
             if (!def.race.Animal) return false;
-            var pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(def.race.AnyPawnKind, Faction.OfPlayer, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true));
+            Pawn pawn = RimketPawnKeep.Restore(e, def, cell(), map);      // 보관해 둔 폰이 있으면 그대로
+            bool restored = pawn != null;
+            if (!restored) pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(def.race.AnyPawnKind, Faction.OfPlayer, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false));
             string sp = def.label ?? def.defName;
             if (!string.IsNullOrEmpty(e.C.Name) && e.C.Name != sp && !e.C.Neutral) pawn.Name = new NameSingle(e.C.Name);
-            GenSpawn.Spawn(pawn, cell(), map);
+            if (!restored) GenSpawn.Spawn(pawn, cell(), map);
             return true;
+        }
+
+        static void CleanContainers(ref int items)
+        {
+            var all = new List<Thing>();
+            foreach (var m in Find.Maps) { try { ThingOwnerUtility.GetAllThingsRecursively(m, all, false); } catch (Exception ex) { Log.Warning("[림켓몬] 제거: 지도 그릇 검색 " + ex.Message); } }
+            foreach (var wo in Find.WorldObjects.AllWorldObjects.ToList())
+                if (wo is IThingHolder h) { try { ThingOwnerUtility.GetAllThingsRecursively(h, all, false); } catch (Exception ex) { Log.Warning("[림켓몬] 제거: 월드 오브젝트 검색 " + ex.Message); } }
+            foreach (var t in all.Distinct())
+                if (!(t is Pawn) && t != null && !t.Destroyed && Ours(t.def)) { try { t.Destroy(); items++; } catch (Exception) { } }
+        }
+
+        static void CleanLettersAndLords(ref int items)
+        {
+            try
+            {
+                foreach (var l in Find.LetterStack.LettersListForReading.ToList())
+                    if (l is RimketChallengeLetter || Ours(l.def)) { Find.LetterStack.RemoveLetter(l); items++; }
+            }
+            catch (Exception ex) { Log.Warning("[림켓몬] 제거: 레터 정리 " + ex.Message); }
+            try
+            {
+                foreach (var a in Find.Archive.ArchivablesListForReading.ToList())
+                    if (a is RimketChallengeLetter || (a is Letter lt && Ours(lt.def))) { Find.Archive.Remove(a); items++; }
+            }
+            catch (Exception ex) { Log.Warning("[림켓몬] 제거: 보관함 정리 " + ex.Message); }
+            foreach (var m in Find.Maps)
+            {
+                try
+                {
+                    foreach (var lord in m.lordManager.lords.ToList())
+                        if (lord.LordJob is LordJob_RimketChallenger) { m.lordManager.RemoveLord(lord); items++; }
+                }
+                catch (Exception ex) { Log.Warning("[림켓몬] 제거: 무리 정리 " + ex.Message); }
+            }
         }
 
         /// <summary>폰 하나에서 모드 흔적을 지운다. 모드가 꺼낸 몸이면 없앤다.</summary>
@@ -174,16 +220,18 @@ namespace Rimketmon
         {
             var rm = Find.ResearchManager; if (rm == null) return;
             var ours = DefDatabase<ResearchProjectDef>.AllDefs.Where(Ours).ToList();
+            bool found = false;
             foreach (var f in rm.GetType().GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public))
             {
                 try
                 {
                     var v = f.GetValue(rm);
-                    if (v is System.Collections.IDictionary d) { foreach (var r in ours) if (d.Contains(r)) d.Remove(r); }
+                    if (v is System.Collections.IDictionary d) { found = true; foreach (var r in ours) if (d.Contains(r)) d.Remove(r); }
                     else if (v is ResearchProjectDef cur && ours.Contains(cur)) f.SetValue(rm, null);
                 }
                 catch (Exception) { }
             }
+            if (!found) Log.Warning("[림켓몬] 제거: 이 림월드 버전에서 연구 진행 표를 찾지 못해 연구 기록은 그대로 남았습니다(게임 진행에는 지장 없음).");
         }
 
         /// <summary>모드 데이터 컴포넌트를 새로 만들어 끼운다(처음 설치한 상태).</summary>
@@ -193,7 +241,10 @@ namespace Rimketmon
             var types = new[] { typeof(PartyComponent), typeof(RimketWorldComponent), typeof(RimketChallengeComponent) };
             for (int i = 0; i < g.components.Count; i++)
                 if (types.Contains(g.components[i].GetType()))
-                    g.components[i] = (GameComponent)Activator.CreateInstance(g.components[i].GetType(), g);
+                {
+                    try { g.components[i] = (GameComponent)Activator.CreateInstance(g.components[i].GetType(), g); }
+                    catch (Exception ex) { Log.Warning("[림켓몬] 컴포넌트 초기화 실패(" + g.components[i].GetType().Name + "): " + ex.Message); }
+                }
             // 컴포넌트 찾기 캐시가 있으면 비운다(버전마다 다를 수 있어 이름 대신 형식으로 찾는다)
             foreach (var f in typeof(Game).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic))
             {

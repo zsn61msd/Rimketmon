@@ -155,6 +155,8 @@ namespace Rimketmon.Engine
             c.BaseHp = bs[0]; c.BaseAtk = bs[1]; c.BaseDef = bs[2]; c.BaseSpA = bs[3]; c.BaseSpD = bs[4]; c.BaseSpe = bs[5];
             c.Iv = iv; c.Sp = pt;
             if (string.IsNullOrEmpty(c.Species) || string.IsNullOrEmpty(c.Name)) { error = "종족 정보 없음"; return null; }
+            if (c.Name.Length > 40) c.Name = c.Name.Substring(0, 40);      // 받은 이름이 터무니없이 길면 자른다
+            if (c.Look != null && c.Look.Length > 200) c.Look = null;
             if (c.Gender < 0 || c.Gender > 2) { error = "성별 오류"; return null; }
             if (c.Nature < 0 || c.Nature > 24) { error = "성격 오류"; return null; }
             // 사람·메카노이드·모드 종족·?티어 모두 낼 수 있다(그림은 따로 보낸다). 전투에 쓰는 값은 이 메시지에 다 들어 있다

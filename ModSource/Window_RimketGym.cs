@@ -13,7 +13,7 @@ namespace Rimketmon
     /// 체육관 전용 창. 관장은 고르지 않는다: [배틀 개시]를 누르면 도전 가능한 관장들의 그림자 스프라이트가
     /// 슬롯머신처럼 빙글 돌다가 한 명에서 탁 멈추고, 그 관장과의 전투가 시작된다.
     /// </summary>
-    internal sealed class Window_RimketGym : PrWindow
+    internal sealed class Window_RimketGym : PrWindow, IRimketLive      // 체육관(관장전 포함)은 림월드 시간이 흐른다
     {
         private enum State { Idle, Spinning, Revealed }
 
@@ -71,7 +71,7 @@ namespace Rimketmon
         protected override void DrawCanvas(Canvas g)
         {
             var pc = PartyComponent.Instance;
-            float now = Time.realtimeSinceStartup;
+            float now = RimketClock.Now;
             var win = PR.Tex("ui/windows/window_1");
 
             g.Img(PR.Tex("arena/dojo_bg") ?? PR.Tex("arena/default_bg"), 0f, 0f, 0f, 0f);
@@ -264,7 +264,7 @@ namespace Rimketmon
  pickedIndex = leagueMode && pcs != null && pcs.InLeague ? Mathf.Min(pcs.EliteWins, pool.Count - 1) : new GameRng().Next(0, pool.Count);
             picked = pool[pickedIndex];
             state = State.Spinning;
-            spinStart = Time.realtimeSinceStartup;
+            spinStart = RimketClock.Now;
             lastTick = -1;
             launched = false;
         }

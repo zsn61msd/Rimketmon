@@ -39,7 +39,7 @@ namespace Rimketmon
             const float dx = 120f, dy = 108f, dw = 196f, dh = 68f;
             g.Window(win, dx, dy, dw, dh);
             g.Label("세레나", dx + 10f, dy + 5f, 9f, Canvas.PinkC, Canvas.PinkSh);
-            string line = lines[Mathf.Clamp(page, 0, lines.Length - 1)];
+            string line = Lang.Tr(lines[Mathf.Clamp(page, 0, lines.Length - 1)]);      // 번역한 뒤에 자른다(잘린 한글은 번역이 안 돼 깜빡인다)
             int shown = Mathf.Clamp((int)((Time.realtimeSinceStartup - t0 - 0.3f) * 45f), 0, line.Length);
             g.Wrap(line.Substring(0, shown), dx + 10f, dy + 19f, dw - 20f, 8.5f, Canvas.White, Canvas.WhiteShadow);
             bool full = shown >= line.Length;

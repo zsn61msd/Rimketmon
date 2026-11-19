@@ -122,7 +122,7 @@ namespace Rimketmon
                 if (!trainer.Spawned) return;
             }
             else if (trainer.Dead || trainer.Destroyed || !trainer.Spawned) { Clear(); return; }    // 죽였거나 사라졌다: 배틀 없음
-            if (!forcedShown && Find.TickManager.TicksGame - arrivedTick >= (mode == ModeMystery ? MysteryForceTicks : ForceAfterTicks)) ShowForced();
+            if (!forcedShown && Find.TickManager.TicksGame - arrivedTick >= (mode == ModeMystery ? MysteryForceTicks : ForceAfterTicks) && !BattleFlow.RimketUiOpen()) ShowForced();      // 림켓몬 창이 떠 있으면 닫힐 때까지 미룬다
         }
 
         /// <summary>개발자용: 방문 트레이너를 부르고(없으면) 24시간 뒤의 강제 수락창을 곧바로 띄운다.</summary>
@@ -229,6 +229,7 @@ namespace Rimketmon
                 return false;
             }
             if (!pending || trainer == null || trainer.Dead || !trainer.Spawned) { Clear(); return false; }
+            if (BattleFlow.RimketUiOpen()) { Messages.Message(Lang.Tr("림켓몬 창이 열려 있는 동안에는 시작할 수 없다."), MessageTypeDefOf.RejectInput, false); return false; }
             var fighters = Fighters();
             if (fighters.Count == 0)
             {
@@ -323,7 +324,7 @@ namespace Rimketmon
         private bool ArriveApocriton(Map map, PawnKindDef kind)
         {
             Pawn p;
-            try { p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true)); }
+            try { p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false)); }
             catch (System.Exception ex) { Log.Warning("[림켓몬] 아포크립톤 생성 실패: " + ex.Message); return false; }
             IntVec3 spot = MeetSpot(map, DropCellFinder.TradeDropSpot(map));
             IntVec3 drop;
@@ -343,7 +344,7 @@ namespace Rimketmon
         private bool ArriveMystery(Map map)
         {
             var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail("Drifter") ?? PawnKindDefOf.Villager;
-            Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true));
+            Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false));
             IntVec3 cell;
             if (!CellFinder.TryFindRandomEdgeCellWith(c => c.Standable(map) && map.reachability.CanReachColony(c), map, CellFinder.EdgeRoadChance_Neutral, out cell)) return false;
             GenSpawn.Spawn(p, cell, map);

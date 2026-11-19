@@ -81,10 +81,10 @@ namespace Rimketmon.Engine
         // 포켓몬 챔피언스 환산: 1 BP = 5 VP. (챔피언스: 랭크 승 약 300VP, 패 약 100VP, 일일 미션 약 500VP, 능력 포인트 5VP, 기술 250VP, 성격 500VP)
 
         // 림켓몬에는 출석·퀘스트가 없으므로, 챔피언스의 미션 수입(일일 약 500VP + 주간 약 3,000VP ≈ 하루 5판 기준 판당 +35 BP)을 전투 보상에 녹였다.
-        public const int WinBp = 100;         // 챔피언스 승리 300VP(60 BP) + 미션 몫
-        public const int LossBp = 35;         // 챔피언스 패배 약 100VP(20 BP) + 미션 몫
+        public const int WinBp = 150;         // 챔피언스 승리 300VP(60 BP) + 미션 몫
+        public const int LossBp = 75;         // 챔피언스 패배 약 100VP(20 BP) + 미션 몫
         public const int StreakBp = 75;       // 연승마다 추가(최대 5연승분). 림켓몬 고유 보너스
-        public const int RankUpBonus = 300;   // 등급이 처음 올랐을 때(챔피언스: 시즌 보상이 등급별로 크게 오른다)
+        public const int RankUpBonus = 1000;   // 등급이 처음 올랐을 때(챔피언스: 시즌 보상이 등급별로 크게 오른다)
         public const int StarterBp = 1000;    // 시작 보너스(챔피언스: 10,000 VP, 참고 자료마다 달라 절반으로)
 
         /// <summary>상점 가격(BP): 팬게임 가격표(은 단위)를 눌러서 쓴다. 30 × (가격/200)^0.55, 최소 5. 상처약(200) 30, 좋은상처약(700) 59, 먹다남은음식(20000) 약 380(승 6~7번), 구애머리띠(100000) 약 910.</summary>
@@ -93,7 +93,7 @@ namespace Rimketmon.Engine
             return Math.Max(5, (int)Math.Round(30.0 * Math.Pow(Math.Max(1.0, silverPrice) / 200.0, 0.55)));
         }
 
-        /// <summary>승리 100 + 연승 75씩(최대 +375) + 강한 상대 보너스(20점 차이마다 +4, 최대 +40). 패배 35.</summary>
+        /// <summary>승리 150 + 연승 75씩(최대 +375) + 강한 상대 보너스(20점 차이마다 +4, 최대 +40). 패배 75.</summary>
         public static int BpReward(bool won, int winStreak, int mine, int theirs)
         {
             if (!won) return LossBp;

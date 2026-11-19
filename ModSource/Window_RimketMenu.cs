@@ -14,9 +14,9 @@ namespace Rimketmon
     /// 우하단 림볼 아이콘으로 연다. 파티, 센터(치료), 상점, 체육관(전용 창), 랭크전(준비 중), 설정.
     /// </summary>
     [StaticConstructorOnStartup]
-    internal sealed partial class Window_RimketMenu : PrWindow
+    internal sealed partial class Window_RimketMenu : PrWindow, IRimketLive
     {
-        private enum View { Menu, Party, Summary, Center, Shop, Settings, Ranked, Dev, DevPick, Box, Train, DevRank, Paradox, Tutorial, Online, Hunt, Dex, HallOfFame }
+        private enum View { Menu, Party, Summary, Center, Shop, Settings, Ranked, Dev, DevPick, Box, Train, DevRank, Paradox, Tutorial, Online, Hunt, Dex, HallOfFame, Cards, Tower }
 
         private View view = View.Menu;
         private int menuCursor, partyCursor, page, optCursor, settingCursor, summaryPage, shopCursor, scroll;
@@ -30,10 +30,10 @@ namespace Rimketmon
             get
             {
                 var pc = PartyComponent.Instance;
-                var l = new List<string> { "파티", "도감", "센터", "체육관", "랭크전" };
+                var l = new List<string> { "파티", "도감", "센터", "체육관", "랭크전", "배틀타워" };
                 if (pc != null && pc.huntUnlocked) l.Add("사냥");
                 if (pc != null && pc.hallOfFame.Count > 0) l.Add("전당");
-                l.AddRange(new[] { "패러독스 배틀", "온라인 배틀", "설정" });
+                l.AddRange(new[] { "패러독스 배틀", "카드", "온라인 배틀", "설정" });
                 if (RimketBuild.Dev) l.Add("개발자");
                 l.Add("닫기");
                 return l.ToArray();
@@ -43,6 +43,41 @@ namespace Rimketmon
         public Window_RimketMenu()
         {
             closeOnCancel = false;
+        }
+
+        /// <summary>아이콘 메뉴의 "센터 치료하기": 눈앞이 깜깜해진 뒤 센터에서 깨어나는데, 치료는 이미 끝나 있다(간호사 연출 없음).</summary>
+        public static Window_RimketMenu WakeAtCenterHealed()
+        {
+            var w = new Window_RimketMenu();
+            w.view = View.Center; w.CenterWakeHealed();
+            return w;
+        }
+
+        private bool quickPc;      // 아이콘 우클릭 메뉴의 "PC로 가기"로 연 경우: 뒤로 가면 창을 닫는다
+
+        /// <summary>센터 안 PC를 거치지 않고 곧바로 림켓몬 보관함(PC)을 연다.</summary>
+        public static Window_RimketMenu OpenAtPc()
+        {
+            var w = new Window_RimketMenu();
+            w.OpenBox(); w.quickPc = true;
+            return w;
+        }
+
+        /// <summary>배틀타워 화면으로 곧바로 연다(층 사이 결과·선택을 림켓몬 창 안에서 보여 줄 때).</summary>
+        public static Window_RimketMenu OpenAtTower()
+        {
+            var w = new Window_RimketMenu();
+            w.view = View.Tower; w.TowerEnter();
+            return w;
+        }
+
+        /// <summary>배틀 중 교체창은 그 배틀이 시간 정지 대상(야생·방문자·어둠·???·온라인)일 때만 멈춘다. 그 밖의 화면(랭크·체육관 등 포함)은 시간이 흐른다.</summary>
+        protected override bool FreezeTime
+        {
+            get
+            {
+                return battle != null && RimketTime.FreezeFor(battle);
+            }
         }
 
         /// <summary>승부에 진 뒤 센터에서 깨어나는 장면으로 연다.</summary>
@@ -85,7 +120,7 @@ namespace Rimketmon
             if (pc == null) { Close(); return; }
             var win = PR.Tex("ui/windows/window_1");
             // 배틀/연출 창이 위에 떠 있으면 이 메뉴는 입력을 받지 않는다(Esc·클릭이 뒤로 새어 메뉴가 닫히는 것을 막는다)
-            covered = battle == null && (Find.WindowStack.IsOpen<Window_RimketBattle>() || Find.WindowStack.IsOpen<Window_RimketDouble>() || Find.WindowStack.IsOpen<Window_RimketTransition>() || Find.WindowStack.IsOpen<Window_RimketGym>());
+            covered = battle == null && (Find.WindowStack.IsOpen<Window_RimketBattle>() || Find.WindowStack.IsOpen<Window_RimketDouble>() || Find.WindowStack.IsOpen<Window_RimketTransition>() || Find.WindowStack.IsOpen<Window_RimketGym>() || Find.WindowStack.IsOpen<Dialog_RimketRename>());      // 이름 입력창이 떠 있는 동안 메뉴가 W/A/S/D/Z/X/Backspace/Enter를 먹지 않게(입력창에 글자가 들어가게)
             Locked = covered || confirmMsg != null || (battle == null && Time.frameCount - Window_RimketBattle.LastCloseFrame <= 2);
             // 림월드는 새 창을 열 때, 같은 종류의 창 중 onlyOneOfTypeAllowed가 켜진 '기존' 창을 닫는다.
             // 온라인 연결을 들고 있는 이 메뉴가 배틀 중 교체 창(같은 종류)에 밀려 닫히면 방을 나간 것이 되어 항복 처리된다 → 연결 중엔 끈다.
@@ -105,8 +140,10 @@ namespace Rimketmon
                 case View.Ranked: DrawRanked(g, win, pc); break;
                 case View.Train: DrawTrain(g, win, pc); break;
                 case View.Paradox: DrawParadox(g, win, pc); break;
+                case View.Cards: DrawCards(g, win, pc); break;
                 case View.Online: DrawOnline(g, win, pc); break;
                 case View.Hunt: DrawHunt(g, win, pc); break;
+                case View.Tower: DrawTower(g, win, pc); break;
                 case View.Dex: DrawDex(g, win, pc); break;
                 case View.HallOfFame: DrawHallOfFame(g, win, pc); break;
                 case View.Tutorial: DrawTutorial(g, win, pc); break;
@@ -121,6 +158,15 @@ namespace Rimketmon
         // ---- 메뉴 안에서 바로 뜨는 확인창(림월드 대화상자 대신)
         private bool covered;
         private string confirmMsg, confirmYes = "예", confirmNo = "아니오"; private Action confirmAct; private int confirmCursor = 1;
+        /// <summary>창 위 닫기 버튼: 온라인 방에 있으면 먼저 묻고(닫으면 방에서 나간다), 아니면 바로 닫는다.</summary>
+        internal bool InOnlineRoom { get { return ol != null; } }
+
+        internal void RequestCloseFromFrame()
+        {
+            if (ol != null) { if (confirmMsg == null) AskConfirm("창을 닫을까요?\n온라인 방에서 나가고 상대와의 연결이 끊깁니다.", () => Close(), "닫는다"); return; }
+            Close();
+        }
+
         private void AskConfirm(string msg, Action yes, string yesLabel = "예")
         {
             confirmMsg = msg; confirmAct = yes; confirmYes = yesLabel; confirmCursor = 1; RimketAudio.PlaySe("gui_sel_decision");
@@ -154,6 +200,7 @@ namespace Rimketmon
         private void Back()
         {
             if (battle != null) { Close(); return; }
+            if (quickPc && view == View.Box) { quickPc = false; RimketAudio.PlaySe("pc_close"); Close(); return; }
             if ((view == View.Party || view == View.Box) && cenFromPc) { cenFromPc = false; view = View.Center; optionsOpen = false; RimketAudio.PlaySe("pc_close"); CenterSet(CS.Walk); return; }
             if (view == View.Ranked && rs != RS.Home && rs != RS.Result && rs != RS.Search) { rs = RS.Home; return; }
             if (view == View.Online) { OnlineBack(); return; }
@@ -165,7 +212,7 @@ namespace Rimketmon
         private void UpdateMenuBgm()
         {
             bool tense = (view == View.Ranked && (rs == RS.Pick || rs == RS.Versus)) || view == View.Paradox || (view == View.Online && os == OS.Pick);
-            string want = tense ? "factory" : MeadowTrack();      // 그 밖의 메뉴는 들판 곡(계절·날씨·시간대에 따라 바뀐다)
+            string want = view == View.Tower ? "end_summit" : tense ? "factory" : MeadowTrack();      // 배틀타워는 정상(summit) 곡, 그 밖의 메뉴는 들판 곡(계절·날씨·시간대에 따라 바뀐다)
             menuBgmOn = true;
             RimketAudio.PlayBgmFade(want);
             RimketAudio.Maintain();
@@ -236,7 +283,7 @@ namespace Rimketmon
             DrawExpShareToggle(g, pc);
             DrawMeadow(g, pc, 6f, 50f, 210f, 78f);
             float step = Mathf.Min(names.Length > 6 ? 14f : 16f, 116f / names.Length);
-            float fs = step < 12f ? 9.5f : names.Length > 8 ? 11f : 12f;
+            float fs = step < 11f ? 9.5f : names.Length > 8 ? 11f : 12f;      // (배틀타워 항목이 늘어도 기본 메뉴 10줄은 11 크기를 유지하게 12 → 11)
             g.Window(win, 222f, 2f, 96f, step * names.Length + 14f);
             for (int i = 0; i < names.Length; i++)
             {
@@ -280,9 +327,11 @@ namespace Rimketmon
                 case "센터": return "센터 · 상점";
                 case "체육관": return PartyComponent.Instance != null && PartyComponent.Instance.InLeague ? "체육관 · 포켓몬 리그(창 위쪽 탭)" : "체육관";
                 case "랭크전": return "랭크전";
+                case "배틀타워": return "배틀타워 · 100층을 한 층씩 올라간다(BP·경험치)";
                 case "사냥": return "사냥 · 바이옴을 골라 야생 포켓몬을 잡으러 간다";
                 case "전당": return "전당 · 챔피언을 이긴 날의 파티 기록";
                 case "패러독스 배틀": return "패러독스 · 6티어/?티어 도전";
+                case "카드": return "카드 · 포켓몬 카드를 림월드 동물에게 적용해 겉모습을 바꾼다";
                 case "온라인 배틀": return "온라인 · 방 코드로 친구와 대전 (싱글/더블)";
                 case "설정": return "설정";
                 case "개발자": return "디버그";
@@ -300,9 +349,11 @@ namespace Rimketmon
                 case "센터": view = View.Center; CenterEnter(); break;
                 case "체육관": Close(); Find.WindowStack.Add(new Window_RimketGym(null) { FromMenu = true }); break;
                 case "랭크전": view = View.Ranked; rs = RS.Home; break;
+                case "배틀타워": view = View.Tower; TowerEnter(); break;
                 case "사냥": view = View.Hunt; HuntEnter(); break;
                 case "전당": view = View.HallOfFame; hofIndex = Math.Max(0, PartyComponent.Instance.hallOfFame.Count - 1); break;
                 case "패러독스 배틀": view = View.Paradox; ParadoxEnter(); break;
+                case "카드": view = View.Cards; CardEnter(); break;
                 case "온라인 배틀": view = View.Online; OnlineEnter(); break;
                 case "설정": view = View.Settings; settingCursor = 0; scroll = 0; break;
                 case "개발자": view = View.Dev; devRow = 0; break;
@@ -375,7 +426,7 @@ namespace Rimketmon
                     IntVec3 cellM = CellFinder.RandomClosewalkCellNear(nearM, map, e.C.MechFoe ? 10 : 6, c => c.Standable(map));
                     var mech = RimketMech.SpawnReleased(def, e.C.MechFoe, cellM, map);
                     var compM = mech.TryGetComp<CompRimket>();
-                    if (compM != null) { e.C.FullHeal(); compM.data = e; }
+                    if (compM != null) { e.C.FullHeal(); compM.data = e; PokeBody.CardChanged(); }
                     PartyComponent.Instance.Remove(e);
                     if (selected == e) selected = null;
                     if (e.C.MechFoe) Messages.Message(Lang.Tr(e.C.Name + "을(를) 볼에서 풀어주었다. 적 메카가 풀려나 공격해 온다!"), mech, MessageTypeDefOf.ThreatBig, false);
@@ -399,14 +450,18 @@ namespace Rimketmon
             }
             try
             {
-                var kind = def.race.AnyPawnKind;
-                var pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, Faction.OfPlayer, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true));
                 var anchor = map.mapPawns.FreeColonistsSpawned.FirstOrDefault();
                 IntVec3 near = anchor != null ? anchor.Position : DropCellFinder.TradeDropSpot(map);
                 IntVec3 cell = CellFinder.RandomClosewalkCellNear(near, map, 6, c => c.Standable(map));
-                GenSpawn.Spawn(pawn, cell, map);
+                Pawn pawn = RimketPawnKeep.Restore(e, def, cell, map);      // 보관해 둔 폰이 있으면 그대로(훈련·장비·보철물 유지)
+                if (pawn == null)
+                {
+                    var kind = def.race.AnyPawnKind;
+                    pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, Faction.OfPlayer, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false));
+                    GenSpawn.Spawn(pawn, cell, map);
+                }
                 var comp = pawn.TryGetComp<CompRimket>();
-                if (comp != null) { e.C.FullHeal(); comp.data = e; }
+                if (comp != null) { e.C.FullHeal(); comp.data = e; PokeBody.CardChanged(); }
                 string sp = def.label ?? def.defName;
                 if (!string.IsNullOrEmpty(e.C.Name) && e.C.Name != sp && !e.C.Neutral) pawn.Name = new NameSingle(e.C.Name);
                 PartyComponent.Instance.Remove(e);
@@ -476,7 +531,7 @@ namespace Rimketmon
             var got = new List<string>();
             if (candy) { for (int i = 0; i < count; i++) { pc.BagAdd(Window_RimketMenu.CandyId); got.Add(Window_RimketMenu.CandyId); } }
             else for (int i = 0; i < count; i++) { int k = Rand.Range(0, left.Count); var id = left[k]; left.RemoveAt(k); pc.gachaDrawn.Add(id); pc.BagAdd(id); got.Add(id); }
-            gachaResult = got; gachaShownAt = Time.realtimeSinceStartup;
+            gachaResult = got; gachaShownAt = RimketClock.Now;
             RimketAudio.PlaySe("gacha_dispense");
             RimketAudio.PlaySe(count >= 10 ? "level_up_fanfare" : "item_fanfare");
             Messages.Message(Lang.Tr(count + "회 뽑기: " + string.Join(", ", got.GroupBy(x => x).Select(gr => ItemCatalog.NameOf(gr.Key) + (gr.Count() > 1 ? " ×" + gr.Count() : "")).ToArray())), MessageTypeDefOf.PositiveEvent, false);
@@ -530,6 +585,19 @@ namespace Rimketmon
                 }
                 return l;
             }
+            foreach (var b in BallStock)      // 볼: 실제 림월드 물건(은으로 산다, 1개·5개)
+                foreach (int cnt in new[] { 1, 5 })
+                {
+                    var def = DefDatabase<ThingDef>.GetNamedSilentFail(b.Def); if (def == null) continue;
+                    int n = cnt, price = b.Price * cnt; var bb = b;
+                    var info = ItemCatalog.Get(b.Icon);
+                    l.Add(new ShopEntry
+                    {
+                        Name = ItemCatalog.NameOf(b.Icon) + (n > 1 ? " ×" + n : ""), Icon = b.Icon, Price = price, Have = BallsOnMap(def), Silver = true,
+                        Desc = (info == null ? "" : ItemCatalog.DescOf(info)) + "\n(림월드 물건으로 정착지에 도착한다)",
+                        Buy = () => BuyBalls(def, n, price)
+                    });
+                }
             var ids = shopConsumables;
             foreach (var id0 in ids)
             {
@@ -547,6 +615,41 @@ namespace Rimketmon
                 });
             }
             return l;
+        }
+
+        private sealed class BallItem { public string Def, Icon; public int Price; }
+        /// <summary>상점의 볼(은): 시장가의 3~5배라 사기엔 부담스럽다. 마스터볼은 팔지 않는다.</summary>
+        private static readonly BallItem[] BallStock =
+        {
+            new BallItem { Def = "RimketBall", Icon = "POKEBALL", Price = 150 },
+            new BallItem { Def = "RimketGreatBall", Icon = "GREATBALL", Price = 400 },
+            new BallItem { Def = "RimketUltraBall", Icon = "ULTRABALL", Price = 700 },
+        };
+
+        private static int BallsOnMap(ThingDef def)
+        {
+            var map = SilverBank.PayMap(); if (map == null) return 0;
+            int n = 0; foreach (var t in map.listerThings.ThingsOfDef(def)) n += t.stackCount;
+            return n;
+        }
+
+        /// <summary>볼을 은으로 사서 림켓링크 정착민 옆(없으면 지도 가운데 근처)에 내려놓는다.</summary>
+        private static void BuyBalls(ThingDef def, int count, int price)
+        {
+            var map = SilverBank.PayMap();
+            if (map == null) { Messages.Message(Lang.Tr("볼을 받을 정착지가 없습니다."), MessageTypeDefOf.RejectInput, false); return; }
+            if (!SilverBank.TryPay(map, price)) { Messages.Message(Lang.Tr("은이 부족합니다 (" + price + " 필요)."), MessageTypeDefOf.RejectInput, false); return; }
+            Pawn who = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(RimketLink.Has) ?? map.mapPawns.FreeColonistsSpawned.FirstOrDefault();
+            IntVec3 at = who != null ? who.Position : (DropCellFinder.TradeDropSpot(map));
+            int left = count; Thing first = null;
+            while (left > 0)
+            {
+                var t = ThingMaker.MakeThing(def); t.stackCount = Math.Min(left, def.stackLimit); left -= t.stackCount;
+                GenPlace.TryPlaceThing(t, at, map, ThingPlaceMode.Near);
+                if (first == null) first = t;
+            }
+            RimketAudio.PlaySe("mart_buy_item");
+            Messages.Message(Lang.Tr(def.LabelCap + " " + count + "개 구매 완료 (은 " + price + "). " + (who != null ? who.LabelShortCap + " 옆에 놓았습니다." : "교역 지점에 놓았습니다.")), first != null ? new LookTargets(first) : LookTargets.Invalid, MessageTypeDefOf.PositiveEvent, false);
         }
 
         /// <summary>프렌들리숍: 팬게임 마트 화면(Graphics/UI/Mart)의 배치를 그대로 쓴다. 오른쪽 목록, 왼쪽 소지금/분류, 아래 설명.</summary>
@@ -678,7 +781,7 @@ namespace Rimketmon
         private void DrawGachaResult(Canvas g, Texture2D win)
         {
             if (gachaResult == null) return;
-            float t = Time.realtimeSinceStartup - gachaShownAt;
+            float t = RimketClock.Now - gachaShownAt;
             if (t > 4.5f || (t > 0.4f && Event.current.type == EventType.MouseDown)) { gachaResult = null; return; }
             int n = gachaResult.Count, cols = Math.Min(5, n), rowsN = (n + 4) / 5;
             float w = cols * 30f + 16f, h = rowsN * 30f + 22f, x0 = 222f - w / 2f, y0 = 70f - h / 2f;
@@ -747,7 +850,9 @@ namespace Rimketmon
             var s = RimketmonMod.Settings;
             return new List<Setting>
             {
-                new Setting { Name = "언어", Options = new[] { "한국어", "English" }, Get = () => s.language < 0 ? (Lang.English ? 1 : 0) : s.language, Set = v => { s.language = v; s.languageAsked = true; Lang.Set(v == 1); } },
+                new Setting { Name = "언어", Options = RimketmonMod.LanguageChoices().Select(x => x.Value).ToArray(),
+                    Get = () => Mathf.Max(0, RimketmonMod.LanguageChoices().FindIndex(x => x.Key == Lang.Code)),
+                    Set = v => { var ch = RimketmonMod.LanguageChoices(); if (v >= 0 && v < ch.Count) RimketmonMod.PickLanguage(ch[v].Key); } },      // languageCode까지 함께 저장(저장은 아래 changed → Write)
                 new Setting { Name = "게임 속도", Options = RimketmonSettings.GameSpeedNames, Get = () => s.gameSpeed, Set = v => s.gameSpeed = v },
                 new Setting { Name = "HP 바 속도", Options = RimketmonSettings.HpBarNames, Get = () => s.hpBarSpeed, Set = v => s.hpBarSpeed = v },
                 new Setting { Name = "메시지 넘김", Options = Manual, Get = () => s.manualMessageClear ? 1 : 0, Set = v => s.manualMessageClear = v == 1 },
@@ -758,6 +863,7 @@ namespace Rimketmon
                 new Setting { Name = "상대 기술 표시", Options = OnOff, Get = () => s.showFoeMoves ? 1 : 0, Set = v => s.showFoeMoves = v == 1 },
                 new Setting { Name = "진입 연출", Options = OnOff, Get = () => s.transitionEffect ? 1 : 0, Set = v => s.transitionEffect = v == 1 },
                 new Setting { Name = "상대 생각 시간", Options = OnOff, Get = () => s.humanTiming ? 1 : 0, Set = v => s.humanTiming = v == 1 },
+                new Setting { Name = "림월드 시간 조작", Options = OnOff, Get = () => s.liveWorldTime ? 1 : 0, Set = v => s.liveWorldTime = v == 1 },
                 new Setting { Name = "BGM", Options = OnOff, Get = () => s.bgmEnabled ? 1 : 0, Set = v => s.bgmEnabled = v == 1 },
                 new Setting { Name = "효과음", Options = OnOff, Get = () => s.sfxEnabled ? 1 : 0, Set = v => s.sfxEnabled = v == 1 },
                 new Setting { Name = "전체 음량", Options = Vol, Get = () => VolIdx(s.masterVolume), Set = v => s.masterVolume = v / 4f },

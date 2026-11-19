@@ -94,6 +94,10 @@ namespace Rimketmon.Engine
         // ---- 상대의 항복(랭크): 사람처럼, 가망이 없을 때뿐 아니라 실수 뒤 민망하거나 급소를 맞고 기분이 상했을 때도 가끔 그만둔다
         /// <summary>true면 상대가 스스로 항복할 수 있다(BattleFlow가 랭크전에서 켠다). 학습 환경에서는 꺼져 있다.</summary>
         public bool FoeMaySurrender { get; set; }
+        /// <summary>랭크가 아닌 배틀(배틀타워)에서도 상대가 항복할 수 있게 한다. FoeMaySurrender를 켜고 FoeRating을 CalmRating으로 두면 가망이 없을 때만 항복한다.</summary>
+        public bool AllowFoeSurrender { get; set; }
+        /// <summary>가방 아이템(소비 아이템) 사용 금지(배틀타워). 랭크는 Ranked로 이미 금지.</summary>
+        public bool NoItems { get; set; }
         /// <summary>true면 내 림켓몬이 전멸했을 때 "눈앞이 깜깜해졌다!"가 나온다(방문자 승부: 지면 센터에서 깨어난다).</summary>
         public bool BlackoutOnDefeat { get; set; }
         /// <summary>감정적인 항복(민망함·급소)의 빈도 배율. 점수가 낮은 상대일수록 크다(0.5~1.5).</summary>
@@ -109,7 +113,7 @@ namespace Rimketmon.Engine
         /// <summary>이번 라운드 결과를 보고 상대가 항복할지 정한다. 항복하면 플레이어의 승리로 끝난다.</summary>
         private bool TryFoeSurrender()
         {
-            if (!FoeMaySurrender || Online || !Ranked || Paradox || IsOver || Foe.PersonActive || Player.PersonActive) return false;
+            if (!FoeMaySurrender || Online || !(Ranked || AllowFoeSurrender) || Paradox || IsOver || Foe.PersonActive || Player.PersonActive) return false;
             int foeAlive = Alive(Foe), myAlive = Alive(Player);
             if (foeAlive == 0 || myAlive == 0) return false;                  // 이미 승패가 난 판은 그대로 끝낸다
             double fm = Material(Foe), pm = Material(Player);
@@ -786,6 +790,14 @@ namespace Rimketmon.Engine
             if (Ranked || winners.Count == 0 || foe.IsPerson) return;
             double baseExp = 30 + 25 * Math.Max(1, foe.C.Tier);
             long gain = (long)Math.Max(1, baseExp * foe.C.Level / (5.0 * winners.Count) * (IsTrainer ? 1.5 : 1.0));
+            if (DeferExp)      // 배틀타워: 전투 중에는 능력치를 바꾸지 않고(미리 예측 AI가 어긋나지 않게) 끝난 뒤 한꺼번에 준다
+            {
+                foreach (var w in winners) if (!(w.IsPerson && w.C.PawnId == 0) && w.C.Level < PlayerLevelCap) Defer(w.C, gain);
+                if (ExpShare && !IsDouble)
+                    foreach (var c in Player.Party.Where(c => !c.IsFainted && !c.Neutral && !winners.Any(w => w.C == c) && c.Level < PlayerLevelCap)) Defer(c, gain);
+                Add("경험치 " + gain + "은(는) 전투가 끝난 뒤에 받는다.");
+                return;
+            }
             foreach (var w in winners)
             {
                 if (w.IsPerson && w.C.PawnId == 0) { w.C.Exp += gain; Result.ColonistExp += gain; Add(w.C.Name + "은(는) 경험치 " + gain + "을(를) 얻었다!"); Events.Add(new BattleEvent { Kind = BattleEventKind.Exp, PlayerSide = true, LogIndex = Log.Count - 1, Value = (int)gain, Who = w, HpAfter = (int)w.C.Exp }); continue; }   // 전투 중 직접 싸운 정착민(림켓몬이 아님)
@@ -801,7 +813,7 @@ namespace Rimketmon.Engine
                     int oldMax = w.C.MaxHp; w.C.Level++; w.C.RecalculateStats();
                     if (w.C.Hp > 0) w.C.Hp = Math.Min(w.C.MaxHp, w.C.Hp + Math.Max(0, w.C.MaxHp - oldMax));
                 }
-                if (w.C.Level > from) { Add(w.C.Name + "은(는) 레벨 " + w.C.Level + "(으)로 올랐다!"); LearnOnLevelUp(w.C, from); }
+                if (w.C.Level > from) { Add(w.C.Name + "은(는) 레벨 " + w.C.Level + "(으)로 올랐다!"); LearnOnLevelUp(w.C, from); Unreplayable?.Invoke(); }      // 능력치가 바뀌어 미리 계산 AI의 재생(랭크 규칙, 경험치 없음)과 어긋난다
             }
             if (!ExpShare || IsDouble) return;
             // 학습장치: 싸우지 않은 파티 림켓몬도 같은 경험치를 받는다(쓰러진 림켓몬 제외)
@@ -818,8 +830,29 @@ namespace Rimketmon.Engine
                     int oldMax = c.MaxHp; c.Level++; c.RecalculateStats();
                     if (c.Hp > 0) c.Hp = Math.Min(c.MaxHp, c.Hp + Math.Max(0, c.MaxHp - oldMax));
                 }
-                if (c.Level > from) { Add(c.Name + "은(는) 레벨 " + c.Level + "(으)로 올랐다!"); LearnOnLevelUp(c, from); }
+                if (c.Level > from) { Add(c.Name + "은(는) 레벨 " + c.Level + "(으)로 올랐다!"); LearnOnLevelUp(c, from); Unreplayable?.Invoke(); }
             }
+        }
+
+        /// <summary>배틀타워: 경험치를 전투 뒤에 몰아서 준다(승패 무관). 켜면 전투 중 레벨업이 없다.</summary>
+        public bool DeferExp;
+        /// <summary>DeferExp일 때 이 전투에서 쌓인 경험치(림켓몬별).</summary>
+        public readonly Dictionary<RimketCreature, long> DeferredExp = new Dictionary<RimketCreature, long>();
+        private void Defer(RimketCreature c, long gain) { long v; DeferredExp.TryGetValue(c, out v); DeferredExp[c] = v + gain; }
+
+        /// <summary>전투 밖에서 경험치를 준다. 레벨이 오르면 능력치를 다시 계산하고, 오르기 전 레벨을 돌려준다(기술 배우기는 부르는 쪽에서).</summary>
+        public static int GiveExp(RimketCreature c, long gain, int cap)
+        {
+            int from = c.Level;
+            if (c.Level >= cap || gain <= 0) return from;
+            long maxExp = RimketCreature.ExpForLevel(cap + 1) - 1;
+            c.Exp = Math.Min(Math.Max(c.Exp, RimketCreature.ExpForLevel(c.Level)) + gain, maxExp);
+            while (c.Level < cap && c.Exp >= RimketCreature.ExpForLevel(c.Level + 1))
+            {
+                int oldMax = c.MaxHp; c.Level++; c.RecalculateStats();
+                if (c.Hp > 0) c.Hp = Math.Min(c.MaxHp, c.Hp + Math.Max(0, c.MaxHp - oldMax));
+            }
+            return from;
         }
 
         /// <summary>레벨업으로 배우는 기술: 빈 칸이 있으면 바로 배우고, 다 찼으면 화면에서 무엇을 잊을지 묻도록 사건을 남긴다.</summary>

@@ -178,7 +178,7 @@ namespace Rimketmon
             if (map == null) return;
 
             var kind = PawnKindDefOf.SpaceRefugee ?? PawnKindDefOf.Villager;
-            var req = new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, forceGenerateNewPawn: true, forceDead: true);
+            var req = new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false, forceDead: true);
             var pawn = PawnGenerator.GeneratePawn(req);
             var ball = DefDatabase<ThingDef>.GetNamedSilentFail("RimketBall");
             if (pawn.inventory != null && ball != null) { var balls = ThingMaker.MakeThing(ball); balls.stackCount = 10; pawn.inventory.innerContainer.TryAdd(balls); }

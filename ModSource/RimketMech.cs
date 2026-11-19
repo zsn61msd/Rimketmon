@@ -38,7 +38,7 @@ namespace Rimketmon
         {
             var kind = def.race.AnyPawnKind;
             Faction f = foe ? (Faction.OfMechanoids ?? Find.FactionManager.RandomEnemyFaction()) : Faction.OfPlayer;
-            var pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, f, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true));
+            var pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, f, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, canGeneratePawnRelations: false, allowPregnant: false));
             GenSpawn.Spawn(pawn, cell, map);
             if (foe && f != null)
             {

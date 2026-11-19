@@ -14,7 +14,7 @@ namespace Rimketmon
     /// 앞에서부터 partyLimit마리가 전투에 참가한다. 치료는 림켓몬 센터(관리창)에서 한다.
     /// </summary>
     [StaticConstructorOnStartup]
-    public partial class PartyComponent : GameComponent
+    public partial class PartyComponent : GameComponent, IThingHolder
     {
         private List<ExposableCreature> all = new List<ExposableCreature>();
         private List<string> beatenLeaders = new List<string>();
@@ -46,7 +46,7 @@ namespace Rimketmon
         public bool levelHold;
         public void DebugAddBadge() { int o = Stage; levelHold = true; if (Badges < MaxBadges) badgeCount = Badges + 1; else championBeaten = true; if (Stage != o) OnStageUp(); }
         public void DebugSetBadges(int n) { levelHold = true; badgeCount = Math.Max(0, Math.Min(MaxBadges, n)); beatenLeaders.Clear(); if (badgeCount < MaxBadges) championBeaten = false; }
-        public void DebugSetChampion(bool v) { levelHold = true; if (v) badgeCount = MaxBadges; championBeaten = v; }
+        public void DebugSetChampion(bool v) { levelHold = true; if (v) badgeCount = MaxBadges; championBeaten = v; huntUnlocked = v; }      // 사냥·이로치 아저씨도 함께 열고 닫는다
         /// <summary>개발자 모드: 림켓몬 레벨을 직접 정한다(1~100). 사람도 된다.</summary>
         public void DebugSetLevel(RimketCreature c, int lv)
         {
@@ -104,6 +104,9 @@ namespace Rimketmon
         /// <summary>패러독스 배틀에서 얻은 유전자 쐐기(6티어/?티어 개체 정보). 림켓몬에 쓰면 그 정보로 완전히 덮어쓴다.</summary>
         private List<ExposableCreature> wedges = new List<ExposableCreature>();
         public List<ExposableCreature> Wedges { get { if (wedges == null) wedges = new List<ExposableCreature>(); return wedges; } }
+        /// <summary>포켓몬을 바꿔 만든 카드(겉모습만 담김). 림월드 동물·메카에 적용하면 그 포켓몬 모습이 된다.</summary>
+        private List<ExposableCard> cards = new List<ExposableCard>();
+        public List<ExposableCard> Cards { get { if (cards == null) cards = new List<ExposableCard>(); return cards; } }
         public int paradoxWins, paradoxLosses;
         public ExposableCreature paradoxPending;      // 입장했지만 아직 싸우지 않은 패러독스 상대(창을 닫아도 그대로 → 다시 열어 리롤할 수 없다)
         public int paradoxRerolls;                    // 이번 상대에서 남은 리롤 횟수
@@ -278,12 +281,13 @@ namespace Rimketmon
         }
 
         /// <summary>새 림켓몬: 파티에 자리가 있으면 파티로, 가득 차 있으면 자동으로 PC 보관함으로 보낸다.</summary>
-        public void Add(RimketCreature c)
+        public ExposableCreature Add(RimketCreature c)
         {
             var e = new ExposableCreature { C = c };
             DexCatch(c);
             if (all.Count < PartyMax) all.Add(e);
             else { e.BoxSlot = FirstFreeSlot(); box.Add(e); Messages.Message(Lang.Tr(c.Name + "은(는) 파티가 가득 차 PC로 보내졌다."), MessageTypeDefOf.NeutralEvent, false); }
+            return e;
         }
 
 
@@ -310,13 +314,35 @@ namespace Rimketmon
 
         private static Texture2D iconTex;
         private bool dragging;
+        private bool dragMoved;                 // 우클릭을 누른 채 실제로 끌었는지(끌지 않고 뗐으면 빠른 메뉴)
+        private Vector2 dragAccum;
+
+        /// <summary>최소화된 림켓몬을 다시 여는 탭(화면 아래 가운데)과 몬스터볼 아이콘.</summary>
+        private void DrawRestoreTab()
+        {
+            if (iconTex == null) iconTex = ContentFinder<Texture2D>.Get("UI/RimketIcon", false) ?? BaseContent.BadTex;
+            var t = new Rect(UI.screenWidth / 2f - 80f, UI.screenHeight - 112f, 160f, 26f);
+            bool over = Mouse.IsOver(t);
+            GUI.color = over ? new Color(0.24f, 0.28f, 0.4f, 0.95f) : new Color(0.12f, 0.14f, 0.22f, 0.9f);
+            GUI.DrawTexture(t, BaseContent.WhiteTex);
+            GUI.color = new Color(1f, 0.84f, 0.45f, 0.9f); GUI.DrawTexture(new Rect(t.x, t.y, t.width, 1.5f), BaseContent.WhiteTex);
+            GUI.color = Color.white;
+            GUI.DrawTexture(new Rect(t.x + 6f, t.y + 3f, 20f, 20f), iconTex);
+            var a = Text.Anchor; Text.Anchor = TextAnchor.MiddleLeft; Text.Font = GameFont.Small;
+            Widgets.Label(new Rect(t.x + 32f, t.y, t.width - 36f, t.height), "RimKéMoN ▲ " + Lang.Tr("다시 열기"));
+            Text.Anchor = a;
+            TooltipHandler.TipRegion(t, Lang.Tr("숨겨 둔 림켓몬 창을 다시 엽니다 (멈춘 곳부터 이어서)"));
+            if (Widgets.ButtonInvisible(t)) RimketFrame.Restore();
+        }
 
         public override void GameComponentOnGUI()
         {
             if (Current.ProgramState != ProgramState.Playing || Find.CurrentMap == null || WorldRendererUtility.WorldRendered) return;
+            if (RimketClock.Paused) { DrawRestoreTab(); return; }      // 최소화 중: 다시 열기 탭만
             if (Find.WindowStack.WindowOfType<Window_RimketMenu>() != null) return;
             bool removed = RimketUninstall.Removed;
             if (showTiers && ChampionBeaten && !removed) DrawTierLabels();
+            if (RimketFrame.AnyOpen()) { dragging = false; return; }      // 림켓몬 창(배틀·체육관 등)이 떠 있으면 버튼을 그리지도 누르게 하지도 않는다(창을 줄이거나 옮겨 뒤가 드러나도 메뉴가 또 열리지 않게). 아이콘을 끌던 중이면 끌기도 푼다
             var s = RimketmonMod.Settings;
             if (iconTex == null) iconTex = ContentFinder<Texture2D>.Get("UI/RimketIcon", false) ?? BaseContent.BadTex;
 
@@ -333,18 +359,29 @@ namespace Rimketmon
             GUI.color = removed || noLink ? new Color(0.6f, 0.6f, 0.6f, over ? 0.9f : 0.55f) : over ? new Color(1.15f, 1.15f, 1.15f, 1f) : new Color(0.92f, 0.92f, 0.92f, 1f);      // 제거된 상태면 흐리게   // 그림 자체가 회색+검은 테두리라 색을 입히지 않고 밝기만 바꾼다
             GUI.DrawTexture(r, iconTex);
             GUI.color = Color.white;
-            if (over) TooltipHandler.TipRegion(r, Lang.Tr(removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : noLink ? "림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)" : "림켓몬\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)"));
+            if (over) TooltipHandler.TipRegion(r, Lang.Tr(removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : noLink ? "림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)" : "림켓몬\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)"));
 
             var e = Event.current;
-            if (e.type == EventType.MouseDown && over && e.button == 1 && e.clickCount >= 2) { s.iconX = s.iconY = -1f; s.Write(); dragging = false; e.Use(); return; }      // 우클릭 두 번: 기본 위치로
-            if (e.type == EventType.MouseDown && over && e.button == 1) { dragging = true; e.Use(); }
+            if (e.type == EventType.MouseDown && over && e.button == 1) { dragging = true; dragMoved = false; dragAccum = Vector2.zero; e.Use(); }
             else if (dragging && e.type == EventType.MouseDrag)
             {
-                s.iconX = Mathf.Clamp(x + e.delta.x, 0f, UI.screenWidth - size);
-                s.iconY = Mathf.Clamp(y + e.delta.y, 0f, UI.screenHeight - size);
+                Vector2 d = e.delta;
+                if (!dragMoved)
+                {
+                    dragAccum += d;
+                    if (dragAccum.magnitude < 5f) { e.Use(); return; }      // 클릭 중 손떨림은 끌기로 치지 않는다
+                    dragMoved = true; d = dragAccum;
+                }
+                s.iconX = Mathf.Clamp(x + d.x, 0f, UI.screenWidth - size);
+                s.iconY = Mathf.Clamp(y + d.y, 0f, UI.screenHeight - size);
                 e.Use();
             }
-            else if (dragging && e.type == EventType.MouseUp) { dragging = false; s.Write(); e.Use(); }
+            else if (dragging && e.type == EventType.MouseUp)
+            {
+                dragging = false; e.Use();
+                if (dragMoved) s.Write();
+                else if (!removed) OpenQuickMenu(noLink);      // 끌지 않고 뗐으면 빠른 메뉴
+            }
             else if (e.type == EventType.MouseDown && over && e.button == 0)
             {
                 e.Use();
@@ -355,9 +392,47 @@ namespace Rimketmon
                     Messages.Message(Lang.Tr("림켓링크를 두뇌에 설치한 정착민이 살아 있어야 림켓몬 메뉴를 열 수 있습니다. (몬스터볼 연구를 끝내면 열리는 퀘스트로 림켓링크를 얻을 수 있어요.)"), MessageTypeDefOf.RejectInput, false);
                     return;
                 }
+                if (BattleFlow.RimketUiOpen()) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }      // 이미 림켓몬 창이 떠 있으면(배틀·메뉴 동시 진행 중) 또 열지 않는다
                 if (!RimketmonMod.AskLanguageOnce(() => Find.WindowStack.Add(new Window_RimketMenu())))
                     Find.WindowStack.Add(new Window_RimketMenu());
             }
+        }
+
+        private static bool QuickBusy()
+        {
+            return Find.WindowStack.IsOpen<Window_RimketBattle>() || Find.WindowStack.IsOpen<Window_RimketDouble>() || Find.WindowStack.IsOpen<Window_RimketTransition>();
+        }
+
+        /// <summary>아이콘 우클릭(끌지 않음): 림월드 폰 우클릭처럼 작은 메뉴로 PC·센터 치료를 바로 쓴다.</summary>
+        private void OpenQuickMenu(bool noLink)
+        {
+            if (QuickBusy()) return;
+            string tail = noLink ? " (림켓링크 필요)" : "";
+            var opts = new List<FloatMenuOption>
+            {
+                new FloatMenuOption(Lang.Tr("PC로 가기" + tail), noLink ? null : (System.Action)QuickPc),
+                new FloatMenuOption(Lang.Tr("센터 치료하기" + tail), noLink ? null : (System.Action)QuickHeal),
+            };
+            Find.WindowStack.Add(new FloatMenu(opts));
+        }
+
+        private static void QuickPc()
+        {
+            if (QuickBusy()) return;
+            RimketAudio.PlaySe("pc_access");
+            if (!RimketmonMod.AskLanguageOnce(() => Find.WindowStack.Add(Window_RimketMenu.OpenAtPc())))
+                Find.WindowStack.Add(Window_RimketMenu.OpenAtPc());
+        }
+
+        /// <summary>패배했을 때와 같은 연출: "눈앞이 깜깜해졌다!" 뒤 센터에서 깨어나면 치료가 이미 끝나 있다(무료).</summary>
+        private static void QuickHeal()
+        {
+            if (QuickBusy()) return;
+            var pc = Instance;
+            if (pc == null || pc.All.Count == 0) { Messages.Message(Lang.Tr("회복시킬 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false); return; }
+            var link = RimketLink.FindLinkPawn();
+            string who = link != null ? link.LabelShortCap : "나";
+            Find.WindowStack.Add(new Window_RimketBlackout(who + "은(는) 눈앞이 깜깜해졌다!", () => Find.WindowStack.Add(Window_RimketMenu.WakeAtCenterHealed())));
         }
 
         // ---- 도구 가방(지닌 도구로 줄 수 있는 도구 보관함)
@@ -399,6 +474,7 @@ namespace Rimketmon
             ExposeRanked();
             Scribe_Values.Look(ref rating, "rankRating", RankedLadder.StartRating);
             Scribe_Values.Look(ref bp, "bp", 0);
+            ExposeTower();
             Scribe_Values.Look(ref bpStarterGiven, "bpStarterGiven", false);
             Scribe_Values.Look(ref rankedGames, "rankedGames", 0);
             Scribe_Values.Look(ref rankedWins, "rankedWins", 0);
@@ -409,6 +485,7 @@ namespace Rimketmon
             Scribe_Collections.Look(ref all, "rimketParty", LookMode.Deep);
             Scribe_Collections.Look(ref box, "rimketBox", LookMode.Deep);
             Scribe_Collections.Look(ref wedges, "paradoxWedges", LookMode.Deep);
+            Scribe_Collections.Look(ref cards, "pokemonCards", LookMode.Deep);
             Scribe_Collections.Look(ref releasedPeople, "releasedPeople", LookMode.Value, LookMode.Deep, ref releasedKeys, ref releasedVals);
             if (releasedPeople == null) releasedPeople = new Dictionary<string, ExposableCreature>();
             Scribe_Values.Look(ref tutorialSeen, "tutorialSeen", false);
@@ -437,6 +514,7 @@ namespace Rimketmon
             if (leagueLineup == null) leagueLineup = new List<string>();
             Scribe_Collections.Look(ref capturedPawns, "capturedPawns", LookMode.Reference);
             if (capturedPawns == null) capturedPawns = new List<Pawn>();
+            Scribe_Deep.Look(ref frozenPawns, "frozenAnimalPawns", this);      // 볼 안의 우리 동물 폰(틱 없이 동결)
             if (all == null) all = new List<ExposableCreature>();
             if (beatenLeaders == null) beatenLeaders = new List<string>();
         }
