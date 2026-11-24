@@ -29,20 +29,23 @@ namespace Rimketmon.Engine
                 if (es != null) { m = es.Move; slot = es; }
             }
 
+            var animMove = m;                               // 연출은 원래 기술 그림으로
+            if (!a.IsPerson) m = MaxMoveFor(a.C, m);      // 다이맥스: 다이기술/다이월로 바뀐다(PP는 원래 기술에서 깎는다)
+
             if (!CanAct(side, a, m))
             {
                 a.LockTurns = 0; a.LockMove = null; a.ChargeMove = null; a.Invulnerable = false; a.InvulKind = null; a.RolloutCount = 0; a.LockNoConfuse = false;
                 a.FirstTurn = false; a.LastMoveFailed = true;
                 return;
             }
-            if (!forced && !chargeRelease && !CheckMoveAllowed(side, a, m)) { a.FirstTurn = false; a.LastMoveFailed = true; return; }
+            if (!forced && !chargeRelease && !CheckMoveAllowed(side, a, animMove)) { a.FirstTurn = false; a.LastMoveFailed = true; return; }
 
             string label = m.IsStruggle ? m.Name : (a.IsPerson ? "기본 공격" : m.Name);
             Add(N(side, a) + (a.IsPerson ? "의 " : "의 ") + label + "!");
             moveEvtIdx = -1;
             if (!m.IsStruggle && !a.IsPerson)
             {
-                Events.Add(new BattleEvent { Kind = BattleEventKind.MoveUsed, PlayerSide = side.IsPlayer, LogIndex = Log.Count - 1, Who = a, Target = d, MoveId = m.Id, HpAfter = a.C.Hp });
+                Events.Add(new BattleEvent { Kind = BattleEventKind.MoveUsed, PlayerSide = side.IsPlayer, LogIndex = Log.Count - 1, Who = a, Target = d, MoveId = IsMaxMove(m) && m.Id != "MAXGUARD" ? animMove.Id : (m.Id == "MAXGUARD" ? "PROTECT" : m.Id), HpAfter = a.C.Hp });
                 moveEvtIdx = Events.Count - 1;
             }
             if (a.IsPerson)
@@ -52,10 +55,10 @@ namespace Rimketmon.Engine
                 slot.PP = Math.Max(0, slot.PP - 1);
                 if (d.Has("PRESSURE") && slot.PP > 0) slot.PP--;
             }
-            a.LastMoveId = m.IsStruggle ? null : m.Id;      // 발버둥은 봉인·앙코르 대상이 아니다(카탈로그에도 없다)
-            if (!m.IsStruggle && !a.IsPerson && a.ChoiceMove == null && IsChoiceItem(a.HeldItem)) a.ChoiceMove = m;
+            a.LastMoveId = m.IsStruggle ? null : animMove.Id;      // 발버둥은 봉인·앙코르 대상이 아니다(카탈로그에도 없다)
+            if (!m.IsStruggle && !a.IsPerson && a.ChoiceMove == null && IsChoiceItem(a.HeldItem)) a.ChoiceMove = animMove;
             if (a.CustapReady) { a.CustapReady = false; if (a.HeldItem == "CUSTAPBERRY") { Add(N(side, a) + "은(는) " + IName("CUSTAPBERRY") + "을(를) 먹고 선수를 쳤다!"); UseUpItem(a); a.AteBerry = true; } }
-            if (a.Has("GORILLATACTICS") && a.GorillaMove == null && !m.IsStruggle) a.GorillaMove = m;
+            if (a.Has("GORILLATACTICS") && a.GorillaMove == null && !m.IsStruggle) a.GorillaMove = animMove;
             if (!m.IsStruggle && !a.IsPerson && !a.UsedMoves.Contains(m.Name)) a.UsedMoves.Add(m.Name);
 
             if (m.Has(EffectKind.TwoTurn) && !chargeRelease)
@@ -84,6 +87,7 @@ namespace Rimketmon.Engine
             lastMoveGlobal = m.Id;
 
             UseMove(side, a, oSide, d, m);
+            if (IsMaxMove(m) && !IsOver) MaxAfter(side, a, oSide, d, m);
             if (extraTargets != null)
             {
                 var ex = extraTargets; extraTargets = null;
@@ -140,7 +144,7 @@ namespace Rimketmon.Engine
             if (f.SkyDropped) { Add(n + "은(는) 움직일 수 없다!"); return false; }
             if (f.GlaiveRush) f.GlaiveRush = false;
 
-            if (f.Flinched) { Add(n + "은(는) 풀이 죽어 움직일 수 없었다!"); if (f.Has("STEADFAST")) { AnnounceAbility(side, f); ChangeStage(side, f, Stat.Spe, 1, null, false); } return false; }
+            if (f.Flinched && !FormChange.IsDynamaxed(f.C)) { Add(n + "은(는) 풀이 죽어 움직일 수 없었다!"); if (f.Has("STEADFAST")) { AnnounceAbility(side, f); ChangeStage(side, f, Stat.Spe, 1, null, false); } return false; }
             if (f.Attracted)
             {
                 Add(n + "은(는) 헤롱헤롱 상태다!");

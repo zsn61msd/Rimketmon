@@ -158,6 +158,7 @@ namespace Rimketmon.Engine
                 if (cd.Mist > 0 && --cd.Mist == 0) Add("흰안개가 사라졌다.");
                 if (cd.Tailwind > 0 && --cd.Tailwind == 0) Add("순풍이 멈췄다.");
                 if (cd.LuckyChant > 0 && --cd.LuckyChant == 0) Add("행운의 주문 효과가 끝났다.");
+                GmaxResidual(side);
                 if (!cd.EchoedUsed) cd.EchoedVoice = 0; cd.EchoedUsed = false;
             }
             if (gravityTurns > 0 && --gravityTurns == 0) Add("중력이 원래대로 돌아왔다!");

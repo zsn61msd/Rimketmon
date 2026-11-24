@@ -12,7 +12,7 @@ namespace Rimketmon
     /// </summary>
     internal static class LearnedAi
     {
-        static NeuralPolicy policy; static bool tried;
+        static NeuralPolicy policy, formPolicy; static bool tried;
 
         /// <summary>랭크전에서 이 점수 이상인 상대는 학습된 AI가 조종한다(상위권, 감정 항복이 없는 점수와 같음).</summary>
         public const int RankedMinRating = 1800;
@@ -32,21 +32,38 @@ namespace Rimketmon
                 policy = p;
                 AiEncoder.FullInfo = true;      // 전체 정보 조건으로 학습한 모델(기존 랭크 AI와 같은 조건)
                 Log.Message("[림켓몬] 학습된 AI를 불러왔습니다.");
+                string fp = Path.Combine(RimketmonMod.Instance.Content.RootDir, "Data/ai_policy_form.bin");      // 폼 전용 AI(상대 파티에 폼체인지 포켓몬이 있을 때만)
+                if (File.Exists(fp))
+                {
+                    var q = NeuralPolicy.Load(fp);
+                    if (LearnedFoe.IsFormPolicy(q) && q.OutputSize == AiEncoder.Actions) { formPolicy = q; Log.Message("[림켓몬] 폼 전용 AI를 불러왔습니다."); }
+                    else Log.Warning("[림켓몬] 폼 전용 AI 파일의 크기가 맞지 않아 쓰지 않습니다.");
+                }
             }
             catch (Exception e) { Log.Warning("[림켓몬] 학습된 AI를 읽지 못했습니다: " + e.Message); }
+        }
+
+        /// <summary>상대(플레이어) 파티에 폼체인지(메가·원시·거다이맥스·다이맥스) 포켓몬이 있으면 폼 전용 AI, 없거나 파일이 없으면 기존 AI.</summary>
+        static NeuralPolicy PolicyFor(System.Collections.Generic.IEnumerable<RimketCreature> playerParty)
+        {
+            if (formPolicy != null && playerParty != null)
+                foreach (var c in playerParty) if (c != null && (c.FormBase != null || c.Dynamax)) return formPolicy;
+            return policy;
         }
 
         /// <summary>미리 계산 AI의 후보당 시뮬레이션 수(24와 8을 비교해 정함).</summary>
         public const int LookaheadSims = 24, LookaheadDepth = 4;
 
         /// <summary>랭크의 타이난 실베스터 전용: 미리 계산하는 AI(개선 A, 4턴). 전투는 seed로 만든 SystemRng여야 한다.</summary>
-        public static void AttachLookahead(RimketBattle battle, EngineSettings s, int seed, System.Collections.Generic.IList<RimketCreature> mine0, System.Collections.Generic.IList<RimketCreature> foe0, Action<RimketBattle> configure)
+        public static LookaheadFoe AttachLookahead(RimketBattle battle, EngineSettings s, int seed, System.Collections.Generic.IList<RimketCreature> mine0, System.Collections.Generic.IList<RimketCreature> foe0, Action<RimketBattle> configure)
         {
-            if (battle == null || !RimketmonMod.Settings.learnedAi) return;
+            if (battle == null || !RimketmonMod.Settings.learnedAi) return null;
             Load();
-            if (policy == null) return;
-            var la = new LookaheadFoe(policy, s, seed, mine0, foe0, configure, Rand.Int) { Sims = LookaheadSims, Depth = LookaheadDepth };
+            if (policy == null) return null;
+            var la = new LookaheadFoe(PolicyFor(mine0), s, seed, mine0, foe0, configure, Rand.Int) { Sims = LookaheadSims, Depth = LookaheadDepth };
             la.Attach(battle);
+            BattleSave.NoteLookahead(battle, seed);
+            return la;
         }
 
         /// <summary>이 전투의 상대를 학습된 AI가 조종하게 한다(설정이 꺼져 있거나 파일이 없으면 그대로 둔다).</summary>
@@ -55,7 +72,7 @@ namespace Rimketmon
             if (battle == null || !RimketmonMod.Settings.learnedAi) return;
             Load();
             if (policy == null) return;
-            var brain = new LearnedFoe(policy, s, new SystemRng(Rand.Int));
+            var brain = new LearnedFoe(PolicyFor(battle.Player.Party), s, new SystemRng(Rand.Int));
             battle.FoeBrain = brain.Decide;
         }
     }

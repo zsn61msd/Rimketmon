@@ -168,7 +168,7 @@ namespace Rimketmon
             EndDrag();
             RimketAudio.PlaySe("gui_sel_cancel");
             RimketClock.Pause();
-            Messages.Message(Lang.Tr("림켓몬 창을 숨겼습니다. 화면 아래 탭이나 몬스터볼 아이콘을 누르면 이어서 합니다."), RimWorld.MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr("림켓몬 창을 숨겼습니다. 아래 탭이나 몬스터볼 아이콘으로 다시 엽니다."), RimWorld.MessageTypeDefOf.NeutralEvent, false);
         }
         public static void Restore()
         {
@@ -289,7 +289,7 @@ namespace Rimketmon
 
             if (mode == Mode.None)
             {
-                TooltipHandler.TipRegion(new Rect(bar.x, bar.y, bar.width - ResetW - 4f, Bar), Lang.Tr("위 줄을 끌면 창이 움직입니다.\n오른쪽 아래 모서리를 끌면 크기가 바뀝니다.\n창이 이상한 곳에 있으면 [창 초기화] (모드 설정에도 같은 버튼이 있습니다)."));
+                TooltipHandler.TipRegion(new Rect(bar.x, bar.y, bar.width - ResetW - 4f, Bar), Lang.Tr("위 줄을 끌어 옮기고, 오른쪽 아래 모서리로 크기를 바꿉니다.\n창이 이상하면 [창 초기화]."));
                 if (!full) TooltipHandler.TipRegion(reset, Lang.Tr("창 위치와 크기를 처음 상태로 되돌립니다."));
                 TooltipHandler.TipRegion(fullBtn, full ? Lang.Tr("창 모드로") : Lang.Tr("전체 화면으로"));
                 TooltipHandler.TipRegion(minBtn, Lang.Tr("최소화 (림켓몬을 잠시 멈추고 숨기기)"));

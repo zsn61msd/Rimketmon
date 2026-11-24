@@ -10,10 +10,16 @@ ap = argparse.ArgumentParser()
 ap.add_argument("model")
 ap.add_argument("--games", type=int, default=300)
 ap.add_argument("--full-info", action="store_true", help="전체 정보로 학습한 모델을 잴 때 붙인다(학습 때와 같아야 한다)")
+ap.add_argument("--form-foe", action="store_true", help="상대 팀에 폼(메가·원시·거다이맥스·다이맥스 1~6마리)을 넣고 잰다")
+ap.add_argument("--form-obs", action="store_true", help="폼 전용 AI(--form으로 학습한 모델)를 잴 때 붙인다")
 ap.add_argument("--rule-pick", action="store_true", help="선출을 AI 대신 기존 규칙에 맡겨서 잰다(선출 학습 효과 비교용)")
 a = ap.parse_args()
 if a.full_info:
     os.environ["RIMKET_FULLINFO"] = "1"
+if a.form_foe:
+    os.environ["RIMKET_FORMFOE"] = "1"
+if a.form_obs:
+    os.environ["RIMKET_FORMOBS"] = "1"
 if a.rule_pick:
     os.environ["RIMKET_AUTOPICK"] = "1"
 m = MaskablePPO.load(a.model, device="cpu")

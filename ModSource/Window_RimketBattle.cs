@@ -14,11 +14,12 @@ namespace Rimketmon
         public Fighter F;
         public int Hp, MaxHp;
         public float DispHp;
-        public float DispExp, ExpTarget;
+        public float DispExp, ExpTarget; public int DispLevel; public float ExpPauseUntil, ExpStartAt; public bool ExpSound;      // 화면에 보이는 레벨(경험치 바가 다 찬 뒤에 오른다)
         public bool Visible;
         public bool ShinySe;       // 이로치 반짝임 소리를 냈다
         public bool Person;
         public float AppearTime = -100f, FaintTime = -100f, ShakeTime = -100f;
+        public float SqAtkTime = -100f, SqHitTime = -100f, SqHitFrom, SqHitS; public bool SqAtkPhys; public int SqRoutine = -1;      // SQUISHY 연동
         public float PersonAttackTime = -100f;    // 트레이너 본인이 기본 공격을 시작한 시각(등장 슬라이드를 다시 보여 준다)
         public float CryAt = -1f;                 // 울음소리를 낼 시각(없으면 -1)
         public float FxTime = -100f; public int FxKind; public Color FxColor;     // 능력치 오름(1)·내림(2)·상태이상(3) 연출
@@ -90,7 +91,7 @@ namespace Rimketmon
             string line = battle.Log[revealed - 1];
             if (string.IsNullOrEmpty(line)) return;
             var side = (line.StartsWith("상대 ") || line.StartsWith("야생 ")) != Mirror ? foe : ally;
-            if (line.Contains("레벨") && line.EndsWith("올랐다!")) { RimketAudio.PlaySe("level_up"); return; }
+            if (line.Contains("레벨") && line.EndsWith("올랐다!")) { if (!(ally.F != null && line.StartsWith(ally.F.C.Name))) RimketAudio.PlaySe("level_up"); else RimketAudio.PlaySe("level_up_fanfare"); return; }      // 나와 있는 림켓몬: 바가 찰 때 레벨업 소리, 문장에선 팡파르
             if (line.EndsWith("올랐다!")) { RimketAudio.PlaySe("stat_up"); Fx(side, 1, new Color(1f, 0.45f, 0.25f), now); return; }
             if (line.EndsWith("떨어졌다!")) { RimketAudio.PlaySe("stat_down"); Fx(side, 2, new Color(0.35f, 0.6f, 1f), now); return; }
             if (line.EndsWith("볼을 던졌다!")) { StartCapture(now); return; }
@@ -464,7 +465,7 @@ namespace Rimketmon
         private readonly Action<RimketBattle> onFinished;
         private bool resolved;
         private BattlePhase lastPhase;
-        private bool victoryPlayed;
+        private bool victoryPlayed, defeatStopped;
         private float openTime;
         private readonly EngineSettings engineSettings = RimketmonMod.Settings.ToEngine();
 
@@ -479,6 +480,10 @@ namespace Rimketmon
         private BattleEvent? pendingMove; private float pendingMoveAt;      // 기술 이름이 뜬 뒤 조금 있다가 연출을 시작한다
         private int preDelayFor = -1; private float preDelayVal;             // 다음 줄을 띄우기 전에 두는 뜸(줄마다 한 번 계산)
         private void Hold(float until) { if (until > holdUntil) holdUntil = until; }
+        private const float ExpSecPerLevel = 1.65f;    // 원작 EXP_GAINS_DURATION_BASE 1650ms: 한 레벨을 다 채우는 시간
+        private const float LevelPauseMs = 500f;       // 원작: 레벨이 오른 순간 500ms 멈춤
+        /// <summary>원작 getLevelDurationMultiplier: 많이 오를수록 한 레벨 시간이 짧아진다(최소 0.1).</summary>
+        private static float LevelMult(int cur, int fin) { float u = 1f - Mathf.Min(fin - cur, 10) / 10f; return Mathf.Max(u * u * u, 0.1f); }
 
         // 레벨업 기술 배우기: 칸이 다 찼으면 무엇을 잊을지 묻는 창을 하나씩 띄우고, 그동안 다음 메시지로 넘어가지 않는다
         private readonly Queue<KeyValuePair<RimketCreature, string>> learnQueue = new Queue<KeyValuePair<RimketCreature, string>>();
@@ -486,7 +491,7 @@ namespace Rimketmon
         private void PumpLearn()
         {
             if (learnOpen) return;
-            if (learnQueue.Count == 0) { holdUntil = RimketClock.Now; return; }
+            if (learnQueue.Count == 0) { if (holdUntil == float.MaxValue) holdUntil = RimketClock.Now; return; }      // 경험치 연출 대기는 끊지 않는다
             var next = learnQueue.Dequeue();
             Move m; try { m = MoveCatalog.Get(next.Value); } catch (Exception) { m = null; }
             if (m == null) { PumpLearn(); return; }
@@ -617,7 +622,8 @@ namespace Rimketmon
 
         private readonly string foeTrainerSprite;   // 트레이너 전투일 때 상대 트레이너 그림
         private float foeTrainerExit = -100f;
-        private float foeTrainerBack = -100f;      // 교체로 다시 내보낼 때 트레이너가 다시 나타난 시각
+        private bool foeTrainerOut;      // 트레이너가 이미 퇴장했는가(시각 값의 부호로 판단하면 불러오기 직후 시계가 작을 때 틀린다)
+        private float foeTrainerBack = float.MinValue;      // 교체로 다시 내보낼 때 트레이너가 다시 나타난 시각
         private bool HasFoeTrainerArt { get { return battle.IsTrainer && (foeTrainerSprite != null || OnlineFoePic() != null); } }
         private const float PersonAnimMs = 1200f;    // 트레이너 본인의 공격 동작(한 번) 길이
         private float holdUntil = -1f;               // 이 시각까지 다음 메시지로 넘어가지 않는다(공격 동작 재생 중)
@@ -627,6 +633,7 @@ namespace Rimketmon
 
         public Window_RimketBattle(RimketBattle battle, Pawn thrower, Action<RimketBattle> onFinished)
         {
+            SquishyLink.Refresh();
             this.battle = battle;
             this.thrower = thrower;
             this.onFinished = onFinished;
@@ -655,7 +662,45 @@ namespace Rimketmon
             foeTrainerSprite = battle.IsTrainer && !battle.Paradox && !battle.Online ? FindTrainerSprite(battle.Foe.Name) : null;
         }
 
-        /// <summary>다음에 여는 배틀 창의 배경(사냥 바이옴). 한 번 쓰면 지워진다.</summary>
+        /// <summary>세이브 중 이어 하기: 이 배틀의 명세(없으면 저장하지 않는다). Resumed면 기록을 재생해 만든 배틀이라 등장 연출 없이 지금 상태로 시작한다.</summary>
+        internal BattleSpec Spec; internal bool Resumed;
+        internal RimketBattle Battle { get { return battle; } }
+
+        /// <summary>배틀 중에 기술을 배우면(화면에서 고른 결과) 진행 기록에 남긴다.</summary>
+        private void OnLearned(RimketCreature c, int slot, Move m)
+        {
+            if (battle == null || battle.Journal == null || c == null || m == null) return;
+            int i = battle.Player.Party.IndexOf(c); if (i >= 0) battle.NoteLearn(i, slot, m.Id);
+        }
+
+        public override void PostOpen()
+        {
+            base.PostOpen();
+            MoveLearn.OnLearned += OnLearned;
+            if (Resumed) ResumeSync();
+        }
+
+        /// <summary>이어 하기: 이미 끝난 문장·사건은 다시 보여 주지 않고, 지금 나와 있는 림켓몬·HP·날씨로 화면을 맞춘다.</summary>
+        private void ResumeSync()
+        {
+            float past = RimketClock.Now - 60f;
+            openTime = past; lineStart = past;
+            revealed = battle.Log.Count; evIndex = Evs.Count;
+            allyEverEntered = true; foeTrainerExit = past; foeTrainerBack = float.MinValue; foeTrainerOut = true;
+            shownWeather = battle.CurrentWeather; shownTerrain = battle.CurrentTerrain;
+            lastPhase = battle.Phase;
+            foreach (var pair in new[] { new KeyValuePair<SideView, BattleSide>(ally, Mirror ? battle.Foe : battle.Player), new KeyValuePair<SideView, BattleSide>(foe, Mirror ? battle.Player : battle.Foe) })
+            {
+                var v = pair.Key; var f = pair.Value != null ? (pair.Value.Active ?? pair.Value.Person) : null;
+                if (f == null) { v.Visible = false; continue; }
+                v.F = f; v.Hp = f.C.Hp; v.MaxHp = f.C.MaxHp; v.DispHp = v.Hp;
+                v.DispExp = v.ExpTarget = Mathf.Max(f.C.Exp, RimketCreature.ExpForLevel(f.C.Level)); v.DispLevel = f.C.Level;
+                v.Person = f.IsPerson; v.Thrown = false; v.FirstEntry = false;
+                v.Visible = !f.Fainted; v.FaintTime = f.Fainted ? past : -100f;
+                v.AppearTime = past; v.InfoTime = past; v.CryAt = -1f; v.RelAt = -1f;
+            }
+            if (battle.IsOver && MyEnd == BattleEnd.Victory) victoryPlayed = false;
+        }
         internal static string ArenaOverride;
 
         /// <summary>랭크전 상대처럼 이름으로는 찾을 수 없는 트레이너의 스프라이트 id.</summary>
@@ -742,6 +787,8 @@ namespace Rimketmon
         /// <summary>배틀 중에는 림월드 시간 정지 + 시간 조작 시도 차단(RimketTime 참고).</summary>
         private void ApplyTime() { RimketTime.Apply(this, RimketTime.FreezeFor(battle)); }
         public override void ExtraOnGUI() { base.ExtraOnGUI(); if (RimketClock.Paused) return; RimketTime.Track(this); ApplyTime(); }
+        /// <summary>창이 포커스를 가진 동안 림월드 단축키(WASD 등)를 막는다(RimketTime.KeySink).</summary>
+        public override RimWorld.QuickSearchWidget CommonSearchWidget { get { return RimketTime.KeySink(); } }
 
         public override void PreOpen()
         {
@@ -802,7 +849,13 @@ namespace Rimketmon
                 else
                 {
                     float need = CurrentLine().Length * TypeSecPerChar / Speed + 0.85f / Speed + PreDelay();
-                    if (now - lineStart >= need) { revealed++; lineStart = now; OnLineShown(now); }
+                    if (advanceRequested)
+                    {
+                        if (TypedChars() < CurrentLine().Length) lineStart = now - 100f;
+                        else { revealed++; lineStart = now; OnLineShown(now); }
+                        advanceRequested = false;
+                    }
+                    else if (now - lineStart >= need) { revealed++; lineStart = now; OnLineShown(now); }
                 }
             }
             else if (!AnimBusy) advanceRequested = false;
@@ -817,7 +870,22 @@ namespace Rimketmon
                     Apply(Evs[evIndex++]);
 
             foreach (var v in new[] { ally })
-                if (v.F != null) v.DispExp = Mathf.MoveTowards(v.DispExp, v.ExpTarget, Mathf.Max(1f, RimketCreature.ExpForLevel(v.F.C.Level + 1) - RimketCreature.ExpForLevel(v.F.C.Level)) * 0.6f * dt * Speed);
+                if (v.F != null)
+                {
+                    // 경험치 바(원작 doUpdateExpAnimation): 문장이 다 찍힌 뒤 차기 시작, 차는 동안 경험치 소리
+                    if (v.DispLevel <= 0 || v.DispLevel > v.F.C.Level) v.DispLevel = v.F.C.Level;
+                    if (now < v.ExpPauseUntil || now < v.ExpStartAt) continue;
+                    int L = v.DispLevel; float lo = RimketCreature.ExpForLevel(L), hi = RimketCreature.ExpForLevel(L + 1);
+                    float target = L < v.F.C.Level ? Mathf.Min(v.ExpTarget, hi) : v.ExpTarget;
+                    if (v.DispExp < target - 0.01f)
+                    {
+                        if (!v.ExpSound) { RimketAudio.PlaySeStoppable("exp_gain"); v.ExpSound = true; }
+                        float mult = LevelMult(L, v.F.C.Level);
+                        v.DispExp = Mathf.MoveTowards(v.DispExp, target, Mathf.Max(1f, hi - lo) / (ExpSecPerLevel * mult) * dt * Speed);
+                    }
+                    if (v.DispExp >= target - 0.01f && v.ExpSound) { RimketAudio.StopSeStoppable(); v.ExpSound = false; }
+                    if (L < v.F.C.Level && v.DispExp >= hi) { v.DispLevel++; RimketAudio.PlaySe("level_up"); v.ExpPauseUntil = now + Sec(LevelPauseMs * LevelMult(L, v.F.C.Level)); v.DispExp = hi; }
+                }
             foreach (var cv in new[] { ally, foe })
             {
                 if (cv.CryAt >= 0f && now >= cv.CryAt && cv.F != null) { cv.CryAt = -1f; RimketAudio.PlayCryFor(cv.F.Shown); }
@@ -839,9 +907,14 @@ namespace Rimketmon
                 victoryPlayed = true;
                 RimketAudio.PlayVictory(battle.IsTrainer);
             }
+            // 패배·무승부·도망: 음악은 마지막 메시지와 쓰러짐 연출까지 다 보여 준 뒤에 멈춘다(엔진이 끝난 순간이 아니라)
+            if (!defeatStopped && battle.Phase == BattlePhase.Finished && MyEnd != BattleEnd.Victory && revealed >= battle.Log.Count && evIndex >= Evs.Count && !AnimBusy && now >= holdUntil)
+            {
+                defeatStopped = true;
+                RimketAudio.StopBgm();
+            }
             if (battle.Phase != lastPhase)
             {
-                if (battle.Phase == BattlePhase.Finished && MyEnd != BattleEnd.Victory) RimketAudio.StopBgm();
                 lastPhase = battle.Phase;
                 mode = Mode.Main; cursor = 0; movePage = 0;
             }
@@ -876,13 +949,13 @@ namespace Rimketmon
                 case BattleEventKind.SendOut:
                 case BattleEventKind.Person:
                     bool firstFoe = !e.PlayerSide && !foe.Visible;
-                    v.F = e.Who; v.Hp = e.HpAfter; v.MaxHp = e.Who.C.MaxHp; v.DispHp = v.Hp; v.DispExp = v.ExpTarget = Mathf.Max(e.Who.C.Exp, RimketCreature.ExpForLevel(e.Who.C.Level));
+                    v.F = e.Who; v.Hp = e.HpAfter; v.MaxHp = e.Who.C.MaxHp; v.DispHp = v.Hp; v.DispExp = v.ExpTarget = Mathf.Max(e.Who.C.Exp, RimketCreature.ExpForLevel(e.Who.C.Level)); v.DispLevel = e.Who.C.Level;
                     v.Visible = true; v.FaintTime = -100f;
                     v.Person = e.Kind == BattleEventKind.Person || e.Who.IsPerson;
                     v.Thrown = !v.Person && (e.PlayerSide || battle.IsTrainer);
                     if (e.PlayerSide) { v.FirstEntry = !allyEverEntered; allyEverEntered = true; }
-                    else if (battle.IsTrainer && foeTrainerExit < 0f) { foeTrainerExit = now; v.FirstEntry = true; }
-                    else if (HasFoeTrainerArt) { v.FirstEntry = false; foeTrainerBack = now; foeTrainerExit = now + Sec(TrainerReshowMs); }      // 교체·다음 림켓몬: 트레이너가 다시 나와서 던진다
+                    else if (battle.IsTrainer && !foeTrainerOut) { foeTrainerExit = now; foeTrainerOut = true; v.FirstEntry = true; }
+                    else if (HasFoeTrainerArt) { v.FirstEntry = false; foeTrainerBack = now; foeTrainerExit = now + Sec(TrainerReshowMs); foeTrainerOut = true; }      // 교체·다음 림켓몬: 트레이너가 다시 나와서 던진다
                     v.AppearTime = (v.Thrown || (v.Person && !e.PlayerSide)) ? now : now - 10f;
                     if (v.Person && !e.PlayerSide) holdUntil = now + Sec(Mathf.Min(Mathf.Max(PersonEnterMs, TrainerAnimMs()), 3000f));
                     v.InfoTime = v.Thrown ? now + ThrowDelay(v, e.PlayerSide) + Sec(650f + 250f) : (firstFoe ? openTime + IntroSec : now);
@@ -912,17 +985,39 @@ namespace Rimketmon
                     if (e.Learner != null && e.MoveId != null) { learnQueue.Enqueue(new KeyValuePair<RimketCreature, string>(e.Learner, e.MoveId)); PumpLearn(); }
                     break;
                 case BattleEventKind.Exp:
-                    if (v.F == e.Who) { v.ExpTarget = e.HpAfter; RimketAudio.PlaySe("exp_gain"); }
+                    if (v.F == e.Who)
+                    {
+                        long before = Math.Max(0L, (long)e.HpAfter - e.Value);
+                        int L0 = e.Who.C.Level; while (L0 > 1 && RimketCreature.ExpForLevel(L0) > before) L0--;
+                        if (battle.QuietExp) { v.DispLevel = e.Who.C.Level; v.DispExp = v.ExpTarget = e.HpAfter; break; }      // 배틀타워: 조용히 반영
+                        // 원작(PokeRogue ExpPhase) 순서: 문장을 끝까지 찍은 뒤 → 바가 찬다(경험치 소리, 다 차면 멈춤)
+                        // → 레벨이 오르면 레벨업 소리·레벨 숫자, 잠깐 멈췄다 0부터 다시 → 다 끝나면 팡파르와 '레벨이 올랐다' 문장
+                        v.DispLevel = L0; v.DispExp = Mathf.Max(before, RimketCreature.ExpForLevel(L0)); v.ExpTarget = e.HpAfter; v.ExpPauseUntil = -1f; v.ExpSound = false;
+                        float typeT = (e.LogIndex >= 0 && e.LogIndex < battle.Log.Count ? battle.Log[e.LogIndex].Length : 20) * TypeSecPerChar / Speed;
+                        v.ExpStartAt = now + typeT;
+                        float total = typeT;
+                        for (int L = L0; L <= e.Who.C.Level; L++)
+                        {
+                            float lo = RimketCreature.ExpForLevel(L), hi = RimketCreature.ExpForLevel(L + 1);
+                            float a = Mathf.Max(lo, v.DispExp), b = Mathf.Min(hi, v.ExpTarget);
+                            float mult = LevelMult(L, e.Who.C.Level);
+                            if (b > a && hi > lo) total += (b - a) / (hi - lo) * ExpSecPerLevel * mult / Speed;
+                            if (L < e.Who.C.Level) total += Sec(LevelPauseMs * mult);
+                        }
+                        Hold(now + total + Sec(250f));      // 바가 다 찰 때까지 다음 문장으로 넘어가지 않는다
+                    }
                     break;
                 case BattleEventKind.PersonAttack:
                     if (!e.PlayerSide) { foe.PersonAttackTime = now; holdUntil = now + Sec(Mathf.Min(Mathf.Max(PersonAnimMs, TrainerAnimMs()), 2500f)); }
                     break;
                 case BattleEventKind.MoveUsed:
                     // "○○의 △△!"를 다 찍고 잠깐 읽을 시간을 준 뒤 연출을 시작한다(영상: 문장 약 1초 → 연출)
+                    SquishyAttack(e, now);      // 반동은 기술 이름이 뜰 때(연출이 그림을 대신 그리기 전에) 보여 준다
                     if (MoveAnimsOn) { pendingMove = e; pendingMoveAt = now + CurrentLine().Length * TypeSecPerChar / Speed + Sec(420f); }
                     else StartMoveAnim(e, now);
                     break;
                 case BattleEventKind.Hit:
+                    float hpBefore = v.Hp;
                     if (v.F == e.Who)
                     {
                         // HP 바가 다 줄어든 다음에 결과 문장(효과가 굉장했다 등)으로 넘어간다
@@ -931,6 +1026,7 @@ namespace Rimketmon
                         v.Hp = e.HpAfter;
                     }
                     if (MoveAnimsOn) v.ShakeTime = now;
+                    if (SquishyLink.Active) { v.SqHitTime = now; v.SqHitFrom = v == ally ? 1f : -1f; v.SqHitS = SquishyLink.HitStrengthFor(v.MaxHp > 0 ? Mathf.Abs(hpBefore - e.HpAfter) / (float)v.MaxHp : 0.3f); }
                     if (RimketmonMod.Settings.damageNumbers && e.Value > 0)
                         v.Numbers.Add(new Floating { Text = "-" + e.Value, Color = new Color(1f, 0.45f, 0.4f), Time = now });
                     PlayHitSound(e);
@@ -967,14 +1063,42 @@ namespace Rimketmon
             animUser = uView; animTarget = tView;
         }
 
+        /// <summary>SQUISHY 연동: 기술을 쓴 쪽의 반동 시작(물리기는 대시, 나머지는 뒤로 킥). 실패한 기술은 없음.</summary>
+        private void SquishyAttack(BattleEvent e, float now)
+        {
+            if (!SquishyLink.Active || e.Value == 1) return;
+            var u = e.PlayerSide ? ally : foe; if (u.F == null) return;
+            Move m = null; try { m = MoveCatalog.Get(e.MoveId); } catch (Exception) { }
+            if (m != null && m.IsStatus) return;
+            u.SqAtkTime = now; u.SqAtkPhys = m != null && m.Category == MoveCategory.Physical;
+            u.SqRoutine = SquishyLink.PickRoutine(u.SqAtkPhys, Rand.Value);
+        }
+
         private AnimActor ActorOf(SideView v, bool back)
         {
             var pic = RimSprite.GetFor(v.F.Shown, back);
             return new AnimActor
             {
                 X = (back ? 102f : 236f) + (pic.Valid ? pic.OffX : 0f), Y = back ? AllyFootY(v.F) : 84f,
-                Tex = pic.Tex, Scale = pic.Scale, Flip = pic.Flip, Pad = pic.Pad, Tint = pic.Tint
+                Tex = pic.Tex, Scale = pic.Scale, Flip = pic.Flip, Pad = pic.Pad, Tint = pic.Tint,
+                Pose = () => SquishyPose(v, back, RimketClock.Now, 64f)
             };
+        }
+
+        /// <summary>SQUISHY 연동: 이 쪽 림켓몬의 지금 몸 움직임(공격 반동 + 피격 반응). 진짜 스프라이트와 연출 사본이 같이 쓴다.</summary>
+        /// <summary>
+        /// SQUISHY 연동: 피격 모션만, SQUISHY Melee의 피격 키프레임·세기·떨림을 그대로 재생한다(34틱 = 60틱/초 기준).
+        /// 몸은 화면 x(가로)·y(세로)로 눌리고, 발은 바닥에 고정, 공격자 반대쪽(수평)으로 밀리며, 몸 가운데를 축으로 기운다.
+        /// </summary>
+        private SquishyLink.Pose SquishyPose(SideView v, bool back, float now, float spriteH)
+        {
+            if (!SquishyLink.Active || v == null || v.FaintTime > 0f || v.SqHitTime <= 0f) return SquishyLink.Pose.Rest;
+            float age = (now - v.SqHitTime) * Speed * 60f;
+            float dirX = back ? -1f : 1f;      // 내 쪽(왼쪽)은 왼쪽으로, 상대(오른쪽)는 오른쪽으로 밀린다
+            float sx, sy, push, hop, lean;
+            SquishyLink.HitFrame(age, v.SqHitS, dirX, out sx, out sy, out push, out hop, out lean);
+            float cell = Mathf.Max(20f, spriteH / 0.7f);      // SQUISHY의 발 고정 보정(0.35칸 = 몸 절반)에 맞춘 1칸 크기
+            return new SquishyLink.Pose { Dx = push * cell, Dy = -hop * cell, Kx = 1f + sx, Ky = 1f + sy, Rot = lean, St = 1f };      // 기울기는 발끝 축(그리는 쪽에서)
         }
 
         /// <summary>교체·다음 림켓몬 때 트레이너가 다시 나와 서 있는 시간(ms).</summary>
@@ -984,7 +1108,7 @@ namespace Rimketmon
         private float ThrowDelay(SideView v, bool player)
         {
             if (player) return v.FirstEntry ? Sec(750f) : Sec(TrainerReshowMs);
-            return (!v.FirstEntry && HasFoeTrainerArt && foeTrainerBack > 0f) ? Sec(TrainerReshowMs) : 0f;      // 상대도 트레이너가 다시 나온 뒤에 던진다
+            return (!v.FirstEntry && HasFoeTrainerArt && foeTrainerBack > float.MinValue) ? Sec(TrainerReshowMs) : 0f;      // 상대도 트레이너가 다시 나온 뒤에 던진다
         }
 
         private void PlayHitSound(BattleEvent e)
@@ -1018,6 +1142,7 @@ namespace Rimketmon
         public override void DoWindowContents(Rect inRect)
         {
             if (RimketClock.Paused) return;
+            if (Event.current.rawType == EventType.MouseDown) RimketTime.WorldFocus = false;      // 창 안을 누르면 무조건 창 포커스(월드를 누른 뒤 키보드가 안 먹던 버그)
             inRect = RimketFrame.Begin(this, inRect);
             PumpQuit();
             PumpAuto();      // 바깥 틀(이동·크기·초기화)을 그리고 캔버스 영역만 받는다
@@ -1050,10 +1175,13 @@ namespace Rimketmon
             if (Online) OnlineChat.Draw(g, Session, 166f, 2f, 150f);      // 온라인: 채팅(오른쪽 위, 속도 버튼 왼쪽)
 
             // 메시지 수동 넘김: 화면 어디를 눌러도 / 스페이스
-            if (RimketmonMod.Settings.manualMessageClear && revealed <= battle.Log.Count)
+            // 문장 넘김: Z·X·엔터·스페이스(자동 넘김 모드에서도 키로 바로 넘길 수 있다), 수동 모드에선 화면 클릭도
+            if (revealed <= battle.Log.Count && !OnlineChat.Blocking)
             {
-                if (!OnlineChat.Blocking && (Event.current.type == EventType.MouseDown || (!RimketTime.KeysBlocked && Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)))
-                { if (!InputReady) { advanceRequested = true; Event.current.Use(); } }
+                var ev = Event.current; var kc = ev.keyCode;
+                bool key = !RimketTime.KeysBlocked && ev.type == EventType.KeyDown && (kc == KeyCode.Space || kc == KeyCode.Z || kc == KeyCode.X || kc == KeyCode.Return || kc == KeyCode.KeypadEnter);
+                bool click = RimketmonMod.Settings.manualMessageClear && ev.type == EventType.MouseDown;
+                if ((key || click) && !InputReady) { advanceRequested = true; ev.Use(); }
             }
 
             float fade = Mathf.Clamp01((now - openTime) / 0.35f);
@@ -1082,17 +1210,17 @@ namespace Rimketmon
             if (battle.IsTrainer && (foeTrainerSprite != null || OnlineFoePic() != null))
             {
                 float alpha = 1f, dx = 0f;
-                if (foeTrainerBack > 0f && now < foeTrainerExit)
+                if (foeTrainerOut && foeTrainerBack > float.MinValue && now < foeTrainerExit)
                 {
                     float k = PR.SineIn((now - foeTrainerBack) / Sec(250f));      // 오른쪽에서 다시 들어온다
                     alpha = k; dx = 16f * (1f - k);
                 }
-                else if (foeTrainerExit > 0f)
+                else if (foeTrainerOut)
                 {
                     float k = PR.Linear((now - foeTrainerExit) / Sec(750f));
                     alpha = 1f - k; dx = 16f * k;
                 }
-                if (alpha > 0.01f) FoeTrainerImg(g, now - openTime, 24f * Speed, 256f + eoff + dx, 94f, alpha);
+                if (alpha > 0.01f) FoeTrainerImg(g, now - openTime, 24f * Speed, 262f + eoff + dx, 90f, alpha);      // 조금 오른쪽·위로
             }
 
             if (!foe.Visible || foe.F == null) return;
@@ -1211,7 +1339,7 @@ namespace Rimketmon
         private void DrawMon(Canvas g, SideView v, float x, float y, bool back, float now, float sincePop)
         {
             if (v.FaintTime > 0f && now - v.FaintTime > Sec(520f)) return;
-            if (anim != null && !anim.Done(now) && ((v == animUser && anim.DrawsActor(now, true)) || (v == animTarget && anim.DrawsActor(now, false)))) return;      // 연출이 사본을 그리는 프레임에만 숨긴다
+            if (!SquishyLink.Active && anim != null && !anim.Done(now) && ((v == animUser && anim.DrawsActor(now, true)) || (v == animTarget && anim.DrawsActor(now, false)))) return;      // 연출이 사본을 그리는 프레임에만 숨긴다
             if (!back && battle.HuntMode && capStart >= 0f)
             {
                 // 사냥 포획: 볼이 열려 빨려 들어간 뒤부터 안 보이고, 빠져나오면 다시 나타난다
@@ -1222,13 +1350,14 @@ namespace Rimketmon
             var pic = RimSprite.GetFor(v.F.Shown, back);
             var tex = pic.Tex;
             float baseScale = pic.Valid ? pic.Scale : 0.5f;
+            if (v.F.C != null && v.F.C.Dynamax) baseScale *= 1.3f;      // 다이맥스(거다이맥스는 그림이 이미 크다)
             float scale = baseScale;
             if (sincePop < Sec(250f)) scale = baseScale * Mathf.Lerp(0.5f, 1f, PR.SineIn(sincePop / Sec(250f)));
             float alpha = 1f, dy = pic.Pad, dx = 0f;
             // 살아 있는 느낌: 숨쉬듯 아주 조금 늘었다 줄어든다(팬게임 그림은 한 장짜리라 코드로 대신한다)
             float ph = back ? 0f : 1.7f;
-            float breathe = 1f + 0.045f * Mathf.Sin(now * 3.2f + ph);     // 숨쉬듯 위아래로 늘었다 줄어듦
-            if (v.FaintTime < 0f) dy -= 1.6f * (0.5f + 0.5f * Mathf.Sin(now * 3.2f + ph + 1.2f)) + 0.0f;   // 발끝은 붙인 채 살짝 들썩
+            float breathe = 1f + 0.015f * Mathf.Sin(now * 3.2f + ph);     // 숨쉬듯 위아래로 늘었다 줄어듦
+            if (v.FaintTime < 0f) dy -= 0.5f * (0.5f + 0.5f * Mathf.Sin(now * 3.2f + ph + 1.2f)) + 0.0f;   // 발끝은 붙인 채 살짝 들썩
 
             if (v.FaintTime > 0f)
             {
@@ -1236,11 +1365,19 @@ namespace Rimketmon
                 dy = pic.Pad + 150f * PR.SineIn(k); alpha = 1f;       // 포켓로그: 500ms 동안 150 아래로(Sine easeIn)
             }
             // 피격: 깜빡임 + 좌우 흔들림
-            if (v.ShakeTime > 0f && now - v.ShakeTime < 0.5f)
+            if (v.ShakeTime > 0f && now - v.ShakeTime < 0.5f && !SquishyLink.Active)      // SQUISHY 연동 중엔 포켓몬식 깜빡임·떨림 대신 SQUISHY 피격만
             {
                 float st = now - v.ShakeTime;
                 if (((int)(st / 0.07f)) % 2 == 1) alpha *= 0.15f;
                 dx = Mathf.Sin(st * 60f) * 2f * (1f - st / 0.5f);
+            }
+            // SQUISHY 연동: 공격 반동·피격 밀림(위치·눌림·기울기). 원래 좌우 떨림은 대신한다
+            float kx = 1f, ky = 1f, rot = 0f, sqDy = 0f; var sqPose = SquishyLink.Pose.Rest;
+            if (SquishyLink.Active && v.FaintTime < 0f)
+            {
+                var sp = SquishyPose(v, back, now, 64f * scale / Mathf.Max(0.0001f, baseScale)); sqPose = sp;
+                if (v.SqHitTime > 0f && now - v.SqHitTime < 0.5f) dx = 0f;      // 원래 좌우 떨림 대신
+                dx += sp.Dx; sqDy = sp.Dy; dy += sqDy; kx = sp.Kx; ky = sp.Ky; rot = sp.Rot;
             }
             // 둥실거림은 없다(포켓로그 스프라이트는 제자리 애니메이션)
             Action<Canvas> drawSprite = c =>
@@ -1269,14 +1406,28 @@ namespace Rimketmon
                     float fy = v.FaintTime > 0f ? dy - pic.Pad : 0f;      // 쓰러질 때만 아래로 가라앉는다
                     float left = x + dx - sheet.SrcW * fs / 2f + sheet.F[o + 4] * fs;
                     float top = y + fy - sheet.SrcH * fs + sheet.F[o + 5] * fs;
-                    c.ImgRegion(sheet.Tex, sheet.F[o], sheet.F[o + 1], sheet.F[o + 2], sheet.F[o + 3], left, top, 0f, 0f, fs, alpha, 0f);
+                    if (kx == 1f && ky == 1f && rot == 0f && sqDy == 0f) c.ImgRegion(sheet.Tex, sheet.F[o], sheet.F[o + 1], sheet.F[o + 2], sheet.F[o + 3], left, top, 0f, 0f, fs, alpha, 0f);
+                    else
+                    {
+                        // 기준점 = 그림의 실제 발끝(잘라낸 프레임의 아래 끝). 원래는 프레임 바닥(여백 포함)을 기준으로 해서 눌릴 때 몸이 아래로 꺼졌다
+                        float sqy = sqDy, cx = left + sheet.F[o + 2] * fs * 0.5f, foot = top + sheet.F[o + 3] * fs;
+                        float l2 = cx + (left - cx) * kx, t2 = foot + sqy + (top - foot) * ky;
+                        c.ImgRegionSquash(sheet.Tex, sheet.F[o], sheet.F[o + 1], sheet.F[o + 2], sheet.F[o + 3], l2, t2, fs * kx, fs * ky, alpha, rot, cx, foot + sqy);      // 기울기는 발끝 축(몸 가운데 축이면 빙글 도는 것처럼 보인다)
+                    }
                 }
                 else if (tex != null)
                 {
-                    var tintNow = pic.Tint;
+                    var tintNow = pic.Tint * c.Tint;      // 피격 붉은 번쩍임과 곱
                     float ft = (now - v.FxTime) * Speed;
                     if (v.FxTime > 0f && ft >= 0f && ft < 0.8f) tintNow = Color.Lerp(tintNow, v.FxColor, 0.45f * Mathf.Sin(ft / 0.8f * Mathf.PI));
-                    c.Tint = tintNow; c.Img(tex, x + dx + pic.OffX * (scale / Mathf.Max(0.0001f, baseScale)), y + dy, 0.5f, 1f, scale, alpha, pic.Flip, 0f, breathe); c.Tint = Color.white;
+                    float imgY = y + dy;
+                    if (ky != 1f)
+                    {
+                        // 눌림 기준을 그림 속 실제 발끝으로(투명 여백 아래를 기준으로 하면 몸이 아래로 꺼진다)
+                        var bnd = RimSprite.Bounds(tex); float ff = Mathf.Clamp01((bnd[1] + bnd[3]) / (float)Mathf.Max(1, tex.height));
+                        float h0 = tex.height * scale * breathe; imgY = (y + dy) - (1f - ff) * h0 + (1f - ff) * h0 * ky;
+                    }
+                    c.Tint = tintNow; c.Img(tex, x + dx + pic.OffX * (scale / Mathf.Max(0.0001f, baseScale)), imgY, 0.5f, 1f, scale * kx, alpha, pic.Flip, rot, breathe * ky / Mathf.Max(0.01f, kx)); c.Tint = Color.white;
                 }
                 else if (!RimSprite.Glitched(v.F.Shown))
                     c.Label(v.F.Shown.Name, x, y - 40f, 12f, Canvas.White, Canvas.WhiteShadow, TextAnchor.MiddleCenter);
@@ -1290,7 +1441,15 @@ namespace Rimketmon
                 }
             };
             // 쓰러질 때: 땅 아래로 가라앉으며(바닥선 아래는 잘린다) 사라진다
-            if (v.FaintTime > 0f) g.Clip(0f, 0f, 320f, y + pic.Pad + 1f, drawSprite); else drawSprite(g);
+            if (v.FaintTime > 0f) g.Clip(0f, 0f, 320f, y + pic.Pad + 1f, drawSprite);
+            else
+            {
+                var om = SquishyLink.PushAxis(new Vector2(g.Area.x + (x + dx) * g.S, g.Area.y + (y + dy) * g.S), sqPose);      // 발끝 기준: 가로로만 눌리고, 세로 보정도 바닥에 붙어서
+                // SQUISHY 피격: 맞는 순간 몸 전체가 새빨갛게 번쩍였다가 0.35초에 걸쳐 원래 색으로
+                float hf = (now - v.SqHitTime) * Speed; var oldTint = g.Tint;
+                if (SquishyLink.Active && v.SqHitTime > 0f && hf >= 0f && hf < 0.35f) { float k = 1f - hf / 0.35f; k *= k; g.Tint = Color.Lerp(Color.white, new Color(1f, 0.12f, 0.08f), k); }
+                try { drawSprite(g); } finally { GUI.matrix = om; g.Tint = oldTint; }
+            }
             DrawFx(g, v, x, y, now);
 
             // 떠오르는 숫자
@@ -1321,7 +1480,7 @@ namespace Rimketmon
                 if (enter < enterDur && v.PersonAttackTime <= 0f && v.FaintTime <= 0f) x = Mathf.Lerp(x + 110f, x, PR.CubicOut(enter / enterDur));
                 float dx = 0f, a = 1f, dyF = 0f;
                 if (!animated && v.PersonAttackTime > 0f && el < Sec(Mathf.Max(PersonAnimMs, TrainerAnimMs()))) dyF = -6f * Mathf.Sin(Mathf.PI * el / Sec(PersonAnimMs));
-                if (v.ShakeTime > 0f && now - v.ShakeTime < 0.5f)
+                if (v.ShakeTime > 0f && now - v.ShakeTime < 0.5f && !SquishyLink.Active)      // SQUISHY 연동 중엔 포켓몬식 깜빡임·떨림 대신 SQUISHY 피격만
                 {
                     float st = now - v.ShakeTime;
                     if (((int)(st / 0.07f)) % 2 == 1) a = 0.15f;
@@ -1367,7 +1526,7 @@ namespace Rimketmon
             if (battle.IsTrainer)
             {
                 float inK = PR.SineIn((now - introEnd) / Sec(500f));
-                float outK = foeTrainerExit > 0f ? PR.Linear((now - foeTrainerExit) / Sec(400f)) : 0f;
+                float outK = foeTrainerOut ? PR.Linear((now - foeTrainerExit) / Sec(400f)) : 0f;
                 float k = Mathf.Min(inK, 1f - outK);
                 if (k > 0.001f) DrawTray(g, false, OppSide.Party.ToList(), (1f - k) * 104f);
             }
@@ -1402,12 +1561,24 @@ namespace Rimketmon
             {
                 float k = PR.CubicOut((now - foe.InfoTime) / 1.0f * Speed);
                 if (now >= foe.InfoTime) DrawFoeBox(g, foe, 140f - 150f * (1f - k), 39f, now);
+                if (now >= foe.InfoTime) DrawDmaxTag(g, foe, 140f - 150f * (1f - k) - 2f, 32f);
             }
             if (ally.Visible && ally.F != null)
             {
                 float k = PR.CubicOut((now - ally.InfoTime) * Speed);
                 if (now >= ally.InfoTime) DrawAllyBox(g, ally, 310f + 150f * (1f - k), 108f);
+                if (now >= ally.InfoTime) DrawDmaxTag(g, ally, 310f + 150f * (1f - k) - 2f, 101f);
             }
+        }
+
+        /// <summary>다이맥스·거다이맥스 표시(정보창 위 붉은 띠).</summary>
+        private void DrawDmaxTag(Canvas g, SideView v, float x, float y)
+        {
+            if (v.F == null || v.F.C == null || !FormChange.IsDynamaxed(v.F.Shown)) return;
+            bool gmax = !v.F.Shown.Dynamax;
+            string t = gmax ? "GMAX" : "DMAX";
+            g.Fill(x, y, 26f, 7f, new Color(0.85f, 0.1f, 0.25f, 0.9f));
+            g.Label(t, x + 13f, y + 3.5f, 6f, Color.white, new Color(0f, 0f, 0f, 0.5f), TextAnchor.MiddleCenter);
         }
 
         private void DrawHp(Canvas g, SideView v, float x, float y, float labelX, float labelY)
@@ -1545,13 +1716,15 @@ namespace Rimketmon
             g.Tx(allyName, cx - 115f, cy - 15.2f, 0f, 0f, 9.5f, Canvas.White, Canvas.WhiteShadow);
             DrawGender(g, v.F.Shown, cx - 115f + g.Measure(allyName, 9.5f) + 2f, cy - 15.2f, 9.5f);
             DrawTypes(g, c, "player", cx - 139f, cy - 17f, cx - 139f, cy - 1f);
-            string lv = c.Level.ToString();
+            int shownLv = v.DispLevel > 0 && v.DispLevel <= c.Level ? v.DispLevel : c.Level;
+            string lv = shownLv.ToString();
             float lx = cx - 41f - 8f * Math.Max(lv.Length - 3, 0), ly = cy - 10f;
             g.Img(PR.Tex("ui/overlay_lv"), lx + 5.5f, ly, 1f, 0.5f);
             g.NumbersLeft(lv, lx + 9.5f, ly, "numbers");
             DrawHp(g, v, cx - 61f, cy - 1f, cx - 62f, cy - 4f);
             g.NumbersRight(Mathf.CeilToInt(v.DispHp) + "/" + v.MaxHp, cx - 15f, cy + 10f, "numbers");
-            g.ImgCrop(PR.Tex("ui/overlay_exp"), cx - 98f, cy + 18f, (float)c.ExpFraction((long)v.DispExp));
+            float elo = RimketCreature.ExpForLevel(shownLv), ehi = RimketCreature.ExpForLevel(shownLv + 1);
+            g.ImgCrop(PR.Tex("ui/overlay_exp"), cx - 98f, cy + 18f, ehi > elo ? Mathf.Clamp01((v.DispExp - elo) / (ehi - elo)) : 0f);
             DrawStatus(g, v.F, cx - 115f, cy - 4.5f);
         }
 
@@ -1860,7 +2033,7 @@ namespace Rimketmon
         /// <summary>사냥: 볼을 던진다(그 턴 행동). 실제 소지품에서 한 개 줄어든다.</summary>
         private void ThrowHuntBall(int tier)
         {
-            if (battle.ThrowBall(tier)) RimketInventory.ConsumeTierPublic(thrower, tier);
+            if (battle.ThrowBall(tier)) RimketInventory.HuntConsume(thrower, tier);
             mode = Mode.Main; cursor = 0;
         }
 
@@ -2187,6 +2360,7 @@ namespace Rimketmon
 
         public override void PostClose()
         {
+            MoveLearn.OnLearned -= OnLearned;
             base.PostClose();
             RimketTime.OnClose(this);
             PR.ReleaseHiIfIdle(this);

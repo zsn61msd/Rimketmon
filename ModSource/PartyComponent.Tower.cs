@@ -13,6 +13,7 @@ namespace Rimketmon
         private void ExposeTower()
         {
             Scribe_Values.Look(ref towerBest, "towerBest", 0);
+            Scribe_Values.Look(ref followFriendAcc, "followFriendAcc", 0f);
             Scribe_Values.Look(ref towerElevator, "towerElevator", 0);
             Scribe_Values.Look(ref towerRuns, "towerRuns", 0);
         }

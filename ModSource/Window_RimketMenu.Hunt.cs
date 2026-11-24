@@ -93,7 +93,7 @@ namespace Rimketmon
             g.Window(win, 0f, 132f, 320f, 48f);
             var pawn = RimketLink.FindLinkPawn();
             int[] balls = new int[4];
-            for (int t = 0; t < 4; t++) balls[t] = RimketInventory.CountPublic(pawn, t);
+            for (int t = 0; t < 4; t++) balls[t] = RimketInventory.HuntCount(pawn, t);
             if (huntHover >= 0)
             {
                 SpeciesInfo sp; SpeciesCatalog.TryGet(table[huntHover].Key, out sp);
@@ -102,7 +102,7 @@ namespace Rimketmon
                 g.Label((sp != null ? sp.Name : table[huntHover].Key) + (got ? " (잡아 봄)" : "") + "  ·  " + HuntCatalog.TierNames[tiers[huntHover]] + "  ·  " + (table[huntHover].Value * 100).ToString("0.##") + "%  ·  포획률 " + RimketBattle.CatchRateOf(table[huntHover].Key) + (HuntCatalog.SpawnFormCount(table[huntHover].Key) > 1 ? "  ·  모습 " + HuntCatalog.SpawnFormCount(table[huntHover].Key) + "가지 중 하나" : ""), got ? 20f : 10f, 137f, 9.5f, Canvas.White, Canvas.WhiteShadow);
             }
             else g.Label("입장 " + HuntCost + " BP (보유 " + pc.bp + ") · 한 번에 " + HuntBattles + "번 배틀 · 이로치 확률 " + "1/" + Math.Max(1, (int)Math.Round(2048 / pc.ShinyMultiplier)) + (pc.rareCharm > 0 ? " · 레어 부적 Lv." + pc.rareCharm : ""), 10f, 137f, 9f, Canvas.White, Canvas.WhiteShadow);
-            g.Label("볼(" + (pawn != null ? pawn.LabelShortCap : "림켓링크 없음") + "의 소지품): 몬스터 " + balls[0] + " · 슈퍼 " + balls[1] + " · 하이퍼 " + balls[2] + " · 마스터 " + balls[3], 10f, 150f, 8f, new Color(0.85f, 0.9f, 1f), Canvas.WhiteShadow);
+            g.Label("볼(" + (pawn != null ? pawn.LabelShortCap + " 소지품+거점" : "림켓링크 없음") + "): 몬스터 " + balls[0] + " · 슈퍼 " + balls[1] + " · 하이퍼 " + balls[2] + " · 마스터 " + balls[3], 10f, 150f, 8f, new Color(0.85f, 0.9f, 1f), Canvas.WhiteShadow);
             g.Label("쓰러뜨리면 잡을 수 없다. 체력을 깎고 상태이상을 걸어 볼을 던지자.", 10f, 162f, 7f, new Color(0.8f, 0.95f, 0.8f), Canvas.WhiteShadow);
             bool can = pawn != null && pc.bp >= HuntCost && pc.ActiveParty().Any(c => !c.IsFainted) && balls.Sum() > 0;
             float bx = 262f, by = 154f;
@@ -121,7 +121,7 @@ namespace Rimketmon
             else if (!can && (Clicked(bx - 10f, by - 3f, 50f, 18f) || AcceptKey()))
             {
                 RimketAudio.PlaySe("gui_sel_buzzer");
-                Messages.Message(Lang.Tr(pawn == null ? "림켓링크 착용자가 필요하다." : pc.bp < HuntCost ? "BP가 부족하다." : balls.Sum() == 0 ? "볼이 없다. 림월드에서 볼을 만들어 착용자의 소지품에 넣자." : "싸울 수 있는 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr(pawn == null ? "림켓링크 착용자가 필요하다." : pc.bp < HuntCost ? "BP가 부족하다." : balls.Sum() == 0 ? "볼이 없다. 림월드에서 볼을 만들거나 사서 거점에 두자." : "싸울 수 있는 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false);
             }
             if (CancelKey()) { view = View.Menu; RimketAudio.PlaySe("gui_sel_cancel"); }
         }
@@ -131,6 +131,20 @@ namespace Rimketmon
     internal static class HuntRun
     {
         private static HuntBiome biome; private static Pawn pawn; private static int left, caught;
+
+        // ---- 세이브 중 이어 하기
+        internal static bool Active { get { return biome != null && left >= 0 && pawn != null; } }
+        internal static Pawn RunPawn { get { return pawn; } }
+        internal static string SaveState() { return biome == null ? null : biome.Key + "|" + left + "|" + caught + "|" + (CurrentRare ? 1 : 0) + "|" + (CurrentRareText ?? ""); }
+        internal static void LoadState(string s, Pawn p)
+        {
+            Reset(); if (string.IsNullOrEmpty(s)) return;
+            var f = s.Split('|'); biome = HuntCatalog.All.FirstOrDefault(b => b.Key == f[0]); if (biome == null) return;
+            pawn = p; left = int.Parse(f[1]); caught = int.Parse(f[2]); CurrentRare = f[3] == "1"; CurrentRareText = f.Length > 4 ? f[4] : "";
+        }
+        internal static void Reset() { biome = null; pawn = null; left = 0; caught = 0; CurrentRare = false; CurrentRareText = null; }
+        /// <summary>이어 한 배틀의 끝 처리.</summary>
+        internal static void ResolvePublic(RimketBattle b) { Resolve(b); }
         /// <summary>지금 상대가 레어(드묾 이상 등급이거나 이로치)인가: 도망칠 때 한 번 더 묻는다.</summary>
         internal static bool CurrentRare; internal static string CurrentRareText;
         public const int RareTier = 2;      // 드묾 이상
@@ -148,7 +162,7 @@ namespace Rimketmon
             if (left <= 0) { End(); return; }
             var party = pc.ActiveParty(); party.RemoveAll(c => c.IsFainted);
             if (party.Count == 0) { End("싸울 수 있는 림켓몬이 없어 돌아왔다."); return; }
-            int balls = 0; for (int t = 0; t < 4; t++) balls += RimketInventory.CountPublic(pawn, t);
+            int balls = 0; for (int t = 0; t < 4; t++) balls += RimketInventory.HuntCount(pawn, t);
             if (balls == 0) { End("볼이 다 떨어져 돌아왔다."); return; }
             left--;
             var rng = new GameRng();
@@ -166,9 +180,10 @@ namespace Rimketmon
             CurrentRare = rTier >= RareTier || wild.Shiny > 0;
             CurrentRareText = wild.Shiny > 0 ? "이로치" : rTier >= 0 && rTier < HuntCatalog.TierNames.Length ? HuntCatalog.TierNames[rTier] : "";
             var colonist = new ColonistCombatant { Name = pawn.LabelShortCap };      // 사냥은 림켓몬끼리만 싸운다
-            var battle = new RimketBattle(rng, settings, party, wild, colonist) { HuntMode = true };
-            for (int t = 0; t < 4; t++) battle.Balls[t] = RimketInventory.CountPublic(pawn, t);
+            var battle = new RimketBattle(BattleSave.Rng(rng), settings, party, wild, colonist) { HuntMode = true };
+            for (int t = 0; t < 4; t++) battle.Balls[t] = RimketInventory.HuntCount(pawn, t);
             Window_RimketBattle.ArenaOverride = biome.Arena;
+            BattleSave.Begin("hunt", null, pawn);
             BattleFlow.StartHuntBattle(battle, pawn, Resolve);
         }
 

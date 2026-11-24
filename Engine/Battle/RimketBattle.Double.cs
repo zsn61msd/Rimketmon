@@ -277,7 +277,8 @@ namespace Rimketmon.Engine
         // ------------------------------------------------------------------ 라운드
 
         /// <summary>두 칸의 행동을 한꺼번에 낸다. 둘째 칸 행동이 null이면 자동(AI)으로 정한다.</summary>
-        public bool ActDouble(BattleAction a0, BattleAction? a1)
+        public bool ActDouble(BattleAction a0, BattleAction? a1) { bool ok = ActDoubleCore(a0, a1); if (ok) Note("D|" + BattleJournal.Enc(a0) + "|" + (a1.HasValue ? BattleJournal.Enc(a1.Value) : "-")); return ok; }
+        private bool ActDoubleCore(BattleAction a0, BattleAction? a1)
         {
             if (!IsDouble || IsOver || Phase == BattlePhase.WinChoice || PendingSwitch) return false;
             var live = LiveIdx(Player);

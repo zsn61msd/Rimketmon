@@ -26,6 +26,9 @@ namespace Rimketmon
             Scribe_Values.Look(ref C.Name, "name");
             Scribe_Values.Look(ref C.Look, "look", "");
             Scribe_Values.Look(ref C.WedgeBackup, "wedgeBackup", null);
+            Scribe_Values.Look(ref C.FormBase, "formBase", null);
+            Scribe_Values.Look(ref C.FormBaseAbility, "formBaseAbility", null);
+            Scribe_Values.Look(ref C.Dynamax, "dynamax", false);
             Scribe_Values.Look(ref C.CardSpecies, "cardSpecies", null);
             Scribe_Values.Look(ref C.CardShiny, "cardShiny", 0);
             Scribe_Values.Look(ref C.Neutral, "neutral", false);

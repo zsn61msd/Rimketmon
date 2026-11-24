@@ -55,7 +55,7 @@ internal static class Program
     private static void TestTowerAutoAndFee()
     {
         Console.WriteLine("\n[배틀타워: 입장료 · 오토 AI]");
-        Check(TowerRules.EntryFee(1) == 100 && TowerRules.EntryFee(10) == 100 && TowerRules.EntryFee(11) == 150 && TowerRules.EntryFee(91) == 550, "입장료 100 + 10층마다 50", TowerRules.EntryFee(91).ToString());
+        Check(TowerRules.EntryFee(1) == 0 && TowerRules.EntryFee(10) == 0 && TowerRules.EntryFee(11) == 150 && TowerRules.EntryFee(21) == 200 && TowerRules.EntryFee(91) == 550, "입장료 1~10층 무료, 11층 150 + 10층마다 50", TowerRules.EntryFee(91).ToString());
         var s = new EngineSettings();
         int bad = 0, games = 0, wins = 0;
         for (int g = 0; g < 30; g++)
@@ -98,6 +98,257 @@ internal static class Program
         Check(w1.SequenceEqual(w2), "예전 단계(셋 동일 배율)는 확률이 그대로");
     }
 
+    /// <summary>폼 팀(플레이어 쪽, 규칙 AI가 조종) 대 기본 팀(상대 쪽, 시험할 AI). mode: rule / learned / look. 상대 쪽 승률을 출력.</summary>
+    static void BenchForm(string mode, int from, int n, int sims, int depth)
+    {
+        string path = System.IO.Path.Combine(AppContext.BaseDirectory, "../../../../Rimketmon/Data/ai_policy.bin");
+        var pol = NeuralPolicy.Load(path); var s = new EngineSettings(); AiEncoder.FullInfo = true;
+        int win = 0, done = 0, forms = 0; var sw = System.Diagnostics.Stopwatch.StartNew();
+        for (int g = from; g < from + n; g++)
+        {
+            var rng = new SystemRng(50000 + g); string fmt = RankedPoolCatalog.Formats[g % 6];
+            var p6 = RankedBuilder.Build(fmt, 6, RankedLadder.BattleLevel, rng, s); var f6 = RankedBuilder.Build(fmt, 6, RankedLadder.BattleLevel, rng, s);
+            var mine = RankedRules.Brought(p6, new List<int> { 0, 1, 2 }, RankedLadder.BattleLevel); var foe = RankedRules.Brought(f6, new List<int> { 0, 1, 2 }, RankedLadder.BattleLevel);
+            // 플레이어(폼 팀): 바꿀 수 있는 것 중 1~3마리를 무작위 폼으로
+            var can = mine.Where(c => FormChange.Options(c).Count > 0 || FormChange.CanDynamax(c)).ToList();
+            if (can.Count > 0)
+            {
+                int k = rng.Next(1, can.Count + 1);
+                foreach (var t in can.OrderBy(_ => rng.Next(0, 1000)).Take(k))
+                {
+                    var o = FormChange.Options(t); bool dm = FormChange.CanDynamax(t); int pk = rng.Next(0, o.Count + (dm ? 1 : 0));
+                    if (pk < o.Count) FormChange.Apply(t, o[pk]); else { t.Dynamax = true; t.RecalculateStats(); }
+                    forms++;
+                }
+            }
+            foreach (var c in mine.Concat(foe)) c.FullHeal();
+            int seed = 7000 + g;
+            var m0 = mine.Select(c => c.Clone()).ToList(); var f0 = foe.Select(c => c.Clone()).ToList();
+            var b = RimketBattle.RankedBattle(new SystemRng(seed), s, "P", mine, "F", foe);
+            if (mode == "learned") b.FoeBrain = new LearnedFoe(pol, s, new SystemRng(seed + 1)).Decide;
+            else if (mode == "look") new LookaheadFoe(pol, s, seed, m0, f0, null, seed + 2) { Sims = sims, Depth = depth, WaitMs = 600000 }.Attach(b);
+            var pr = new SystemRng(seed + 3); int guard = 0, lastSw = -9, sws = 0;
+            while (!b.IsOver && guard++ < 300)
+            {
+                var l = b.LegalActions().Where(x => x.Kind != ActionKind.Disconnect && x.Kind != ActionKind.UseItem).ToList();
+                if (l.Count == 0) break;
+                BattleAction act = l[0]; var me = b.Player.Active; var tg = b.Foe.Active;
+                bool mustSwitch = l.All(x => x.Kind == ActionKind.Switch);
+                if (!mustSwitch && me != null && tg != null && !me.Fainted)
+                {
+                    int sw2 = RankedAI.ChooseSwitch(me, tg, b.Player.Party, s, pr, lastSw == b.Turn - 1, sws);
+                    if (sw2 >= 0 && l.Any(x => x.Kind == ActionKind.Switch && x.Index == sw2)) { act = new BattleAction(ActionKind.Switch, sw2); lastSw = b.Turn; sws++; }
+                    else
+                    {
+                        var ch = RankedAI.ChooseMove(me, tg, s, pr, m => l.Any(x => x.Kind == ActionKind.UseMove && me.C.Moves[x.Index].Move == m), m => 0.0);
+                        int idx = ch != null && ch.Slot != null ? me.C.Moves.IndexOf(ch.Slot) : -1;
+                        var hit = l.Where(x => x.Kind == ActionKind.UseMove && x.Index == idx).ToList();
+                        act = hit.Count > 0 ? hit[0] : l.First(x => x.Kind == ActionKind.UseMove || x.Kind == ActionKind.Struggle || true);
+                    }
+                }
+                else if (mustSwitch && tg != null)
+                {
+                    act = l.OrderByDescending(x => b.Player.Party[x.Index].Moves.Where(ms => ms.Move.IsDamaging).Select(ms => RankedAI.Damage(b.Player.Party[x.Index], ms.Move, tg.C, 1, 1, s)).DefaultIfEmpty(0).Max()).First();
+                }
+                if (!b.Act(act)) b.Act(l[pr.Next(0, l.Count)]);
+            }
+            if (b.IsOver) { done++; if (b.Player.Party.All(c => c.Hp <= 0)) win++; }
+        }
+        Console.WriteLine($"{mode} sims={sims} depth={depth}: 상대 쪽(시험 AI) 승 {win}/{done} (판 {n}, 폼 {forms}마리) {sw.Elapsed.TotalSeconds:F0}s");
+    }
+
+    // ------------------------------------------------------------------ 배틀 진행 기록(세이브 중 배틀 이어 하기)
+    static RimketBattle JBuild(string kind, List<RimketCreature> mine, List<RimketCreature> foe, IRng rng, EngineSettings s, int brainSeed)
+    {
+        RimketBattle b;
+        switch (kind)
+        {
+            case "wild": b = new RimketBattle(rng, s, mine, foe[0], new ColonistCombatant { Name = "나" }); break;
+            case "hunt": b = new RimketBattle(rng, s, mine, foe[0], new ColonistCombatant { Name = "나" }); b.HuntMode = true; b.Balls[0] = 5; b.Balls[1] = 3; break;
+            case "trainer": b = RimketBattle.Trainer(rng, s, mine, new ColonistCombatant { Name = "나" }, "트레이너", foe, null); break;
+            case "double": b = RimketBattle.DoubleTrainer(rng, s, mine, new ColonistCombatant { Name = "나" }, "트레이너", foe, null); break;
+            case "online": b = RimketBattle.OnlineBattle(rng, s, "가", mine, "나", foe); break;
+            default: b = RimketBattle.RankedBattle(rng, s, "나", mine, "상대", foe); break;
+        }
+        if (kind == "ranked")
+        {
+            var br = new SystemRng(brainSeed);      // 상대 두뇌: 매번 다른 무작위(기록 없이는 재현 불가) → 기록이 이것을 대신해야 한다
+            b.FoeBrain = bb => { var l = bb.FoeLegalActions(); return l.Count > 0 && br.NextDouble() < 0.7 ? l[br.Next(0, l.Count)] : (BattleAction?)null; };
+        }
+        return b;
+    }
+
+    /// <summary>한 걸음: 합법 행동 중 하나(가끔 볼·승리 선택·기술 배우기 흉내).</summary>
+    static void JStep(RimketBattle b, IRng pick)
+    {
+        if (b.Phase == BattlePhase.WinChoice) { b.ChooseWinOption((WinChoice)pick.Next(0, 3)); return; }
+        if (b.Online)
+        {
+            BattleAction? pa = null, fa = null;
+            var lp = b.LegalActions().Where(x => x.Kind != ActionKind.Disconnect).ToList(); var lf = b.FoeLegalActions().Where(x => x.Kind != ActionKind.Disconnect).ToList();
+            if ((!b.PendingFoeSwitch || b.PendingSwitch) && lp.Count > 0) pa = lp[pick.Next(0, lp.Count)];
+            if ((!b.PendingSwitch || b.PendingFoeSwitch) && lf.Count > 0) fa = lf[pick.Next(0, lf.Count)];
+            b.OnlineAct(pa, fa); return;
+        }
+        if (b.HuntMode && pick.NextDouble() < 0.15 && b.ThrowBall(pick.Next(0, 2))) return;
+        if (pick.NextDouble() < 0.05 && b.Player.Party.Count > 0)
+        {
+            int pi = pick.Next(0, b.Player.Party.Count); var ids = new[] { "TACKLE", "EMBER", "WATERGUN", "THUNDERSHOCK" };
+            string id = ids[pick.Next(0, ids.Length)]; int slot = pick.Next(0, 4);
+            b.NoteLearn(pi, slot, id); b.ApplyLearn(pi, slot, id);
+        }
+        var la = b.LegalActions(); if (la.Count == 0) return;
+        if (b.IsDouble && !b.PendingSwitch)
+        {
+            var a0 = la[pick.Next(0, la.Count)];
+            if (!b.ActDouble(a0, null)) foreach (var x in la) if (b.ActDouble(x, null) || b.ActDouble(x, la[0])) break;
+            return;
+        }
+        if (!b.Act(la[pick.Next(0, la.Count)])) foreach (var x in la) if (b.Act(x)) break;
+    }
+
+    static void TestJournal()
+    {
+        Console.WriteLine("\n[배틀 진행 기록: 저장 → 다시 만들기 → 재생 → 똑같은가]");
+        var s = new EngineSettings(); int ok = 0, total = 0, fail = 0, controls = 0, controlsDiffer = 0; string firstFail = null; bool codecRound = false;
+        foreach (var kind in new[] { "wild", "hunt", "trainer", "ranked", "double", "online" })
+            for (int g = 0; g < 40; g++)
+            {
+                var gen = new SystemRng(9000 + g * 7 + kind.Length);
+                string fmt = RankedPoolCatalog.Formats[g % 6];
+                var m6 = RankedBuilder.Build(fmt, 6, 50, gen, s); var f6 = RankedBuilder.Build(fmt, 6, 50, gen, s);
+                int n = kind == "wild" || kind == "hunt" ? 1 : kind == "double" ? 4 : 3;
+                var mine = RankedRules.Brought(m6, new List<int> { 0, 1, 2 }, 50); var foe = RankedRules.Brought(f6, Enumerable.Range(0, n).ToList(), 50);
+                if (kind == "double") mine = RankedRules.Brought(m6, new List<int> { 0, 1, 2, 3 }, 50);
+                foreach (var c in mine.Concat(foe)) c.FullHeal();
+                var mine0 = mine.Select(c => c.Clone()).ToList(); var foe0 = foe.Select(c => c.Clone()).ToList();
+                var mineTxt = mine.Select(FlatCodec.EncodeCreature).ToList(); var foeTxt = foe.Select(FlatCodec.EncodeCreature).ToList();      // 세이브에 남기는 형태(문자열)
+
+                var j = new BattleJournal();
+                var b = JBuild(kind, mine, foe, new JournalRng(new SystemRng(500 + g), j), s, 777 + g); b.Journal = j;
+                var pick = new SystemRng(31 * g + 3); int steps = 3 + pick.Next(0, 25);
+                for (int i = 0; i < steps && !b.IsOver; i++) JStep(b, pick);
+
+                // 저장(문자열로 바꿨다가 되돌리기까지) → 시작 사본으로 다시 만들기 → 재생
+                var saved = new BattleJournal { Entries = j.Entries.ToList(), Foe = j.Foe.ToList() }; saved.SetDrawsText(j.DrawsText());
+                var mineR = mineTxt.Select(FlatCodec.DecodeCreature).ToList(); var foeR = foeTxt.Select(FlatCodec.DecodeCreature).ToList();      // 문자열에서 되살린 시작 상태
+                if (g == 0 && kind == "wild") codecRound = mine0.Zip(mineR, (x, y) => FlatCodec.EncodeCreature(x) == FlatCodec.EncodeCreature(y)).All(z => z);
+                var jr = saved.Copy();
+                var r = JBuild(kind, mineR, foeR, new JournalRng(new SystemRng(123456), jr), s, 999999);      // 다른 무작위·다른 두뇌: 기록만으로 같아져야 한다
+                bool replayed = BattleJournal.Replay(r, jr);
+                total++;
+                string h1 = OnlineProtocol.StateHash(b), h2 = OnlineProtocol.StateHash(r);
+                bool same = replayed && h1 == h2 && b.Log.Count == r.Log.Count && b.Phase == r.Phase && b.IsOver == r.IsOver
+                            && mine.Select(c => c.Hp + "/" + string.Join(",", c.Moves.Select(m => m.Move.Id + m.PP))).SequenceEqual(mineR.Select(c => c.Hp + "/" + string.Join(",", c.Moves.Select(m => m.Move.Id + m.PP))));
+                // 이어서 같은 입력으로 더 진행해도 계속 같아야 한다(새 무작위는 양쪽에 같은 값이 들어가도록 같은 시드)
+                if (same)
+                {
+                    b.Journal = null; r.Journal = null;
+                    var tail1 = new SystemRng(4242 + g); var tail2 = new SystemRng(4242 + g);
+                    // 이어 하기부터는 기록이 끝났으니 각자 rng가 새 값을 뽑는다 → 같은 값이 되도록 남은 무작위를 맞출 수 없으므로 입력만 같은지 확인
+                    for (int i = 0; i < 5 && !b.IsOver && !r.IsOver; i++) { var la1 = b.LegalActions(); var la2 = r.LegalActions(); if (la1.Count != la2.Count) { same = false; break; } int k = tail1.Next(0, Math.Max(1, la1.Count)); tail2.Next(0, 1); }
+                }
+                // 대조군: 기록의 무작위 값 하나를 바꾸면 결과가 달라져야 한다(검사가 헛돌지 않는지)
+                if (same && g == 0 && saved.Draws.Count > 4 && saved.Entries.Count > 2)
+                {
+                    var bad = saved.Copy(); for (int q = 0; q < bad.Draws.Count; q++) bad.Draws[q] = bad.Draws[q] % 1 == 0 ? bad.Draws[q] : 1 - bad.Draws[q];
+                    var rb = JBuild(kind, mine0.Select(c => c.Clone()).ToList(), foe0.Select(c => c.Clone()).ToList(), new JournalRng(new SystemRng(1), bad), s, 1);
+                    BattleJournal.Replay(rb, bad); controls++;
+                    if (OnlineProtocol.StateHash(rb) != h1 || rb.Log.Count != b.Log.Count) controlsDiffer++;
+                }
+                if (same) ok++; else { fail++; if (firstFail == null) firstFail = kind + " #" + g + " 재생=" + replayed + " 로그 " + b.Log.Count + "/" + r.Log.Count + " 단계 " + b.Phase + "/" + r.Phase; }
+            }
+        { var es = new EngineSettings(); es.LethalDefeat = true; var es2 = new EngineSettings(); FlatCodec.Decode(es2, FlatCodec.Encode(es)); Check(FlatCodec.Encode(es) == FlatCodec.Encode(es2) && es2.LethalDefeat, "엔진 설정: 저장했다 되살려도 똑같다", string.Join(" ", FlatCodec.Skipped.Where(x => x.StartsWith("EngineSettings")))); }
+        { var cc = Col("정착민", 1.3, 4, new EngineSettings()); var cc2 = new ColonistCombatant(); FlatCodec.Decode(cc2, FlatCodec.Encode(cc)); Check(FlatCodec.Encode(cc) == FlatCodec.Encode(cc2), "정착민 전투원: 저장했다 되살려도 똑같다", string.Join(" ", FlatCodec.Skipped.Where(x => x.StartsWith("ColonistCombatant")))); }
+        {
+            var j1 = new BattleJournal(); var r1 = new JournalRng(new SystemRng(77), j1);
+            var seq1 = new List<double>(); for (int i = 0; i < 50; i++) seq1.Add(i % 3 == 0 ? r1.Next(0, 100) : r1.NextDouble());
+            var j2 = new BattleJournal { Draws = j1.Draws.Take(20).ToList() }; var r2 = new JournalRng(new SystemRng(77), j2, true);
+            var seq2 = new List<double>(); for (int i = 0; i < 50; i++) seq2.Add(i % 3 == 0 ? r2.Next(0, 100) : r2.NextDouble());
+            Check(seq1.SequenceEqual(seq2), "시드 난수 이어 쓰기: 기록 20개 뒤에도 원래 흐름과 같다(미리 계산 AI)");
+        }
+        Check(codecRound, "림켓몬 시작 상태: 문자열로 저장했다 되살려도 똑같다", string.Join(" ", FlatCodec.Skipped));
+        Check(!FlatCodec.Skipped.Any(x => x.StartsWith("RimketCreature.")), "림켓몬의 모든 필드를 저장한다", string.Join(" ", FlatCodec.Skipped));
+        Check(controls > 0 && controlsDiffer == controls, "대조군: 기록을 바꾸면 결과가 달라진다(" + controlsDiffer + "/" + controls + ")");
+        Check(fail == 0, "저장한 배틀 " + total + "판을 다시 만들어 재생하면 상태가 똑같다", firstFail);
+    }
+
+    static string RunRanked(int seed, EngineSettings s)
+    {
+        var rng = new SystemRng(seed); var pick = new SystemRng(seed + 7);
+        var m6 = RankedBuilder.Build("ou", 6, RankedLadder.BattleLevel, rng, s); var f6 = RankedBuilder.Build("ou", 6, RankedLadder.BattleLevel, rng, s);
+        var mine = RankedRules.Brought(m6, new List<int> { 0, 1, 2 }, RankedLadder.BattleLevel); var foe = RankedRules.Brought(f6, new List<int> { 0, 1, 2 }, RankedLadder.BattleLevel);
+        foreach (var c in mine.Concat(foe)) c.FullHeal();
+        var b = RimketBattle.RankedBattle(rng, s, "나", mine, "상대", foe);
+        int guard = 0;
+        while (!b.IsOver && guard++ < 400) { var la = b.LegalActions(); if (la.Count == 0) break; b.Act(la[pick.Next(0, la.Count)]); }
+        return b.Turn + ":" + b.Log.Count + ":" + string.Join(",", mine.Concat(foe).Select(c => c.Hp)) + ":" + b.IsOver;
+    }
+
+    static void BenchQuiet(int n)
+    {
+        var s = new EngineSettings(); var a = new string[n]; var sw = System.Diagnostics.Stopwatch.StartNew();
+        for (int i = 0; i < 20; i++) RunRanked(i + 99999, s);
+        RimketBattle.QuietLog = false; sw.Restart(); for (int i = 0; i < n; i++) a[i] = RunRanked(i, s); double t0 = sw.Elapsed.TotalSeconds;
+        RimketBattle.QuietLog = true; sw.Restart(); int diff = 0; for (int i = 0; i < n; i++) if (RunRanked(i, s) != a[i]) diff++; double t1 = sw.Elapsed.TotalSeconds;
+        RimketBattle.QuietLog = false;
+        Console.WriteLine($"판 {n}개: 문장 켬 {t0:F2}s / 끔 {t1:F2}s → {t0 / t1:F2}배, 결과 다른 판 {diff}");
+    }
+
+    private static void TestFormChange()
+    {
+        Console.WriteLine("\n[폼체인지: 메가·원시·거다이맥스]");
+        Check(SpeciesCatalog.BattleForms.Count >= 120, "폼 데이터", SpeciesCatalog.BattleForms.Count + "종");
+        Check(!SpeciesCatalog.All.Any(x => x.FormKind != null) && !SpeciesCatalog.Forms.Any(x => x.FormKind != null), "전체·폼 목록(무작위 생성)에 들어가지 않는다");
+        SpeciesInfo mx; Check(SpeciesCatalog.TryGet("MEGA_CHARIZARD_X", out mx) && mx.Type1 == ElementType.Fire && mx.Type2 == ElementType.Dragon && mx.Atk == 130 && mx.Def == 111 && mx.Abilities[0] == "TOUGHCLAWS", "메가리자몽X 정식 수치(불꽃/드래곤, 공격 130, 방어 111, 단단한발톱)");
+        SpeciesInfo pk; Check(SpeciesCatalog.TryGet("PRIMAL_KYOGRE", out pk) && pk.SpA == 180 && pk.Abilities[0] == "PRIMORDIALSEA", "원시가이오가(특공 180, 시원의바다)");
+        var s = new EngineSettings();
+        var c = Mk("CHARIZARD", 50, null, "FLAMETHROWER"); c.Ability = "SOLARPOWER"; c.Item = "LEFTOVERS";
+        int atk0 = c.Atk, hp0 = c.MaxHp;
+        var opts = FormChange.Options(c);
+        Check(opts.Count == 3 && opts.Any(o => o.Id == "GMAX_CHARIZARD"), "리자몽 선택지: 메가X·메가Y·거다이맥스", string.Join(",", opts.Select(o => o.Id)));
+        FormChange.Apply(c, mx);
+        Check(c.Species == "MEGA_CHARIZARD_X" && c.Ability == "TOUGHCLAWS" && c.Atk > atk0 && c.Item == "LEFTOVERS" && c.FormBase == "CHARIZARD", "메가진화: 종족·특성·능력치 변경, 도구 그대로", "공격 " + atk0 + "→" + c.Atk);
+        Check(FormChange.Options(c).Count == 0, "이미 바뀐 포켓몬은 다시 바꿀 수 없다");
+        FormChange.Revert(c);
+        Check(c.Species == "CHARIZARD" && c.Ability == "SOLARPOWER" && c.Atk == atk0 && c.MaxHp == hp0 && c.FormBase == null, "되돌리기: 원래 종족·특성·능력치");
+        SpeciesInfo gm; SpeciesCatalog.TryGet("GMAX_CHARIZARD", out gm);
+        FormChange.Apply(c, gm);
+        Check(FormChange.IsDynamaxed(c) && c.MaxHp >= hp0 * 2 - 1, "거다이맥스: 언제나 다이맥스(HP 2배)", hp0 + "→" + c.MaxHp);
+        FormChange.Revert(c);
+        var p = Mk("PIKACHU", 30, null, "THUNDERSHOCK");
+        var m = Mk("MAGIKARP", 30, null, "SPLASH"); int mh = m.MaxHp;
+        Check(FormChange.CanDynamax(m), "거다이맥스 폼이 없는 포켓몬은 다이맥스 가능");
+        m.Dynamax = true; m.RecalculateStats();
+        Check(m.MaxHp == mh * 2, "다이맥스: HP 2배", mh + "→" + m.MaxHp);
+        var z = Mk("ETERNATUS", 60, null, "TACKLE");
+        Check(!FormChange.CanDynamax(z), "무한다이노는 다이맥스 불가");
+        int found = 0; var rng = new SystemRng(3);
+        for (int i = 0; i < 40; i++) foreach (var x in TowerBuilder.BuildRegularParty(95, rng, s)) if (SpeciesCatalog.IsBattleForm(x.Species)) found++;
+        Check(found == 0, "타워 트레이너에게 폼이 나오지 않는다");
+
+        // 다이맥스 기술
+        var dp = Mk("PIKACHU", 50, null, "THUNDERSHOCK", "GROWL"); dp.Dynamax = true; dp.RecalculateStats(); dp.Hp = dp.MaxHp;
+        var foe = Mk("SNORLAX", 50, null, "TACKLE");
+        var b = new RimketBattle(new SystemRng(5), s, new[] { dp }, foe, Col("정착민", 1.0, 3, s));
+        b.Act(new BattleAction(ActionKind.UseMove, 0));
+        string log = string.Join("\n", b.Log);
+        Check(log.Contains("다이썬더") && log.Contains("일렉트릭필드") || log.Contains("다이썬더") && log.Contains("전기"), "다이맥스 피카츄: 전기쇼크 → 다이썬더 + 일렉트릭필드");
+        Check(dp.Moves[0].PP == dp.Moves[0].Move.MaxPP - 1, "다이기술 PP는 원래 기술에서 깎인다");
+        var gc = Mk("CHARIZARD", 50, null, "FLAMETHROWER"); FormChange.Apply(gc, gm);
+        var foe2 = Mk("BLISSEY", 50, null, "SPLASH");
+        var b2 = new RimketBattle(new SystemRng(5), s, new[] { gc }, foe2, Col("정착민", 1.0, 3, s));
+        b2.Act(new BattleAction(ActionKind.UseMove, 0)); b2.Act(new BattleAction(ActionKind.UseMove, 0));
+        string log2 = string.Join("\n", b2.Log);
+        Check(log2.Contains("거다이백화요란") && log2.Contains("여파"), "거다이리자몽: 거다이백화요란 + 지속 피해");
+        Check(RimketBattle.IsMaxMoveId("MAXGUARD"), "변화기 → 다이월");
+        var fe = new AiEncoder(s) { FormObs = true }; fe.SetPreview(new List<RimketCreature> { gc }, new List<RimketCreature> { dp });
+        var fo = fe.Encode(b2);
+        Check(fo.Length == AiEncoder.SizeFor(true) && AiEncoder.SizeFor(true) == AiEncoder.Size + AiEncoder.FormExtra, "폼 전용 관측 크기");
+        Check(fo[AiEncoder.Size] == 1f && fo[AiEncoder.Size + 1] == 1f, "폼 입력: 내 거다이리자몽 = 다이맥스·거다이맥스 표시");
+        Check(new AiEncoder(s).Encode(b2).Length == AiEncoder.Size, "기존 AI 관측 크기는 그대로");
+    }
+
     private static void Check(bool ok, string name, string detail = "")
     {
         if (ok) { passed++; Console.WriteLine("  [PASS] " + name + (detail != "" ? "  " + detail : "")); }
@@ -112,6 +363,8 @@ internal static class Program
             string lp = System.IO.Path.Combine(d.FullName, "Rimketmon", "Languages");
             if (System.IO.Directory.Exists(lp)) { Lang.LoadFolder(lp); break; }
         }
+        if (args.Length > 0 && args[0] == "--bench-form") { BenchForm(args[1], int.Parse(args[2]), int.Parse(args[3]), args.Length > 4 ? int.Parse(args[4]) : 24, args.Length > 5 ? int.Parse(args[5]) : 4); return 0; }
+        if (args.Length > 0 && args[0] == "--bench-quiet") { BenchQuiet(args.Length > 1 ? int.Parse(args[1]) : 300); return 0; }
         if (args.Length > 1 && args[0] == "--lang-audit")
         {
             // 한국어 문장 목록을 영어로 바꿔 보고 한글이 남는 것을 출력
@@ -122,6 +375,47 @@ internal static class Program
                 if (Lang.HasKorean(t)) { left++; Console.WriteLine(line + "\t=> " + t.Replace("\n", "\\n")); }
             }
             Console.Error.WriteLine("남은 줄: " + left);
+            return 0;
+        }
+        if (args.Length > 0 && args[0] == "--lang-battle")
+        {
+            // 무작위 배틀을 많이 돌려 전투 기록 문장을 영어로 바꿔 보고, 한글이 남는 문장을 모은다
+            var rng = new SystemRng(4242); var s0 = new EngineSettings(); var left = new Dictionary<string, string>();
+            var pool = ItemCatalog.All.Where(x => x.Holdable && (x.Pocket == 1 || x.Pocket == 5)).Select(x => x.Id).ToList();
+            int n = args.Length > 1 ? int.Parse(args[1]) : 2000;
+            for (int i = 0; i < n; i++)
+            {
+                try
+                {
+                    Lang.Set(true);
+                    int badges = rng.Next(0, 9);
+                    var party = new List<RimketCreature>();
+                    for (int k = 0, m = rng.Next(1, 4); k < m; k++) { var c = SpawnRoller.Roll("a", "Ally", rng.Next(1, 7), 0.5f, badges, rng, s0); c.Item = pool[rng.Next(0, pool.Count)]; party.Add(c); }
+                    var wild = SpawnRoller.Roll("w", "Wild", rng.Next(1, 7), 0.5f, badges, rng, s0); wild.Item = pool[rng.Next(0, pool.Count)];
+                    var col = Col("Rex", 1.0, 3, s0);
+                    RimketBattle b;
+                    if (i % 2 == 0) b = RimketBattle.Trainer(rng, s0, party, col, "Joey", new List<RimketCreature> { wild, SpawnRoller.Roll("w2", "Wild2", rng.Next(1, 7), 0.5f, badges, rng, s0) }, null);
+                    else b = new RimketBattle(rng, s0, party, wild, col);
+                    int guard = 0;
+                    while (!b.IsOver && guard++ < 600)
+                    {
+                        if (b.Phase == BattlePhase.WinChoice) { b.ChooseWinOption((WinChoice)rng.Next(0, 3)); break; }
+                        var acts = b.LegalActions(); if (acts.Count == 0) break;
+                        b.Act(acts[rng.Next(0, acts.Count)]);
+                    }
+                    foreach (var line in b.Log)
+                    {
+                        var t = Lang.Tr(line);
+                        if (!Lang.HasKorean(t)) continue;
+                        string key = System.Text.RegularExpressions.Regex.Replace(line, @"\d+", "N");
+                        if (!left.ContainsKey(key)) left[key] = line + "\t=> " + t.Replace("\n", "\\n");
+                    }
+                    Lang.Set(false);
+                }
+                catch (Exception) { Lang.Set(false); }
+            }
+            foreach (var kv in left.OrderBy(k => k.Key)) Console.WriteLine(kv.Value.Replace("\n", "\\n"));
+            Console.Error.WriteLine("남은 문장 종류: " + left.Count);
             return 0;
         }
         if (args.Length > 1 && args[0] == "--show")
@@ -273,6 +567,8 @@ internal static class Program
         TestTowerRegularBoost();
         TestTowerAutoAndFee();
         TestRareCharmTiers();
+        TestFormChange();
+        TestJournal();
         Console.WriteLine("== 12. 대량 무작위 전투(오류/무한루프 검사) ==");
         Fuzz(false);
         Console.WriteLine("== 12b. 지닌 도구를 섞은 대량 전투 ==");

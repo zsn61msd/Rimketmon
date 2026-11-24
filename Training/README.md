@@ -60,3 +60,28 @@
 - `FastBuffer`: 한 번 모은 데이터(관측 등)를 학습 장치(GPU)에 통째로 올려 두고 묶음을 거기서 뽑는다. 이전에는 묶음마다 CPU에서 골라 GPU로 보냈다(256환경×128걸음이면 한 번에 128회, 회당 약 30MB). 학습 결과는 같다. GPU 메모리가 모자라면 자동으로 예전 방식, `--slow-buffer`로 끌 수 있다.
 - `[시간 배분]`이 환경(C#) / 행동 고르기(신경망) / 학습 세 부분으로 나온다.
 - GPU에서의 실제 속도 향상은 측정하지 못했다(작업 환경에 GPU 없음, CPU에서는 차이 없음이 정상).
+
+## 폼 전용 AI (5단계, 2026-11-21)
+상대 파티에 폼체인지(메가·원시·거다이맥스·다이맥스) 포켓몬이 있을 때만 쓰는 **두 번째 AI**. 기존 AI(ai_policy.bin)는 그대로 두고, 모드가 배틀마다 고른다(폼 포켓몬이 한 마리라도 있으면 폼 전용, 없으면 기존).
+- 학습하는 AI 쪽은 기본 랭크 조합 그대로. 상대 팀(6마리)만 1~6마리를 무작위 폼으로 바꾼다(도구는 그대로).
+- 관측 끝에 폼 입력 30칸(7222 → 7252): 전투 6칸 × (다이맥스·거다이맥스·메가/원시) + 상대 프리뷰 6칸 × (폼 있음·다이맥스). `--widen`으로 기존 모델을 이어받으면 새 칸은 0에서 시작 → 처음엔 기존 AI와 똑같이 둔다.
+- 실행: `py -3.10 train.py --selfplay --form --full-info --widen runs/<기존 최종>/final --out runs/form1 --steps 20000000 --envs 256 --n-steps 128 --device cuda --patience 4`
+  - `--patience 4`: 평가(100만 step마다) 랭크AI 승률이 4번 연속 최고 기록을 못 넘으면 자동으로 멈추고 final을 저장한다. best는 따로 남는다.
+- 비교 평가(같은 폼 상대):
+  - 기존 AI: `py -3.10 eval.py runs/<기존>/final --full-info --form-foe --games 500`
+  - 폼 전용: `py -3.10 eval.py runs/form1/best --full-info --form-foe --form-obs --games 500`
+- 모드에 넣기: `py -3.10 export_weights.py runs/form1/best ai_policy_form.bin --half` → `Rimketmon/Rimketmon/Data/ai_policy_form.bin`
+- 환경 변수(직접 돌릴 때): RIMKET_FORMFOE=1(상대에 폼), RIMKET_FORMOBS=1(폼 입력).
+
+## 학습 중 배틀 문장 끄기 (속도)
+TrainEnv는 배틀 문장(번역·조사 처리)을 만들지 않는다(`RimketBattle.QuietLog`). 줄 수는 그대로 늘어서 동기화 값·결과는 같다(같은 시드 2000판 비교, 다른 판 0). 엔진만 잰 속도 1.5~1.75배. 문장이 필요한 점검 때는 RIMKET_LOG=1.
+
+## 폼 팀 대응: 미리 계산 AI 따라 하기 (distill.py, 2026-11-21)
+PPO로 폼 팀 상대를 학습한 결과(form1·form2)는 기존 AI를 넘지 못했다. 대신 미리 계산 AI(타이난, sims 24·depth 4)가 폼 팀 상대로 학습 AI의 약 2배 승률(600판: 24.3% vs 12.2%)이라, 그 결정을 학습 AI가 따라 하게 만든다.
+- 바퀴마다: 수집(C#, 미리 계산 AI가 둔 결정 기록) → 학습(지금까지 모은 기록 전부, 정답 따라 하기) → 평가(학습에 쓰지 않은 판 600개).
+- 다음 바퀴의 미리 계산 AI는 새 정책으로 앞 수를 굴린다 → 둘이 같이 좋아지는 것을 노림.
+- 실행(Training\python에서): `py -3.10 distill.py --start ../../Rimketmon/Data/ai_policy.bin --out runs/distill1 --rounds 4 --games 4000 --eval-look`
+  - 중간에 멈춰도 같은 명령으로 다시 돌리면 이미 모은 바퀴의 기록(records.bin)은 다시 모으지 않는다(학습은 처음부터 다시).
+- 결과: runs/distill1/log.txt, 바퀴마다 round<N>/ai_policy_form.bin(모드용 16비트). 학습 AI 승률이 출발보다 확실히 높은 바퀴의 파일을 모드 `Rimketmon/Data/ai_policy_form.bin`으로 복사.
+- 모드에서의 쓰임: 플레이어 파티에 폼 포켓몬이 있으면 학습 AI(관장·사천왕·챔피언·어둠·타워·랭크 1800+)와 타이난의 미리 계산 AI가 이 파일을 쓴다. 없으면 기존 ai_policy.bin.
+- C# 도구 직접 실행: `dotnet TrainEnv.dll --bench 정책.bin 시작판 판수 rule|learned|look`, `--collect 정책.bin 시작판 판수 출력.bin [sims depth eps threads]`.

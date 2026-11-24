@@ -305,6 +305,39 @@ namespace Rimketmon
             catch (System.Exception) { return false; }
         }
 
+        static readonly Dictionary<string, Texture2D> lyingCache = new Dictionary<string, Texture2D>();
+        /// <summary>
+        /// 그림(또는 그 한 조각)을 옆으로 90° 눕힌 새 텍스처. GUI 회전은 창·그룹 안에서 위치가 어긋나거나 잘려 사라지므로,
+        /// 쓰러진 모습은 미리 눕힌 그림을 회전 없이 그린다. right = 머리가 오른쪽(시계 방향).
+        /// </summary>
+        public static Texture2D Lying(Texture2D tex, int sx, int sy, int sw, int sh, bool flipX, bool right)
+        {
+            if (tex == null) return null;
+            string key = tex.GetInstanceID() + ":" + sx + ":" + sy + ":" + sw + ":" + sh + ":" + flipX + ":" + right;
+            Texture2D r;
+            if (lyingCache.TryGetValue(key, out r)) return r;
+            try
+            {
+                var px = ReadPixels(tex); int W = tex.width, H = tex.height;
+                var o = new Color32[sw * sh];
+                // 원본 조각 (x, yTop) → 텍스처 픽셀 (sx + x, H - 1 - (sy + yTop))
+                for (int yT = 0; yT < sh; yT++)
+                    for (int x = 0; x < sw; x++)
+                    {
+                        int xs = flipX ? sw - 1 - x : x;
+                        var c = px[(H - 1 - (sy + yT)) * W + sx + xs];
+                        // 시계 방향 90°: 새 그림 (가로 sh, 세로 sw) 에서 위 기준 (nx, nyT) = (sh - 1 - yT, x)
+                        int nx = right ? sh - 1 - yT : yT, nyT = right ? x : sw - 1 - x;
+                        o[(sw - 1 - nyT) * sh + nx] = c;
+                    }
+                r = new Texture2D(sh, sw, TextureFormat.RGBA32, false) { filterMode = tex.filterMode, wrapMode = TextureWrapMode.Clamp };
+                r.SetPixels32(o); r.Apply(false, false);
+            }
+            catch (System.Exception) { r = null; }
+            lyingCache[key] = r;
+            return r;
+        }
+
         public static Color32[] ReadPixels(Texture2D tex)
         {
             int w = tex.width, h = tex.height;

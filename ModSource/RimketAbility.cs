@@ -46,7 +46,7 @@ namespace Rimketmon
             }
             if (!RimketInventory.HasBall(caster))
             {
-                if (throwMessages) Messages.Message(Lang.Tr("림볼이 없다."), caster, MessageTypeDefOf.RejectInput, false);
+                if (throwMessages) Messages.Message(Lang.Tr("볼이 없다."), caster, MessageTypeDefOf.RejectInput, false);
                 return false;
             }
             if (!BattleFlow.IsOwnedAnimal(t) && !RimketInventory.HasBallFor(caster, t))
@@ -105,6 +105,31 @@ namespace Rimketmon
             if (RimketMech.IsMech(animal) && animal.Faction != Faction.OfPlayer) return 3;
             int t = TierOf(animal);
             return t <= 0 ? 2 : t <= 3 ? 0 : t == 4 ? 1 : t == 5 ? 2 : 3;
+        }
+
+        /// <summary>사냥용 볼 수: 착용자 소지품 + 그 지도(플레이어 거점) 바닥·창고에 있는 볼(금지 표시된 것 제외).</summary>
+        public static int HuntCount(Pawn pawn, int tier)
+        {
+            if (pawn == null) return 0;
+            int n = pawn.inventory != null ? Count(pawn, tier) : 0;
+            foreach (var t in MapBalls(pawn, tier)) n += t.stackCount;
+            return n;
+        }
+
+        private static List<Thing> MapBalls(Pawn pawn, int tier)
+        {
+            var l = new List<Thing>(); var d = BallDef(tier); var map = pawn != null ? pawn.MapHeld : null;
+            if (d == null || map == null || !map.IsPlayerHome) return l;
+            foreach (var t in map.listerThings.ThingsOfDef(d)) if (t.Spawned && !t.IsForbidden(Faction.OfPlayer)) l.Add(t);
+            return l;
+        }
+
+        /// <summary>사냥에서 볼 하나 소모: 소지품 먼저, 없으면 지도 위 볼에서.</summary>
+        public static bool HuntConsume(Pawn pawn, int tier)
+        {
+            if (pawn != null && pawn.inventory != null && Count(pawn, tier) > 0) return ConsumeTier(pawn, tier);
+            foreach (var t in MapBalls(pawn, tier)) { if (t.stackCount > 1) t.stackCount--; else t.Destroy(); return true; }
+            return false;
         }
 
         private static int Count(Pawn pawn, int tier)

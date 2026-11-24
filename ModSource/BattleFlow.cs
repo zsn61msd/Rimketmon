@@ -61,7 +61,7 @@ namespace Rimketmon
             var entry = pc.Add(c);
             if (animal.carryTracker != null && animal.carryTracker.CarriedThing != null) animal.carryTracker.TryDropCarriedThing(animal.Position, ThingPlaceMode.Near, out _);
             if (!RimketPawnKeep.Keep(animal, entry)) PawnRemoval.Remove(animal);      // 우리 동물은 지우지 않고 보관(훈련·장비·보철물 유지)
-            Messages.Message(Lang.Tr(label + "을(를) 림볼에 넣었다. (티어 " + c.TierText + ", Lv." + c.Level + ")"), thrower, MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(Lang.Tr(label + "을(를) 볼에 넣었다. (티어 " + c.TierText + ", Lv." + c.Level + ")"), thrower, MessageTypeDefOf.PositiveEvent, false);
         }
 
         /// <summary>마스터볼 대상: 동물(야생·우리 것), 또는 사람 폰(적·동맹·중립은 물론 우리 세력 폰도 가능).</summary>
@@ -195,8 +195,9 @@ pc.CapturedPawns.Add(target);
             if (thrower == null || thrower.Dead || thrower.Destroyed || target == null || target.Dead || target.Destroyed || !target.Spawned) return;      // 경고창을 보는 사이 상황이 바뀌었다
             // 볼은 배틀이 실제로 시작될 때만 소모된다(경고창에서 취소하면 그대로 남는다).
             RimketInventory.ConsumeBall(thrower, target);
-            var battle = new RimketBattle(new GameRng(), settings, party, wild, colonist);
+            var battle = new RimketBattle(BattleSave.Rng(new GameRng()), settings, party, wild, colonist);
             RimketTime.MarkFrozen(battle);      // 야생동물 배틀: 림월드 시간 정지
+            BattleSave.Begin("wild", target);
             OpenWindow(battle, thrower, b => ResolveWild(b, thrower, target));
         }
 
@@ -235,13 +236,14 @@ pc.CapturedPawns.Add(target);
 
             Action go = () =>
             {
-                var battle = RimketBattle.Trainer(new GameRng(), settings, party, colonist, leader.Name, setup.Party, null);      // 관장 본인도 나서지 않는다
+                var battle = RimketBattle.Trainer(BattleSave.Rng(new GameRng()), settings, party, colonist, leader.Name, setup.Party, null);      // 관장 본인도 나서지 않는다
                 battle.GymBattle = true;      // 관장전은 항복 가능
                 battle.LeagueBattle = true;   // 도장에서 싸운다(지도 날씨 없음)
                 string lt; if (league && LeagueBgm.TryGetValue(leader.Id, out lt)) RimketAudio.ForcedTrack = lt;      // 그 사천왕·챔피언의 실제 배틀 곡(포켓로그 trainer-config)
                 LearnedAi.Attach(battle, settings);      // 관장·챔피언은 학습된 AI가 조종한다
                 var lead = leader;
                 Window_RimketBattle.TrainerSpriteOverride[lead.Name] = lead.SpriteId;
+                BattleSave.Begin("gym", null, null, "leader", lead.Id, "champion", champion ? "1" : "0", "league", league ? "1" : "0", "rematch", rematch ? "1" : "0");
                 OpenWindow(battle, challenger, b => ResolveGym(b, challenger, lead, champion, league, rematch));
             };
             if (alreadyConfirmed) go();
@@ -283,7 +285,7 @@ pc.CapturedPawns.Add(target);
             bool tynan = op.Name == RankedBoard.TynanName && LearnedAi.Available && RimketmonMod.Settings.learnedAi;
             int seed = Rand.Int;
             var mine0 = mine.Select(c => c.Clone()).ToList(); var foe0 = foe.Select(c => c.Clone()).ToList();
-            var battle = RimketBattle.RankedBattle(tynan ? (IRng)new SystemRng(seed) : new GameRng(), settings, "나", mine, op.Name, foe);
+            var battle = RimketBattle.RankedBattle(BattleSave.Rng(tynan ? (IRng)new SystemRng(seed) : new GameRng()), settings, "나", mine, op.Name, foe);
             var ms = RimketmonMod.Settings;
             double mistake = Mathf.Clamp01((float)HumanPlay.MistakeRate(op.Rating) * ms.foeMistakeScale), tilt = ms.foeTiltScale <= 0f ? 0.0001 : HumanPlay.TiltFor(op.Rating) * ms.foeTiltScale;
             bool mayGiveUp = ms.foeSurrender; int rating = op.Rating;
@@ -296,6 +298,7 @@ pc.CapturedPawns.Add(target);
             configure(battle);
             if (tynan) LearnedAi.AttachLookahead(battle, settings, seed, mine0, foe0, configure);
             else if (op.Rating >= LearnedAi.RankedMinRating) LearnedAi.Attach(battle, settings);      // 랭크 상위권(1800점 이상)은 학습된 AI가 조종한다
+            BattleSave.Begin("ranked");
             OpenWindow(battle, null, b => { LastFoeSurrender = b.Result.FoeSurrendered ? b.Result.FoeSurrenderReason : null; onDone(b.Result.End == BattleEnd.Victory); }, Window_RimketMenu.RankedPawnFor(op.Name));      // 림월드 사람이면 초상화로
         }
 
@@ -350,7 +353,8 @@ pc.CapturedPawns.Add(target);
             var settings = RimketmonMod.Settings.ToEngine();
             var party = PartyComponent.Instance.ActiveParty().Where(p => !p.IsFainted).Take(Paradox.BringMax).ToList();
             var mine = party.Select(p => { var c = p.Clone(); c.FullHeal(); return c; }).ToList();      // 내 림켓몬은 원래 레벨 그대로
-            var battle = RimketBattle.ParadoxBattle(new GameRng(), settings, mine, foe.Clone());
+            var battle = RimketBattle.ParadoxBattle(BattleSave.Rng(new GameRng()), settings, mine, foe.Clone());
+            BattleSave.Begin("paradox");
             OpenWindow(battle, null, b => onDone(b.Result.End == BattleEnd.Victory));
         }
 
@@ -374,9 +378,10 @@ pc.CapturedPawns.Add(target);
             var pos = trainerPawn.Position;
             int minLv, maxLv; settings.LevelBand(pc.Badges, out minLv, out maxLv);
             var person = ColonistCombatant.PersonFor(name, 600, maxLv, MathUtil.Clamp(2 + pc.Badges / 2, 1, 6));   // 마지막에는 트레이너 본인이 나선다(관장전과 같다)
-            var battle = RimketBattle.Trainer(new GameRng(), settings, party, colonist, name, foeParty, person);
+            var battle = RimketBattle.Trainer(BattleSave.Rng(new GameRng()), settings, party, colonist, name, foeParty, person);
             LearnedAi.Attach(battle, settings);      // 어둠의 트레이너는 학습된 AI가 조종한다(마지막에 본인이 나설 때는 기존 방식)
             RimketTime.MarkFrozen(battle);      // 어둠의 배틀: 림월드 시간 정지
+            BattleSave.Begin("challenge", null, null, "pos", pos.ToString(), "apocriton", apocriton ? "1" : "0");
             OpenWindow(battle, fighter, b => ResolveChallenge(b, fighter, trainerPawn, map, pos, apocriton), trainerPawn);
         }
 
@@ -433,11 +438,16 @@ pc.CapturedPawns.Add(target);
             party.RemoveAll(p => p.IsFainted);
             if (party.Count == 0) { Messages.Message(Lang.Tr("?????"), MessageTypeDefOf.RejectInput, false); return; }
             var foeParty = BuildMysteryParty(MysteryLevel, new GameRng(), settings);      // 전원 Lv.100 고정
-            var battle = RimketBattle.Trainer(new GameRng(), settings, party, colonist, "???", foeParty, null);      // 트레이너 본인도 나서지 않는다
+            var battle = RimketBattle.Trainer(BattleSave.Rng(new GameRng()), settings, party, colonist, "???", foeParty, null);      // 트레이너 본인도 나서지 않는다
             battle.GymBattle = true;      // 져도 아무 일 없으니 항복도 된다
             RimketTime.MarkFrozen(battle);      // ???: 림월드 시간 정지
+            BattleSave.Begin("mystery");
             OpenWindow(battle, me, b => ResolveMystery(b, trainerPawn), trainerPawn);
         }
+
+        internal static void ResolveMysteryPublic(RimketBattle b, Pawn trainerPawn) { ResolveMystery(b, trainerPawn); }
+        internal static void ResolveVisitorPublic(RimketBattle b, Pawn visitor, Pawn me, int badges) { ResolveVisitor(b, visitor, me, badges); }
+        internal static void ResolveChallengePublic(RimketBattle b, Pawn fighter, Pawn trainerPawn, Map map, IntVec3 pos, bool apocriton) { ResolveChallenge(b, fighter, trainerPawn, map, pos, apocriton); }
 
         private static void ResolveMystery(RimketBattle battle, Pawn trainerPawn)
         {
@@ -511,11 +521,12 @@ pc.CapturedPawns.Add(target);
             var foeParty = ChallengeBuilder.BuildParty(pc.Badges, new GameRng(), settings, Mathf.Clamp(RimketmonMod.Settings.visitorFoeCount, 1, 6), 3, true);
             if (foeParty.Count == 0) return;
             string name = visitor.LabelShortCap;
-            var battle = RimketBattle.Trainer(new GameRng(), settings, party, colonist, name, foeParty, null);
+            var battle = RimketBattle.Trainer(BattleSave.Rng(new GameRng()), settings, party, colonist, name, foeParty, null);
             battle.GymBattle = true;              // 항복 가능
             battle.BlackoutOnDefeat = true;       // 지면 "눈앞이 깜깜해졌다!"
             RimketTime.MarkFrozen(battle);        // 방문자 배틀: 림월드 시간 정지
             int badges = pc.Badges;
+            BattleSave.Begin("visitor", null, me, "badges", badges.ToString());
             OpenWindow(battle, me, b => ResolveVisitor(b, visitor, me, badges), visitor);
         }
 
@@ -611,8 +622,9 @@ pc.CapturedPawns.Add(target);
                 if (animals.Count > 0) { var a = animals.RandomElement(); wild.SpeciesId = a.defName; wild.Name = a.LabelCap; }
             }
             wild.FullHeal();
-            var battle = new RimketBattle(new GameRng(), settings, party, wild, colonist);
+            var battle = new RimketBattle(BattleSave.Rng(new GameRng()), settings, party, wild, colonist);
             RimketTime.MarkFrozen(battle);      // 야생 배틀(개발자)도 시간 정지
+            BattleSave.Begin("devwild");
             OpenWindow(battle, thrower, b => { if (b.Result.Captured) PartyComponent.Instance.Add(b.Wild); });
         }
 
@@ -629,16 +641,19 @@ pc.CapturedPawns.Add(target);
         /// <summary>배틀타워: 일반 층은 짧은 셔터만, 강적·챔피언만 트레이너 등장 연출을 보여 준다.</summary>
         internal static void StartTowerBattle(RimketBattle battle, Pawn pawn, Action<RimketBattle> onFinished, bool trainerIntro = true)
         {
+            battle.QuietExp = true;      // 배틀타워: 경험치 획득을 하나하나 알리지 않는다
             OpenWindow(battle, pawn, onFinished, null, trainerIntro);
         }
 
         private static void OpenWindow(RimketBattle battle, Pawn pawn, Action<RimketBattle> onFinished, Pawn foePawn = null, bool trainerIntro = true)
         {
+            BattleSpec spec = null;
             RimketAudio.Choose(battle.IsTrainer, battle.Foe != null ? battle.Foe.Name : "");
             var envPawn = pawn ?? foePawn;
             if (envPawn != null && envPawn.Spawned) BattleEnv.Apply(battle, envPawn.Map, envPawn.Position);      // 그 자리의 날씨·필드
             if (PartyComponent.Instance != null) battle.PlayerLevelCap = PartyComponent.Instance.LevelCap;
             if (PartyComponent.Instance != null && !battle.Online && !battle.Ranked) battle.ExpShare = PartyComponent.Instance.expShareOwned && PartyComponent.Instance.expShareOn;
+            try { spec = BattleSave.Capture(battle, pawn, foePawn); } catch (Exception ex) { Log.Warning("[림켓몬] 배틀 저장 준비: " + ex.Message); }      // 세이브 중 이어 하기용 명세(창을 열기 전 설정이 끝난 상태)
             // 진화: 전투 전 레벨을 기억해 두었다가 끝난 뒤 레벨이 오른 림켓몬만(온라인·랭크·패러독스는 복사본이라 제외)
             if (!battle.Online && !battle.Ranked && !battle.Paradox && PartyComponent.Instance != null)
             {
@@ -655,7 +670,7 @@ pc.CapturedPawns.Add(target);
                     Messages.Message(Lang.Tr("상황이 바뀌어 배틀이 취소되었다."), MessageTypeDefOf.NeutralEvent, false);
                     return;
                 }
-                Find.WindowStack.Add(new Window_RimketBattle(battle, pawn, onFinished) { FoePawn = foePawn });
+                Find.WindowStack.Add(new Window_RimketBattle(battle, pawn, onFinished) { FoePawn = foePawn, Spec = spec });
             };
             // 화면 울렁임 연출(BGM 포함) → 배틀 창 (연출을 끄면 곧바로 배틀 창)
             if (RimketmonMod.Settings.transitionEffect)
@@ -663,7 +678,7 @@ pc.CapturedPawns.Add(target);
                 // 트레이너전: 상황별 진입 연출 → 트레이너 등장 연출
                 if (battle.IsTrainer && !trainerIntro) open();      // 배틀타워 일반 층: 진입 연출 없이 바로
                 else if (battle.IsTrainer && battle.Foe != null && !battle.Paradox)
-                    Find.WindowStack.Add(new Window_RimketTransition(open, Window_RimketBattle.FindTrainerSprite(battle.Foe.Name), (battle.Foe.Name) + "이(가) 승부를 걸어왔다!", foePawn).WithPreStyle(TransitionStyle.Shutter));
+                    Find.WindowStack.Add(new Window_RimketTransition(open, Window_RimketBattle.FindTrainerSprite(battle.Foe.Name), (battle.Foe.Name) + "이(가) 승부를 걸어왔다!", foePawn).WithPreStyle(PickTransition(battle, envPawn)));
                 else
                 {
                     var st = PickTransition(battle, envPawn);
@@ -747,8 +762,15 @@ pc.CapturedPawns.Add(target);
             {
                 if (battle.Paradox) return TransitionStyle.Swirl;
                 if (!battle.IsTrainer && battle.Wild != null && battle.Wild.Tier >= 6) return TransitionStyle.Swirl;
-                if (!battle.IsTrainer) return TransitionStyle.Wobble;      // 야생: 언제나 진짜 울렁임(지역은 색감·속도로만 구분)
-                return TransitionStyle.Shutter;
+                // 매번 같은 연출이면 지루하다: 지역·강약에 맞는 본편 연출을 우선 섞고, 가끔 다른 지역 연출과 기본 연출(울렁임/셔터)도 나온다
+                int area = (int)DetectArea(envPawn);
+                int strong = battle.Foe != null && battle.Player != null && battle.Foe.Active != null && battle.Player.Active != null && battle.Foe.Active.C.Level >= battle.Player.Active.C.Level ? 1 : 0;
+                var tbl = battle.IsTrainer ? TrainerTransitions : WildTransitions;
+                float r = Rand.Value;
+                if (r < 0.3f) return battle.IsTrainer ? TransitionStyle.Shutter : TransitionStyle.Wobble;
+                if (r < 0.6f) return tbl[area, strong];
+                if (r < 0.75f) return tbl[area, 1 - strong];
+                return tbl[Rand.Range(0, tbl.GetLength(0)), Rand.Range(0, 2)];
             }
             catch (Exception ex) { Log.Warning("[림켓몬] 진입 연출 고르기: " + ex.Message); }
             return TransitionStyle.Wave;

@@ -272,8 +272,12 @@ namespace Rimketmon
                 float depth = h - horizon - 12f;
                 foreach (var wk in walkers.OrderBy(k => k.Y))
                 {
+                    // 빈사(HP 0): 돌아다니지 않고 제자리에 쓰러져 있다(회복하면 다시 움직인다)
+                    bool down = wk.C.IsFainted;
+                    if (down) { wk.Speed = 0f; wk.State = 0; wk.Alt = 0f; wk.Glide = 0f; wk.Bank = 0f; if (wk.Dir == 0 || wk.Dir == 2) wk.Dir = wk.Right ? 1 : 3; }
                     // 행동
-                    if (dt > 0f && wk.Fly) FlyStep(wk, dt, w, depth);
+                    if (down) { }
+                    else if (dt > 0f && wk.Fly) FlyStep(wk, dt, w, depth);
                     else if (dt > 0f)
                     {
                         if (wk.Speed <= 0f)
@@ -303,8 +307,9 @@ namespace Rimketmon
                             }
                         }
                     }
-                    bool moving = wk.Fly ? wk.State != 0 || wk.Speed > 0f : wk.Speed > 0f;
-                    bool airborne = wk.Fly && (wk.State != 0 || wk.Alt > 0.02f);
+                    bool moving = !down && (wk.Fly ? wk.State != 0 || wk.Speed > 0f : wk.Speed > 0f);
+                    bool airborne = !down && wk.Fly && (wk.State != 0 || wk.Alt > 0.02f);
+                    float downAng = down ? (wk.Right ? 85f : -85f) : 0f, downA = down ? 0.75f : 1f;      // 쓰러짐: 옆으로 눕히고 조금 흐리게
                     float footY = horizon + 8f + wk.Y * (h - horizon - 12f);
                     float persp = 0.78f + 0.3f * wk.Y;
                     var pawnArt = wk.C.PawnId != 0 ? PersonArt.PawnOf(wk.C) : null;
@@ -315,7 +320,9 @@ namespace Rimketmon
                     {
                         float ps = 30f * persp;
                         c.Fill(wk.X - 5f * persp, footY - 1f, 10f * persp, 2f, new Color(0f, 0.1f, 0f, 0.3f));
+                        if (down) GUI.color = new Color(1f, 1f, 1f, downA);
                         PersonArt.Draw(c, pawnArt, wk.X - ps * 0.35f, footY - ps * 0.74f - (moving ? Mathf.Abs(Mathf.Sin(now * 9f + wk.Phase)) * 1.4f : 0f), ps * 0.7f, ps, wk.Dir == 0 ? Rot4.North : wk.Dir == 1 ? Rot4.East : wk.Dir == 3 ? Rot4.West : Rot4.South, false);
+                        GUI.color = Color.white;
                         NameTag(c, wk, footY - ps * 0.74f);
                         if (glitch) Window_RimketBattle.DrawGlitch(c, wk.X, footY, 1f, ps * 0.7f, ps);
                         continue;
@@ -334,10 +341,16 @@ namespace Rimketmon
                     {
                         int fw = ftex.width / 4, fh = ftex.height / 4;
                         int row = wk.Dir == 2 ? 0 : wk.Dir == 3 ? 1 : wk.Dir == 1 ? 2 : 3;
-                        int col = moving ? (int)((now + wk.Phase) * 7f) % 4 : (((int)((now + wk.Phase) * 1.8f)) % 2 == 0 ? 0 : 1);      // 걸을 땐 4프레임, 쉴 땐 제자리 들썩
+                        int col = down ? 0 : moving ? (int)((now + wk.Phase) * 7f) % 4 : (((int)((now + wk.Phase) * 1.8f)) % 2 == 0 ? 0 : 1);      // 걸을 땐 4프레임, 쉴 땐 제자리 들썩
                         float fsc = PokeBody.SizeOf(wk.Sheet.Substring(wk.Sheet.IndexOf('/') + 1)) * 15f * 1.3f * persp / Mathf.Max(1, fw);      // 걷는 그림 한 칸엔 여백이 많아 조금 키운다
                         c.Fill(wk.X - 7f * persp, footY - 1f, 14f * persp, 2f, new Color(0f, 0.1f, 0f, 0.3f));
-                        c.ImgRegion(ftex, col * fw, row * fh, fw, fh, wk.X, footY, 0.5f, 0.94f, fsc, 1f, 0f);      // 걷는 그림의 발은 칸 아래에서 6% 위(60/64)
+                        if (!down) c.ImgRegion(ftex, col * fw, row * fh, fw, fh, wk.X, footY, 0.5f, 0.94f, fsc, 1f, 0f);
+                        else
+                        {
+                            // 쓰러짐: 미리 옆으로 눕힌 그림을 회전 없이, 발 자리에 그대로 눕힌다
+                            var lt = RimSprite.Lying(ftex, col * fw, row * fh, fw, fh, false, wk.Right);
+                            if (lt != null) { var lb = RimSprite.Bounds(lt); c.Img(lt, wk.X, footY + 1f, (lb[0] + lb[2] * 0.5f) / lt.width, (lb[1] + lb[3]) / (float)lt.height, fsc, downA, false, 0f); NameTag(c, wk, footY - lb[3] * fsc - 2f); continue; }      // 눕힌 그림의 실제 몸을 그림자(발 자리) 위에
+                        }
                         float topFrac = Mathf.Clamp01(RimSprite.Bounds(ftex)[1] / (float)fh);
                         NameTag(c, wk, footY - (0.94f - topFrac) * fh * fsc);
                         if (glitch) Window_RimketBattle.DrawGlitch(c, wk.X, footY, 1f, 22f * persp, 24f * persp);
@@ -373,7 +386,8 @@ namespace Rimketmon
                         ang = Mathf.Clamp(wk.Bank, -14f, 14f) * Mathf.Clamp01(wk.Alt * 2f);
                     }
                     else if (moving && !wk.C.HasCard) lift = Mathf.Abs(Mathf.Sin(now * 9f + wk.Phase)) * 1.6f;   // 걸을 때 통통(카드 포켓몬은 튀지 않는다)
-                    else sy = 1f + 0.03f * Mathf.Sin(now * 3f + wk.Phase);                       // 숨쉬기
+                    else if (!down) sy = 1f + 0.01f * Mathf.Sin(now * 3f + wk.Phase);                       // 숨쉬기
+                    if (down) ang = downAng;
                     // 원본은 왼쪽을 본다: 오른쪽으로 갈 때만 뒤집는다
                     bool side = wk.Dir == 1 || wk.Dir == 3;
                     bool flip = side ? (pic.Flip ^ (wk.Dir == 1)) : pic.Flip;
@@ -382,8 +396,9 @@ namespace Rimketmon
                     else
                     {
                         var cardSheet = wk.C.HasCard ? PkAnim.SheetFor(wk.C) : null;      // 걷는 그림이 없는 카드 포켓몬: 배틀용 움직이는 그림
-                        if (cardSheet != null && cardSheet.SrcW == pic.Tex.width && cardSheet.SrcH == pic.Tex.height) PkAnim.DrawLikeStill(c, cardSheet, wk.X, footY + dyOff, 0.5f, 1f, sc, 1f, now);
-                        else { c.Tint = pic.Tint; c.Img(pic.Tex, wk.X, footY + dyOff - lift, 0.5f, 1f, sc, 1f, flip, ang, sy); }
+                        if (!down && cardSheet != null && cardSheet.SrcW == pic.Tex.width && cardSheet.SrcH == pic.Tex.height) PkAnim.DrawLikeStill(c, cardSheet, wk.X, footY + dyOff, 0.5f, 1f, sc, 1f, now);
+                        else { c.Tint = pic.Tint; if (!down) c.Img(pic.Tex, wk.X, footY + dyOff - lift, 0.5f, 1f, sc, 1f, flip, ang, sy);
+                              else { var lt = RimSprite.Lying(pic.Tex, 0, 0, pic.Tex.width, pic.Tex.height, flip, wk.Right); if (lt != null) { var lb = RimSprite.Bounds(lt); c.Img(lt, wk.X, footY + 1f, (lb[0] + lb[2] * 0.5f) / lt.width, (lb[1] + lb[3]) / (float)lt.height, sc, downA, false, 0f); NameTag(c, wk, footY - lb[3] * sc - 2f); c.Tint = Color.white; continue; } } }
                         var bnd = RimSprite.Bounds(pic.Tex);
                         NameTag(c, wk, footY + dyOff - lift - (pic.Tex.height - bnd[1]) * sc * sy);
                     }

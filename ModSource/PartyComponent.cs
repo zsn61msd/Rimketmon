@@ -222,10 +222,56 @@ namespace Rimketmon
         /// <summary>몬스터볼 연구를 끝내면 림켓링크 퀘스트를 한 번 연다.</summary>
         private bool linkQuestOffered;
         private int linkQuestDue = -1;
+        static readonly string[] BallStockGroups = { "RimketStock_Ball", "RimketStock_GreatBall", "RimketStock_UltraBall", "RimketStock_MasterBall" };
+        static InventoryStockGroupDef[] ballGroups;
+
+        /// <summary>
+        /// 몬스터볼을 소지품 비우기에서 빼기: 림월드는 약물 정책과 '소지품 비축'에 든 물건만 남기고 소지품을 비운다.
+        /// 볼마다 비축 그룹을 두고, 정착민마다 비축 수를 '지금 들고 있는 개수'로 맞춘다 → 비우지 않고, 창고에서 더 가져오지도 않는다.
+        /// </summary>
+        static void SyncBallStock()
+        {
+            try
+            {
+                if (ballGroups == null) ballGroups = BallStockGroups.Select(n => DefDatabase<InventoryStockGroupDef>.GetNamedSilentFail(n)).ToArray();
+                foreach (var map in Find.Maps)
+                    foreach (var p in map.mapPawns.FreeColonistsSpawned)
+                    {
+                        if (p.inventoryStock == null || p.inventory == null) continue;
+                        for (int t = 0; t < ballGroups.Length; t++)
+                        {
+                            var g = ballGroups[t]; var d = RimketInventory.BallDef(t); if (g == null || d == null) continue;
+                            int have = p.inventory.innerContainer.TotalStackCountOfDef(d);
+                            int want = p.inventoryStock.GetDesiredCountForGroup(g);
+                            if (have == want) continue;
+                            if (p.inventoryStock.GetDesiredThingForGroup(g) != d) p.inventoryStock.SetThingForGroup(g, d);
+                            p.inventoryStock.SetCountForGroup(g, have);
+                        }
+                    }
+            }
+            catch (System.Exception ex) { Log.ErrorOnce("[림켓몬] 몬스터볼 소지품 비축: " + ex.Message, 0x52424B53); }
+        }
+
+        /// <summary>꺼내서 데리고 다니는 림켓몬: 림월드 하루(60000틱)당 친밀도 +10. 600틱마다 0.1씩 쌓아 정수만큼 올린다.</summary>
+        public float followFriendAcc;
+        void FollowFriendship()
+        {
+            var wc = RimketWorldComponent.Instance;
+            if (wc == null || !wc.AnyFollower) return;
+            var c = PartyList().FirstOrDefault(); if (c == null) return;
+            followFriendAcc += 10f * 600f / 60000f;
+            int add = (int)followFriendAcc;
+            if (add <= 0) return;
+            followFriendAcc -= add;
+            c.Friendship = System.Math.Min(255, c.Friendship + add);
+        }
+
         public override void GameComponentTick()
         {
             base.GameComponentTick();
+            if (Find.TickManager.TicksGame % 60 == 0 && !RimketUninstall.Removed) SyncBallStock();
             if (Find.TickManager.TicksGame % 600 != 0 || RimketUninstall.Removed) return;
+            FollowFriendship();
             if (linkQuestOffered) RimketLink.TickQuests();
             // 림켓링크가 아무 데도 없으면(첫 연구 직후 포함) 반나절~하루 안에 퀘스트가 다시 열린다
             if (RimketLink.ResearchDone && (Find.TickManager.TicksGame % 3000 == 0 || !linkQuestOffered))
@@ -318,22 +364,48 @@ namespace Rimketmon
         private Vector2 dragAccum;
         private Vector2 dragMouse0, dragIcon0;      // 누른 순간의 마우스·아이콘 위치(UI 좌표). 이동량은 이 기준점에서 잰다
 
-        /// <summary>최소화된 림켓몬을 다시 여는 탭(화면 아래 가운데)과 몬스터볼 아이콘.</summary>
+        private bool restorePress;
+        private bool iconPress;      // 아이콘 위에서 왼쪽 버튼을 눌렀다(뗄 때 연다)      // 탭/아이콘 위에서 눌렀고 아직 다른 버튼이 가져가지 않음
+
+        /// <summary>최소화된 림켓몬을 다시 여는 탭(화면 아래 가운데)과 우하단 몬스터볼 아이콘.
+        /// 누름(MouseDown)을 먹지 않고 뗄 때(MouseUp) 판정한다: 위에 겹친 명령 버튼 등이 그 누름을 가져갔으면(hotControl) 열리지 않는다.</summary>
         private void DrawRestoreTab()
         {
             if (iconTex == null) iconTex = ContentFinder<Texture2D>.Get("UI/RimketIcon", false) ?? BaseContent.BadTex;
-            var t = new Rect(UI.screenWidth / 2f - 80f, UI.screenHeight - 112f, 160f, 26f);
+            string label = "RimKéMoN ▲ " + Lang.Tr("다시 열기");
+            var oldFont = Text.Font; Text.Font = GameFont.Small;
+            bool oldWrap = Text.WordWrap; Text.WordWrap = false;
+            float tw = Text.CalcSize(label).x;
+            var t = new Rect(UI.screenWidth / 2f - (tw + 44f) / 2f, UI.screenHeight - 112f, tw + 44f, 26f);
             bool over = Mouse.IsOver(t);
             GUI.color = over ? new Color(0.24f, 0.28f, 0.4f, 0.95f) : new Color(0.12f, 0.14f, 0.22f, 0.9f);
             GUI.DrawTexture(t, BaseContent.WhiteTex);
             GUI.color = new Color(1f, 0.84f, 0.45f, 0.9f); GUI.DrawTexture(new Rect(t.x, t.y, t.width, 1.5f), BaseContent.WhiteTex);
             GUI.color = Color.white;
             GUI.DrawTexture(new Rect(t.x + 6f, t.y + 3f, 20f, 20f), iconTex);
-            var a = Text.Anchor; Text.Anchor = TextAnchor.MiddleLeft; Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(t.x + 32f, t.y, t.width - 36f, t.height), "RimKéMoN ▲ " + Lang.Tr("다시 열기"));
-            Text.Anchor = a;
+            var a = Text.Anchor; Text.Anchor = TextAnchor.MiddleLeft;
+            Widgets.Label(new Rect(t.x + 32f, t.y + 1f, tw + 8f, t.height), label);
+            Text.Anchor = a; Text.WordWrap = oldWrap; Text.Font = oldFont;
             TooltipHandler.TipRegion(t, Lang.Tr("숨겨 둔 림켓몬 창을 다시 엽니다 (멈춘 곳부터 이어서)"));
-            if (Widgets.ButtonInvisible(t)) RimketFrame.Restore();
+
+            // 우하단 몬스터볼 아이콘(평소 자리). 누르면 다시 연다
+            var s = RimketmonMod.Settings; float size = 28f;
+            float ix = Mathf.Clamp(s.iconX >= 0f ? s.iconX : UI.screenWidth - 232f, 0f, UI.screenWidth - size);
+            float iy = Mathf.Clamp(s.iconY >= 0f ? s.iconY : UI.screenHeight - 68f, 0f, UI.screenHeight - size);
+            var ir = new Rect(ix, iy, size, size);
+            bool overI = Mouse.IsOver(ir);
+            GUI.color = overI ? new Color(1.15f, 1.15f, 1.15f, 1f) : new Color(0.92f, 0.92f, 0.92f, 1f);
+            GUI.DrawTexture(ir, iconTex); GUI.color = Color.white;
+            if (overI) TooltipHandler.TipRegion(ir, Lang.Tr("숨겨 둔 림켓몬 창을 다시 엽니다 (멈춘 곳부터 이어서)"));
+
+            var e = Event.current;
+            if (e.type == EventType.MouseDown && e.button == 0) restorePress = (over || overI) && GUIUtility.hotControl == 0 && !Find.WindowStack.MouseObscuredNow;      // 다른 창이 위에 덮여 있으면 그 창의 누름이다
+            else if (e.type == EventType.MouseUp && e.button == 0)
+            {
+                bool go = restorePress && (over || overI) && GUIUtility.hotControl == 0 && !Find.WindowStack.MouseObscuredNow;
+                restorePress = false;
+                if (go) { e.Use(); RimketFrame.Restore(); }
+            }
         }
 
         public override void GameComponentOnGUI()
@@ -354,13 +426,13 @@ namespace Rimketmon
             y = Mathf.Clamp(y, 0f, UI.screenHeight - size);
             var r = new Rect(x, y, size, size);
 
-            bool over = Mouse.IsOver(r);
+            bool over = Mouse.IsOver(r) && !Find.WindowStack.MouseObscuredNow;      // 위에 다른 창(정보창·다른 모드 창 등)이 덮여 있으면 아이콘이 아니라 그 창을 누른 것
             bool noLink = !removed && !RimketLink.AnyLivingLinkedColonist();      // 림켓링크를 단 우리 정착민이 살아 있어야 쓸 수 있다
             // 배경·테두리 없이 회색 볼 모양만 그린다. 마우스를 올리면 밝아진다(림월드 하단 아이콘과 같은 방식).
             GUI.color = removed || noLink ? new Color(0.6f, 0.6f, 0.6f, over ? 0.9f : 0.55f) : over ? new Color(1.15f, 1.15f, 1.15f, 1f) : new Color(0.92f, 0.92f, 0.92f, 1f);      // 제거된 상태면 흐리게   // 그림 자체가 회색+검은 테두리라 색을 입히지 않고 밝기만 바꾼다
             GUI.DrawTexture(r, iconTex);
             GUI.color = Color.white;
-            if (over) TooltipHandler.TipRegion(r, Lang.Tr(removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : noLink ? "림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)" : "림켓몬\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)"));
+            if (over) TooltipHandler.TipRegion(r, Lang.Tr(removed ? "림켓몬 (제거됨 · 눌러서 다시 설치)" : noLink ? "림켓몬 (림켓링크를 단 정착민 필요)\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)" : "림켓몬\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)"));
 
             var e = Event.current;
             if (e.type == EventType.MouseDown && over && e.button == 1) { dragging = true; dragMoved = false; dragAccum = Vector2.zero; dragMouse0 = e.mousePosition; dragIcon0 = new Vector2(x, y); e.Use(); }
@@ -383,14 +455,17 @@ namespace Rimketmon
                 if (dragMoved) s.Write();
                 else if (!removed) OpenQuickMenu(noLink);      // 끌지 않고 뗐으면 빠른 메뉴
             }
-            else if (e.type == EventType.MouseDown && over && e.button == 0)
+            else if (e.type == EventType.MouseDown && e.button == 0) iconPress = over && GUIUtility.hotControl == 0;
+            else if (e.type == EventType.MouseUp && e.button == 0 && iconPress)
             {
+                iconPress = false;
+                if (!over || GUIUtility.hotControl != 0) return;      // 겹친 다른 버튼이 누름을 가져갔거나 밖에서 뗐다
                 e.Use();
                 if (removed) { RimketUninstall.AskReinstall(); return; }
                 if (noLink)
                 {
                     RimketAudio.PlaySe("gui_sel_buzzer");
-                    Messages.Message(Lang.Tr("림켓링크를 두뇌에 설치한 정착민이 살아 있어야 림켓몬 메뉴를 열 수 있습니다. (몬스터볼 연구를 끝내면 열리는 퀘스트로 림켓링크를 얻을 수 있어요.)"), MessageTypeDefOf.RejectInput, false);
+                    Messages.Message(Lang.Tr("림켓링크를 단 정착민이 있어야 열 수 있습니다. (몬스터볼 연구 후 퀘스트로 얻습니다)"), MessageTypeDefOf.RejectInput, false);
                     return;
                 }
                 if (BattleFlow.RimketUiOpen()) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }      // 이미 림켓몬 창이 떠 있으면(배틀·메뉴 동시 진행 중) 또 열지 않는다
@@ -425,15 +500,13 @@ namespace Rimketmon
                 Find.WindowStack.Add(Window_RimketMenu.OpenAtPc());
         }
 
-        /// <summary>패배했을 때와 같은 연출: "눈앞이 깜깜해졌다!" 뒤 센터에서 깨어나면 치료가 이미 끝나 있다(무료).</summary>
+        /// <summary>우클릭 치료: 연출 없이 바로 센터(치료가 이미 끝나 있다, 무료).</summary>
         private static void QuickHeal()
         {
             if (QuickBusy()) return;
             var pc = Instance;
             if (pc == null || pc.All.Count == 0) { Messages.Message(Lang.Tr("회복시킬 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false); return; }
-            var link = RimketLink.FindLinkPawn();
-            string who = link != null ? link.LabelShortCap : "나";
-            Find.WindowStack.Add(new Window_RimketBlackout(who + "은(는) 눈앞이 깜깜해졌다!", () => Find.WindowStack.Add(Window_RimketMenu.WakeAtCenterHealed())));
+            Find.WindowStack.Add(Window_RimketMenu.WakeAtCenterHealed());
         }
 
         // ---- 도구 가방(지닌 도구로 줄 수 있는 도구 보관함)
@@ -468,9 +541,55 @@ namespace Rimketmon
             bp += bpGain;
         }
 
+        // ---- 세이브 중 이어 하기(배틀·최소화·타워/사냥 진행)
+        private BattleSpec resumeBattle; private bool resumeMenuMin; private string resumeTower, resumeHunt; private Pawn resumeTowerPawn, resumeHuntPawn;
+
+        void ExposeResume()
+        {
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                resumeBattle = null; resumeMenuMin = false; resumeTower = resumeHunt = null; resumeTowerPawn = resumeHuntPawn = null;
+                try
+                {
+                    resumeBattle = BattleSave.ForSave();
+                    resumeMenuMin = BattleSave.MenuMinimized();
+                    if (resumeBattle == null || resumeBattle.Kind != "tower") { resumeTower = TowerRun.SaveState(); resumeTowerPawn = TowerRun.RunPawn; }
+                    if (resumeBattle == null || resumeBattle.Kind != "hunt") { resumeHunt = HuntRun.SaveState(); resumeHuntPawn = HuntRun.RunPawn; }
+                }
+                catch (System.Exception ex) { Log.Warning("[림켓몬] 진행 중 배틀 저장: " + ex.Message); resumeBattle = null; }
+            }
+            Scribe_Deep.Look(ref resumeBattle, "rimketActiveBattle");
+            Scribe_Values.Look(ref resumeMenuMin, "rimketMenuMinimized", false);
+            Scribe_Values.Look(ref resumeTower, "rimketTowerRun"); Scribe_References.Look(ref resumeTowerPawn, "rimketTowerPawn");
+            Scribe_Values.Look(ref resumeHunt, "rimketHuntRun"); Scribe_References.Look(ref resumeHuntPawn, "rimketHuntPawn");
+        }
+
+        public override void StartedNewGame() { base.StartedNewGame(); BattleSave.ResetSession(); }
+
+        public override void LoadedGame()
+        {
+            base.LoadedGame();
+            BattleSave.ResetSession();      // 같은 실행 중 다른 세이브를 불러왔을 때 이전 판의 정적 상태를 비운다
+            var spec = resumeBattle; bool menuMin = resumeMenuMin;
+            if (resumeTower != null) TowerRun.LoadState(resumeTower, resumeTowerPawn);
+            if (resumeHunt != null) HuntRun.LoadState(resumeHunt, resumeHuntPawn);
+            resumeBattle = null; resumeMenuMin = false; resumeTower = resumeHunt = null;
+            LongEventHandler.ExecuteWhenFinished(() =>
+            {
+                if (spec != null) { BattleSave.Resume(spec); return; }
+                if (menuMin || TowerRun.Panel != null)
+                {
+                    var w = TowerRun.Panel != null ? Window_RimketMenu.OpenAtTower() : new Window_RimketMenu();
+                    Find.WindowStack.Add(w);
+                    if (menuMin) RimketClock.Pause();
+                }
+            });
+        }
+
         public override void ExposeData()
         {
             base.ExposeData();
+            ExposeResume();
             ExposeExtra();
             ExposeRanked();
             Scribe_Values.Look(ref rating, "rankRating", RankedLadder.StartRating);

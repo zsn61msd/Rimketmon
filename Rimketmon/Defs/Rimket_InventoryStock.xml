@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <!-- 몬스터볼을 '소지품 비축'으로 등록해 정착민이 소지품을 비울 때 들고 있는 볼은 남긴다.
+       비축 수는 림켓몬(PartyComponent.SyncBallStock)이 '지금 든 개수'로 계속 맞춰서, 더 가지러 가지도 않는다. 배정 탭에 열은 생기지 않는다. -->
+  <InventoryStockGroupDef><defName>RimketStock_Ball</defName><thingDefs><li>RimketBall</li></thingDefs><defaultThingDef>RimketBall</defaultThingDef><min>0</min><max>99999</max></InventoryStockGroupDef>
+  <InventoryStockGroupDef><defName>RimketStock_GreatBall</defName><thingDefs><li>RimketGreatBall</li></thingDefs><defaultThingDef>RimketGreatBall</defaultThingDef><min>0</min><max>99999</max></InventoryStockGroupDef>
+  <InventoryStockGroupDef><defName>RimketStock_UltraBall</defName><thingDefs><li>RimketUltraBall</li></thingDefs><defaultThingDef>RimketUltraBall</defaultThingDef><min>0</min><max>99999</max></InventoryStockGroupDef>
+  <InventoryStockGroupDef><defName>RimketStock_MasterBall</defName><thingDefs><li>RimketMasterBall</li></thingDefs><defaultThingDef>RimketMasterBall</defaultThingDef><min>0</min><max>99999</max></InventoryStockGroupDef>
+</Defs>

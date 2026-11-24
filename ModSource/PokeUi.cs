@@ -296,7 +296,20 @@ namespace Rimketmon
             var r = R(x - w * ox, y - h * oy, w, h);
             var old = GUI.matrix;
             if (Mathf.Abs(angle) > 0.01f) GUIUtility.RotateAroundPivot(angle, new Vector2(Area.x + x * S, Area.y + y * S));
-            GUI.color = new Color(1f, 1f, 1f, alpha);
+            GUI.color = new Color(Tint.r, Tint.g, Tint.b, alpha);
+            GUI.DrawTextureWithTexCoords(r, PR.Hi(t), new Rect((float)sx / t.width, 1f - (float)(sy + sh) / t.height, (float)sw / t.width, (float)sh / t.height));
+            GUI.matrix = old;
+            GUI.color = Color.white;
+        }
+
+        /// <summary>시트 조각을 가로·세로 배율을 따로 주고 (px, py)를 축으로 기울여 그린다(SQUISHY 연동 반동).</summary>
+        public void ImgRegionSquash(Texture2D t, int sx, int sy, int sw, int sh, float x, float y, float scX, float scY, float alpha, float angle, float px, float py)
+        {
+            if (t == null) return;
+            var r = R(x, y, sw * scX, sh * scY);
+            var old = GUI.matrix;
+            if (Mathf.Abs(angle) > 0.01f) GUIUtility.RotateAroundPivot(angle, new Vector2(Area.x + px * S, Area.y + py * S));
+            GUI.color = new Color(Tint.r, Tint.g, Tint.b, alpha);
             GUI.DrawTextureWithTexCoords(r, PR.Hi(t), new Rect((float)sx / t.width, 1f - (float)(sy + sh) / t.height, (float)sw / t.width, (float)sh / t.height));
             GUI.matrix = old;
             GUI.color = Color.white;
@@ -679,6 +692,9 @@ namespace Rimketmon
             else RimketTime.OnOpen();      // 연출·체육관 같은 항상 정지 창: 키 입력이 막힌 채 시작하지 않게
         }
         public override void WindowUpdate() { base.WindowUpdate(); RimketFrame.Tick(this); if (RimketClock.Paused) return; if (this is IRimketLive) RimketTime.Apply(this, FreezeTime); }      // 최소화 중엔 시간 조작도 하지 않는다
+        /// <summary>창이 포커스를 가진 동안 림월드 단축키(WASD 등)를 막는다(RimketTime.KeySink).</summary>
+        public override RimWorld.QuickSearchWidget CommonSearchWidget { get { return this is IRimketLive ? RimketTime.KeySink() : base.CommonSearchWidget; } }
+
         public override void ExtraOnGUI()
         {
             base.ExtraOnGUI();
@@ -693,7 +709,8 @@ namespace Rimketmon
 
         public override void DoWindowContents(Rect inRect)
         {
-            if (RimketClock.Paused) return;      // 최소화: 그리지도 입력을 받지도 않는다
+            if (RimketClock.Paused) return;
+            if (Event.current.rawType == EventType.MouseDown) RimketTime.WorldFocus = false;      // 창 안을 누르면 무조건 창 포커스(월드를 누른 뒤 키보드가 안 먹던 버그)      // 최소화: 그리지도 입력을 받지도 않는다
             inRect = RimketFrame.Begin(this, inRect);      // 바깥 틀(이동·크기·초기화)을 그리고 캔버스 영역만 받는다
             var cv = new Canvas(inRect);
             GUI.color = Color.black;

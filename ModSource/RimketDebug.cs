@@ -140,7 +140,7 @@ namespace Rimketmon
             GenPlace.TryPlaceThing(ThingMaker.MakeThing(def), UI.MouseCell(), Find.CurrentMap, ThingPlaceMode.Near);
         }
 
-        [DebugAction(Cat, "정착민: 림볼 5개 + 마스터볼 5개 + 초능력 레벨 +1 + 림켓링크", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        [DebugAction(Cat, "정착민: 볼 5개 + 마스터볼 5개 + 초능력 레벨 +1 + 림켓링크", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
         private static void GiveBallAndPsylink(Pawn p)
         {
             if (!p.IsColonist) return;
@@ -169,7 +169,7 @@ namespace Rimketmon
                 if (br != null) p.health.AddHediff(RimketLink.Hediff, br);
             }
             DebugActionsUtility.DustPuffFrom(p);
-            Messages.Message(Lang.Tr(p.LabelShortCap + ": 림볼 +5, 마스터볼 +5, 초능력 레벨 " + p.GetPsylinkLevel() + " (정신감응력 " + p.GetStatValue(StatDefOf.PsychicSensitivity).ToString("P0") + ")"), MessageTypeDefOf.NeutralEvent, false);
+            Messages.Message(Lang.Tr(p.LabelShortCap + ": 볼 +5, 마스터볼 +5, 초능력 레벨 " + p.GetPsylinkLevel() + " (정신감응력 " + p.GetStatValue(StatDefOf.PsychicSensitivity).ToString("P0") + ")"), MessageTypeDefOf.NeutralEvent, false);
         }
 
         [DebugAction(Cat, "동물: 내 파티에 추가(복제)", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]

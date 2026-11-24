@@ -29,7 +29,7 @@ namespace Rimketmon.Engine
         private void ForceSwitchTarget(MoveCtx c)
         {
             var d = c.D; var dSide = c.DS;
-            if (d.Fainted || d.IsPerson || d.Ingrain || d.Has("SUCTIONCUPS") || d.SubHp > 0 && false) return;
+            if (d.Fainted || d.IsPerson || FormChange.IsDynamaxed(d.C) || d.Ingrain || d.Has("SUCTIONCUPS") || d.SubHp > 0 && false) return;
             if (!IsTrainer && dSide == Foe) { return; }   // 야생 상대는 교체할 수 없다
             var next = RandomOtherPartyMember(dSide);
             if (next == null) return;

@@ -53,6 +53,9 @@ namespace Rimketmon
             if (b != null && !frozenBattles.TryGetValue(b, out o)) frozenBattles.Add(b, Mark);
         }
 
+        /// <summary>MarkFrozen으로 표시된 배틀인가(세이브용).</summary>
+        public static bool IsFrozen(RimketBattle b) { object o; return b != null && frozenBattles.TryGetValue(b, out o); }
+
         /// <summary>이 배틀이 열려 있는 동안 림월드 시간을 멈추는가.</summary>
         public static bool FreezeFor(RimketBattle b)
         {
@@ -137,6 +140,30 @@ namespace Rimketmon
         {
             // 예전에는 창 전체를 35% 어둡게 덮었다(눈에 거슬린다는 요청으로 제거). 이제는 아무것도 그리지 않는다.
             return;
+        }
+
+        static RimWorld.QuickSearchWidget keySink; static System.Reflection.FieldInfo sinkName;
+        /// <summary>
+        /// 림켓몬 창이 포커스를 가진 동안 림월드 단축키(WASD 지도 이동 등)를 막는다.
+        /// 림월드는 '검색창에 글을 쓰는 중'이면 모든 단축키(KeyBindingDef.IsDown/KeyDownEvent)를 무시한다(WindowStack.AnySearchWidgetFocused).
+        /// 창의 CommonSearchWidget으로 '지금 포커스된 컨트롤 이름'을 가진 검색창을 돌려주어 그 상태로 만든다. 림켓몬 창은 단축키 대신 키 이벤트를 직접 읽으므로 영향이 없다.
+        /// 월드를 누르면(WorldFocus) 또는 최소화 중이면 null → 원래대로.
+        /// </summary>
+        public static RimWorld.QuickSearchWidget KeySink()
+        {
+            if (WorldFocus || RimketClock.Paused) return null;
+            try
+            {
+                if (keySink == null)
+                {
+                    keySink = new RimWorld.QuickSearchWidget();
+                    sinkName = typeof(RimWorld.QuickSearchWidget).GetField("controlName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+                }
+                if (sinkName == null) return null;
+                sinkName.SetValue(keySink, GUI.GetNameOfFocusedControl() ?? "");
+                return keySink;
+            }
+            catch (System.Exception) { sinkName = null; return null; }
         }
 
         /// <summary>live 창이 열리면 창이 포커스를 가진 상태로 시작.</summary>

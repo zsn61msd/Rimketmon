@@ -76,7 +76,8 @@ namespace Rimketmon
             for (int i = 0; i < 4; i++) FleckMaker.ThrowDustPuff(c, map, 1.2f);
 
             RimketWorldComponent.AddBurst(c, map);
-            if (onLand != null) { RimketAudio.PlaySe("pb_rel"); var act = onLand; onLand = null; try { act(); } catch (System.Exception ex) { Log.Warning("[림켓몬] 볼 착지 처리: " + ex.Message); } return; }
+            RimketAudio.PlaySe("pb_rel");      // 볼이 터지는 소리(방문자 배틀·소환 포함 맵 위 모든 볼)
+            if (onLand != null) { var act = onLand; onLand = null; try { act(); } catch (System.Exception ex) { Log.Warning("[림켓몬] 볼 착지 처리: " + ex.Message); } return; }
             if (summon) { var wc = RimketWorldComponent.Instance; if (wc != null && thrower != null && thrower.Spawned) wc.Summon(thrower, pos); return; }
             if (thrower == null || target == null) return;
             if (master) { if (BattleFlow.IsMasterTarget(target)) BattleFlow.MasterCapture(thrower, target); }

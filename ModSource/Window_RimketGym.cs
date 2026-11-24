@@ -240,8 +240,9 @@ namespace Rimketmon
             g.Window(win, 6f, 134f, 308f, 40f);
             if (state == State.Idle)
             {
-                bool can = challenger != null && pool.Count > 0;
-                string msg = pool.Count == 0 ? "모든 관장을 쓰러뜨렸다!" : challenger == null ? "림켓링크가 필요하다." :  leagueMode ? "다음 상대: " + (pc.ChampionTurn ? "챔피언" : "사천왕 " + (pc.EliteWins + 1) + "번째") : "상대는 무작위.";
+                bool able = pc != null && pc.ActiveParty().Any(c => c != null && c.Hp > 0);      // 싸울 수 있는 림켓몬이 있어야 룰렛을 돌린다
+                bool can = challenger != null && pool.Count > 0 && able;
+                string msg = pool.Count == 0 ? "모든 관장을 쓰러뜨렸다!" : challenger == null ? "림켓링크가 필요하다." : !able ? "싸울 수 있는 림켓몬이 없다. 센터에서 회복하자." :  leagueMode ? "다음 상대: " + (pc.ChampionTurn ? "챔피언" : "사천왕 " + (pc.EliteWins + 1) + "번째") : "상대는 무작위.";
                 g.Label(msg, 14f, 143f, 9f, Canvas.White, Canvas.WhiteShadow);
 
                 float bx = 230f, by = 143f;
@@ -261,6 +262,7 @@ namespace Rimketmon
         {
             if (pool.Count == 0) return;
             var pcs = PartyComponent.Instance;
+            if (pcs == null || !pcs.ActiveParty().Any(c => c != null && c.Hp > 0)) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }
  pickedIndex = leagueMode && pcs != null && pcs.InLeague ? Mathf.Min(pcs.EliteWins, pool.Count - 1) : new GameRng().Next(0, pool.Count);
             picked = pool[pickedIndex];
             state = State.Spinning;

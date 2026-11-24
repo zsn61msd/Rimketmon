@@ -25,6 +25,8 @@ namespace Rimketmon.Engine
         public string BaseForm;
         /// <summary>지역폼(별개 종족 번호를 가진 폼)인가.</summary>
         public bool IsRegional;
+        /// <summary>메가·원시·거다이맥스 폼이면 "MEGA"/"PRIMAL"/"GMAX". 플레이어만 NPC로 바꿀 수 있고 어떤 무작위 생성에도 나오지 않는다.</summary>
+        public string FormKind;
         public bool Mystery;           // ?티어: 시드로 생성한 올랜덤 종족(MysteryGen)
         public int Tier { get { return Mystery ? 0 : SpeciesCatalog.TierOfBst(Bst); } }
     }
@@ -79,7 +81,27 @@ namespace Rimketmon.Engine
                 forms.Add(sp);
                 byId[sp.Id] = sp;
             }
+            // 메가·원시·거다이맥스: 전체 목록에도 폼 목록에도 넣지 않는다(id로만 찾는다) → 트레이너·야생·사냥·랭크·타워·패러독스에 나오지 않는다
+            var megaBase = new Dictionary<string, string[]>();
+            foreach (var row in GameData.MegaBaseRows) { var f = row.Split('|'); megaBase[f[0]] = f; }
+            foreach (var row in GameData.MegaSpeciesRows)
+            {
+                var sp = Parse(row);
+                string[] b;
+                if (!megaBase.TryGetValue(sp.Id, out b)) continue;
+                sp.BaseForm = b[1]; sp.FormKind = b[2];
+                megas.Add(sp); byId[sp.Id] = sp;
+                List<string> l; if (!megaOf.TryGetValue(b[1], out l)) megaOf[b[1]] = l = new List<string>(); l.Add(sp.Id);
+            }
         }
+
+        private static readonly List<SpeciesInfo> megas = new List<SpeciesInfo>();
+        private static readonly Dictionary<string, List<string>> megaOf = new Dictionary<string, List<string>>();
+        /// <summary>메가·원시·거다이맥스 폼 전체.</summary>
+        public static IList<SpeciesInfo> BattleForms { get { return megas; } }
+        /// <summary>이 종족이 바뀔 수 있는 메가·원시·거다이맥스 폼 id들.</summary>
+        public static IList<string> BattleFormsOf(string id) { List<string> l; return id != null && megaOf.TryGetValue(id, out l) ? (IList<string>)l : new string[0]; }
+        public static bool IsBattleForm(string id) { SpeciesInfo sp; return id != null && byId.TryGetValue(id, out sp) && sp.FormKind != null; }
 
         /// <summary>세이브에 남은 개체의 종족이 지금 데이터에 없으면(데이터에서 빠진 종) 대신할 포켓몬:
         /// 개체에 저장된 첫 타입이 같고 종족값 합계가 가장 가까운 종(같으면 id 순). 아는 종족·사람·?티어면 null.</summary>

@@ -20,7 +20,7 @@
     <defName>RimketNeuralInjury</defName>
     <label>neural overload</label>
     <labelNoun>a neural overload injury</labelNoun>
-    <description>Overload damage to the nervous system from a virtual-reality Rimball battle.</description>
+    <description>Overload damage to the nervous system from a virtual-reality ball battle.</description>
     <comps>
       <li Class="HediffCompProperties_TendDuration">
         <labelTendedWell>treated</labelTendedWell>
@@ -45,7 +45,7 @@
   <!-- 림볼 4종: 야성이 높은 동물일수록 높은 등급이 필요하다 -->
   <ThingDef ParentName="ResourceBase">
     <defName>RimketBall</defName>
-    <label>monster ball</label>
+    <label>Poké Ball</label>
     <description>A ball for catching Rimketmon.</description>
     <graphicData>
       <texPath>Things/RimketBall</texPath>
@@ -56,15 +56,15 @@
     </thingCategories>
     <stackLimit>10</stackLimit>
     <statBases>
-            <Mass>0.4</Mass>
-      <MarketValue>45</MarketValue>
+            <Mass>0.001</Mass>
+      <MarketValue>20</MarketValue>
     </statBases>
     <tradeability>Sellable</tradeability>
   </ThingDef>
 
   <ThingDef ParentName="ResourceBase">
     <defName>RimketGreatBall</defName>
-    <label>great ball</label>
+    <label>Great Ball</label>
     <description>A ball for catching Rimketmon.</description>
     <graphicData>
       <texPath>Things/RimketGreatBall</texPath>
@@ -75,15 +75,15 @@
     </thingCategories>
     <stackLimit>10</stackLimit>
     <statBases>
-            <Mass>0.4</Mass>
-      <MarketValue>95</MarketValue>
+            <Mass>0.001</Mass>
+      <MarketValue>45</MarketValue>
     </statBases>
     <tradeability>Sellable</tradeability>
   </ThingDef>
 
   <ThingDef ParentName="ResourceBase">
     <defName>RimketUltraBall</defName>
-    <label>ultra ball</label>
+    <label>Ultra Ball</label>
     <description>A ball for catching Rimketmon.</description>
     <graphicData>
       <texPath>Things/RimketUltraBall</texPath>
@@ -94,15 +94,15 @@
     </thingCategories>
     <stackLimit>10</stackLimit>
     <statBases>
-            <Mass>0.4</Mass>
-      <MarketValue>130</MarketValue>
+            <Mass>0.001</Mass>
+      <MarketValue>65</MarketValue>
     </statBases>
     <tradeability>Sellable</tradeability>
   </ThingDef>
 
   <ThingDef ParentName="ResourceBase">
     <defName>RimketMasterBall</defName>
-    <label>master ball</label>
+    <label>Master Ball</label>
     <description>A ball that catches instantly, without a battle.</description>
     <graphicData>
       <texPath>Things/RimketMasterBall</texPath>
@@ -113,7 +113,7 @@
     </thingCategories>
     <stackLimit>10</stackLimit>
     <statBases>
-            <Mass>0.4</Mass>
+            <Mass>0.001</Mass>
       <MarketValue>1600</MarketValue>
     </statBases>
     <tradeability>Sellable</tradeability>
@@ -124,7 +124,7 @@
   <!-- ===================== 림켓링크 (두뇌 임플란트) ===================== -->
   <HediffDef>
     <defName>RimketLinkImplant</defName>
-    <label>Rimketlink</label>
+    <label>RimketLink</label>
     <labelNoun>a rimketlink</labelNoun>
     <description>A brain implant that links the mind with Rimketmon.</description>
     <hediffClass>Hediff_Implant</hediffClass>
@@ -136,7 +136,7 @@
 
   <ThingDef ParentName="ResourceBase">
     <defName>RimketLink</defName>
-    <label>Rimketlink</label>
+    <label>RimketLink</label>
     <description>A brain implant that links the mind with Rimketmon.</description>
     <graphicData>
       <texPath>Things/RimketLink</texPath>
@@ -155,7 +155,7 @@
       <li Class="CompProperties_Usable">
         <compClass>CompUsable</compClass>
         <useJob>UseItem</useJob>
-        <useLabel>install Rimketlink</useLabel>
+        <useLabel>install RimketLink</useLabel>
         <useDuration>600</useDuration>
         <showUseGizmo>true</showUseGizmo>
       </li>
@@ -192,12 +192,12 @@
   <!-- ===================== 몬스터볼 연구 ===================== -->
   <ResearchTabDef>
     <defName>RimketBallTab</defName>
-    <label>Monster Balls</label>
+    <label>Poké Balls</label>
   </ResearchTabDef>
 
   <ResearchProjectDef>
     <defName>RimketBallMonster</defName>
-    <label>monster ball</label>
+    <label>Poké Ball</label>
     <description>The basic ball for catching Rimketmon.</description>
     <tab>RimketBallTab</tab>
     <baseCost>600</baseCost>
@@ -209,7 +209,7 @@
 
   <ResearchProjectDef>
     <defName>RimketBallGreat</defName>
-    <label>great ball</label>
+    <label>Great Ball</label>
     <description>A ball for catching Rimketmon.</description>
     <tab>RimketBallTab</tab>
     <baseCost>1500</baseCost>
@@ -224,7 +224,7 @@
 
   <ResearchProjectDef>
     <defName>RimketBallUltra</defName>
-    <label>ultra ball</label>
+    <label>Ultra Ball</label>
     <description>A high-performance ball for catching Rimketmon.</description>
     <tab>RimketBallTab</tab>
     <baseCost>3500</baseCost>
@@ -241,7 +241,7 @@
 
   <ResearchProjectDef>
     <defName>RimketBallMaster</defName>
-    <label>master ball</label>
+    <label>Master Ball</label>
     <description>A ball that catches instantly, without a battle.</description>
     <tab>RimketBallTab</tab>
     <baseCost>7000</baseCost>
@@ -260,8 +260,8 @@
   <!-- 마스터볼 설계도: 제작·거래·일반 생성 경로 없음(특수 경로로만 얻는다). 2개를 해석하면 마스터볼 연구가 열린다 -->
   <ThingDef ParentName="ResourceBase">
     <defName>RimketMasterBlueprint</defName>
-    <label>master ball blueprint</label>
-    <description>The blueprint of the master ball.</description>
+    <label>Master Ball blueprint</label>
+    <description>The blueprint of the Master Ball.</description>
     <graphicData>
       <texPath>Things/RimketBlueprint</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -279,7 +279,7 @@
         <analysisRequiredRange>2~2</analysisRequiredRange>
         <analysisDurationHours>2</analysisDurationHours>
         <activateLabelString>decode blueprint</activateLabelString>
-        <activateDescString>Decode the master ball blueprint.</activateDescString>
+        <activateDescString>Decode the Master Ball blueprint.</activateDescString>
         <activateTexPath>Things/RimketBlueprint</activateTexPath>
       </li>
     </comps>
@@ -288,9 +288,9 @@
   <!-- ===================== 제작 ===================== -->
   <RecipeDef>
     <defName>Make_RimketBall</defName>
-    <label>make monster ball</label>
-    <description>Make a monster ball.</description>
-    <jobString>Making a monster ball.</jobString>
+    <label>make Poké Ball</label>
+    <description>Make a Poké Ball.</description>
+    <jobString>Making a Poké Ball.</jobString>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Smith</soundWorking>
@@ -313,9 +313,9 @@
 
   <RecipeDef>
     <defName>Make_RimketGreatBall</defName>
-    <label>make great ball</label>
-    <description>Make a great ball.</description>
-    <jobString>Making a great ball.</jobString>
+    <label>make Great Ball</label>
+    <description>Make a Great Ball.</description>
+    <jobString>Making a Great Ball.</jobString>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Machining</soundWorking>
@@ -338,9 +338,9 @@
 
   <RecipeDef>
     <defName>Make_RimketUltraBall</defName>
-    <label>make ultra ball</label>
-    <description>Make an ultra ball.</description>
-    <jobString>Making an ultra ball.</jobString>
+    <label>make Ultra Ball</label>
+    <description>Make an Ultra Ball.</description>
+    <jobString>Making an Ultra Ball.</jobString>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Machining</soundWorking>
@@ -363,9 +363,9 @@
 
   <RecipeDef>
     <defName>Make_RimketMasterBall</defName>
-    <label>make master ball</label>
-    <description>Make a master ball.</description>
-    <jobString>Making a master ball.</jobString>
+    <label>make Master Ball</label>
+    <description>Make a Master Ball.</description>
+    <jobString>Making a Master Ball.</jobString>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Machining</soundWorking>
@@ -389,7 +389,7 @@
   <!-- 던져진 림볼: 땅에 떨어지면 효과가 터지고 배틀이 시작된다 -->
   <ThingDef ParentName="BaseBullet">
     <defName>RimketBallProjectile</defName>
-    <label>monster ball</label>
+    <label>Poké Ball</label>
     <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
     <graphicData>
       <texPath>Things/RimketBall</texPath>
@@ -406,7 +406,7 @@
 
   <ThingDef ParentName="BaseBullet">
     <defName>RimketGreatBallProjectile</defName>
-    <label>great ball</label>
+    <label>Great Ball</label>
     <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
     <graphicData>
       <texPath>Things/RimketGreatBall</texPath>
@@ -423,7 +423,7 @@
 
   <ThingDef ParentName="BaseBullet">
     <defName>RimketUltraBallProjectile</defName>
-    <label>ultra ball</label>
+    <label>Ultra Ball</label>
     <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
     <graphicData>
       <texPath>Things/RimketUltraBall</texPath>
@@ -440,7 +440,7 @@
 
   <ThingDef ParentName="BaseBullet">
     <defName>RimketMasterBallProjectile</defName>
-    <label>master ball</label>
+    <label>Master Ball</label>
     <thingClass>Rimketmon.Projectile_RimketBall</thingClass>
     <graphicData>
       <texPath>Things/RimketMasterBall</texPath>
@@ -458,8 +458,8 @@
   <!-- 림볼 던지기: 소지품에 림볼이 있고 초능력 레벨 ≥ 1이고 림켓링크가 있는 정착민에게 C#(RimketAbilityGranter)이 부여/회수한다 -->
   <AbilityDef>
     <defName>RimketThrow</defName>
-    <label>throw Rimball</label>
-    <description>Throw a Rimball to start a battle.</description>
+    <label>throw ball</label>
+    <description>Throw a ball to start a battle.</description>
     <iconPath>UI/Rimket/ThrowIcon</iconPath>
     <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
     <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
@@ -468,7 +468,7 @@
     <cooldownTicksRange>60</cooldownTicksRange>
     <verbProperties>
       <verbClass>Verb_CastAbility</verbClass>
-      <label>throw Rimball</label>
+      <label>throw ball</label>
       <violent>false</violent>
       <range>12.9</range>
       <warmupTime>0.6</warmupTime>
@@ -488,8 +488,8 @@
 
   <AbilityDef>
     <defName>RimketThrowMaster</defName>
-    <label>throw master ball</label>
-    <description>Throw a master ball to catch the target instantly.</description>
+    <label>throw Master Ball</label>
+    <description>Throw a Master Ball to catch the target instantly.</description>
     <iconPath>Things/RimketMasterBall</iconPath>
     <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
     <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
@@ -498,7 +498,7 @@
     <cooldownTicksRange>60</cooldownTicksRange>
     <verbProperties>
       <verbClass>Verb_CastAbility</verbClass>
-      <label>throw master ball</label>
+      <label>throw Master Ball</label>
       <violent>false</violent>
       <range>12.9</range>
       <warmupTime>0.6</warmupTime>
@@ -521,7 +521,7 @@
   <ThingDef ParentName="AnimalThingBase">
     <defName>RimketPokemonBody</defName>
     <label>Rimketmon</label>
-    <description>The form of a Rimketmon let out of its ball. It is only an outer shell: if it is hurt or lost, the Rimketmon itself is unaffected.</description>
+    <description>A Rimketmon out of its ball. Only a shell: harm to it doesn't affect the real one.</description>
     <statBases>
       <MoveSpeed>5.0</MoveSpeed>
       <MarketValue>0</MarketValue>
@@ -587,7 +587,7 @@
   <AbilityDef>
     <defName>RimketSummon</defName>
     <label>send out Rimketmon</label>
-    <description>Throw a ball at the chosen spot to send out the Rimketmon at the front of the party. It follows behind you. Use it again while it is out to call it back.</description>
+    <description>Send out your lead Rimketmon to follow you. Use again to call it back.</description>
     <iconPath>UI/Rimket/SummonIcon</iconPath>
     <displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
     <disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>

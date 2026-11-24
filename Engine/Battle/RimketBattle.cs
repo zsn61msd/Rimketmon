@@ -23,6 +23,8 @@ namespace Rimketmon.Engine
         public BattleSide Player { get; private set; }
         public BattleSide Foe { get; private set; }
         public bool IsTrainer { get; private set; }
+        /// <summary>경험치를 얻을 때 "경험치를 얻었다" 문장을 남기지 않는다(배틀타워). 레벨업 문장은 남긴다.</summary>
+        public bool QuietExp;
         /// <summary>내 림켓몬이 이 레벨 이상이면 경험치를 얻지 못한다(배지로 올라가는 상한).</summary>
         public int PlayerLevelCap = 100;
         public BattlePhase Phase { get; private set; }
@@ -187,6 +189,17 @@ namespace Rimketmon.Engine
                              string foeName, IList<RimketCreature> foeParty, RimketCreature foePerson, bool trainer, bool dbl, bool online = false)
         {
             this.rng = rng;
+            var jr = rng as JournalRng;
+            if (jr != null)
+            {
+                // 세이브 중 배틀 이어 하기: 시작 상태를 무엇보다 먼저 남긴다(생성자도 상태를 조금 바꿀 수 있으므로)
+                Journal = jr.Journal;
+                StartPlayer = party.Select(FlatCodec.EncodeCreature).ToList();
+                StartFoe = foeParty.Select(FlatCodec.EncodeCreature).ToList();
+                StartFoePerson = foePerson != null ? FlatCodec.EncodeCreature(foePerson) : null;
+                StartColonist = FlatCodec.Encode(colonist);
+                StartSettings = FlatCodec.Encode(settings);
+            }
             this.Online = online;
             this.IsDouble = dbl;
             this.s = settings;
@@ -368,7 +381,9 @@ namespace Rimketmon.Engine
 
         public bool Act(BattleAction a)
         {
+            int mark = Journal != null ? Journal.Entries.Count : 0; bool viaDouble = IsDouble && !PendingSwitch;      // 더블 본행동은 ActDouble이 기록한다
             bool ok = ActCore(a);
+            if (ok && Journal != null && !Journal.Replaying && !viaDouble) Journal.Entries.Insert(mark, "A|" + BattleJournal.Enc(a));
             if (ok && AfterAct != null) { try { AfterAct(this); } catch (Exception) { } }
             return ok;
         }
@@ -416,6 +431,14 @@ namespace Rimketmon.Engine
         /// (살아 있는 칸이 하나뿐이면 null). 교체 대기 중에는 교체해야 하는 쪽만 교체 행동을 넣고 다른 쪽은 null. 항복(Disconnect)은 언제든 가능.
         /// 잘못된 입력이면 false(상태는 그대로).</summary>
         public bool OnlineAct(BattleAction? pa, BattleAction? fa, BattleAction? pa2 = null, BattleAction? fa2 = null)
+        {
+            bool ok = OnlineActCore(pa, fa, pa2, fa2);
+            if (ok) Note("O|" + E(pa) + "|" + E(fa) + "|" + E(pa2) + "|" + E(fa2));
+            return ok;
+        }
+        static string E(BattleAction? a) { return a.HasValue ? BattleJournal.Enc(a.Value) : "-"; }
+
+        private bool OnlineActCore(BattleAction? pa, BattleAction? fa, BattleAction? pa2, BattleAction? fa2)
         {
             if (!Online || IsOver) return false;
             bool ps = pa.HasValue && pa.Value.Kind == ActionKind.Disconnect, fs = fa.HasValue && fa.Value.Kind == ActionKind.Disconnect;
@@ -527,7 +550,12 @@ namespace Rimketmon.Engine
             {
                 // 학습된 정책이 상대를 조종한다. 고르지 못했거나 규칙에 어긋나면 아래의 기존 AI로 넘어간다
                 BattleAction? ba = null;
-                try { ba = FoeBrain(this); } catch (Exception) { ba = null; }
+                if (Journal != null && Journal.Replaying) ba = Journal.NextFoe();
+                else
+                {
+                    try { ba = FoeBrain(this); } catch (Exception) { ba = null; }
+                    if (Journal != null) Journal.Foe.Add(ba.HasValue ? BattleJournal.Enc(ba.Value) : "-");
+                }
                 if (ba.HasValue)
                 {
                     var a = ba.Value; var fa = Foe.Active;
@@ -800,12 +828,12 @@ namespace Rimketmon.Engine
             }
             foreach (var w in winners)
             {
-                if (w.IsPerson && w.C.PawnId == 0) { w.C.Exp += gain; Result.ColonistExp += gain; Add(w.C.Name + "은(는) 경험치 " + gain + "을(를) 얻었다!"); Events.Add(new BattleEvent { Kind = BattleEventKind.Exp, PlayerSide = true, LogIndex = Log.Count - 1, Value = (int)gain, Who = w, HpAfter = (int)w.C.Exp }); continue; }   // 전투 중 직접 싸운 정착민(림켓몬이 아님)
+                if (w.IsPerson && w.C.PawnId == 0) { w.C.Exp += gain; Result.ColonistExp += gain; if (!QuietExp) Add(w.C.Name + "은(는) 경험치 " + gain + "을(를) 얻었다!"); Events.Add(new BattleEvent { Kind = BattleEventKind.Exp, PlayerSide = true, LogIndex = Log.Count - 1, Value = (int)gain, Who = w, HpAfter = (int)w.C.Exp }); continue; }   // 전투 중 직접 싸운 정착민(림켓몬이 아님)
                 if (w.C.Level >= PlayerLevelCap) continue;                       // 레벨 상한(배지 수): 경험치 없음
                 long maxExp = RimketCreature.ExpForLevel(PlayerLevelCap + 1) - 1;
                 w.C.Exp = Math.Min(Math.Max(w.C.Exp, RimketCreature.ExpForLevel(w.C.Level)) + gain, maxExp);
                 if (w.IsPerson) Result.ColonistExp += gain; else w.C.Friendship = Math.Min(255, w.C.Friendship + (IsTrainer ? 3 : 2));
-                Add(w.C.Name + "은(는) 경험치 " + gain + "을(를) 얻었다!");
+                if (!QuietExp) Add(w.C.Name + "은(는) 경험치 " + gain + "을(를) 얻었다!");
                 Events.Add(new BattleEvent { Kind = BattleEventKind.Exp, PlayerSide = true, LogIndex = Log.Count - 1, Value = (int)gain, Who = w, HpAfter = (int)w.C.Exp });
                 int from = w.C.Level;
                 while (w.C.Level < PlayerLevelCap && w.C.Exp >= RimketCreature.ExpForLevel(w.C.Level + 1))      // 레벨업
@@ -819,7 +847,7 @@ namespace Rimketmon.Engine
             // 학습장치: 싸우지 않은 파티 림켓몬도 같은 경험치를 받는다(쓰러진 림켓몬 제외)
             var rest = Player.Party.Where(c => !c.IsFainted && !c.Neutral && !winners.Any(w => w.C == c) && c.Level < PlayerLevelCap).ToList();
             if (rest.Count == 0) return;
-            Add("학습장치로 다른 림켓몬들도 경험치 " + gain + "을(를) 얻었다!");
+            if (!QuietExp) Add("학습장치로 다른 림켓몬들도 경험치 " + gain + "을(를) 얻었다!");
             long cap = RimketCreature.ExpForLevel(PlayerLevelCap + 1) - 1;
             foreach (var c in rest)
             {
@@ -945,7 +973,8 @@ namespace Rimketmon.Engine
 
         // ------------------------------------------------------------------ 종료/승리 선택
 
-        public bool ChooseWinOption(WinChoice choice)
+        public bool ChooseWinOption(WinChoice choice) { bool ok = ChooseWinCore(choice); if (ok) Note("W|" + (int)choice); return ok; }
+        private bool ChooseWinCore(WinChoice choice)
         {
             if (Phase != BattlePhase.WinChoice) return false;
             Result.Choice = choice;
@@ -992,7 +1021,9 @@ namespace Rimketmon.Engine
 
         // ------------------------------------------------------------------ 유틸
 
-        private void Add(string text) { Log.Add(Msgs.Josa(Lang.Tr(text))); }
+        /// <summary>학습 환경 전용: 켜면 배틀 문장의 번역·조사 처리를 건너뛴다(줄 수는 그대로 늘어 LogIndex·동기화 값은 같다). 게임에서는 쓰지 않는다.</summary>
+        public static bool QuietLog;
+        private void Add(string text) { Log.Add(QuietLog ? null : Msgs.Josa(Lang.Tr(text))); }
 
         /// <summary>전투 로그용 이름. 야생은 '야생', 트레이너의 림켓몬은 '상대'가 앞에 붙는다.</summary>
         private string N(BattleSide side, Fighter f)

@@ -63,7 +63,7 @@ namespace Rimketmon
             if (list.Count == 0)
             {
                 g.Label("카드 없음", 80f, 90f, 9f, new Color(0.7f, 0.7f, 0.78f), Canvas.WhiteShadow, TextAnchor.UpperCenter);
-                g.Wrap("카드가 없습니다.\n\nPC 화면에서 포켓몬을 골라 '카드로 전환'하면 카드가 만들어집니다. (림월드 동물·사람은 카드로 만들 수 없습니다)", 168f, 20f, 140f, 8.5f, Canvas.White, Canvas.WhiteShadow);
+                g.Wrap("카드가 없습니다.\n\nPC에서 포켓몬을 골라 '카드로 전환'하면 만들어집니다.", 168f, 20f, 140f, 8.5f, Canvas.White, Canvas.WhiteShadow);
                 g.Label("카드 제작 비용 " + CardCost + " BP (보유 " + pc.bp + " BP)", 238f, 70f, 8f, Canvas.GoldC, Canvas.GoldSh, TextAnchor.UpperCenter);
                 if (cardMsg != null) g.Label(cardMsg, 238f, 148f, 7.5f, Canvas.RedC, Canvas.RedSh, TextAnchor.UpperCenter);
                 else g.Label("Esc: 뒤로", 238f, 148f, 7f, dim, Canvas.WhiteShadow, TextAnchor.UpperCenter);
@@ -78,7 +78,7 @@ namespace Rimketmon
             DrawCardPreview(g, card, 238f, 65f, 90f, 72f);
             SpeciesInfo sp;
             if (SpeciesCatalog.TryGet(card.Species, out sp)) DrawTypeChips(g, sp, 238f, 109f);
-            g.Wrap("림월드 동물·메카에게 적용하면 겉모습만 이 포켓몬으로 바뀝니다. 능력치·기술은 그대로이고, 정착지에서도 이 모습이 유지됩니다.", 168f, 122f, 140f, 7.5f, dim, Canvas.WhiteShadow);
+            g.Wrap("림월드 동물·메카의 겉모습만 이 포켓몬으로 바꾼다.", 168f, 122f, 140f, 7.5f, dim, Canvas.WhiteShadow);
             if (cardMsg != null) g.Label(cardMsg, 238f, 148f, 7.5f, Canvas.RedC, Canvas.RedSh, TextAnchor.UpperCenter);
             else g.Label("Enter: 적용   Esc: 뒤로", 238f, 148f, 7f, dim, Canvas.WhiteShadow, TextAnchor.UpperCenter);
             bool hot = Hot(176f, 158f, 124f, 14f);
@@ -155,13 +155,13 @@ namespace Rimketmon
             if (!PickValid(e))
             {
                 RimketAudio.PlaySe("gui_sel_buzzer");
-                Messages.Message(Lang.Tr(boxPick == Pick.Wedge ? "쐐기를 쓸 수 없는 림켓몬입니다. (포켓몬에게는 쓸 수 없고, 림월드 동물·사람에게만 쓸 수 있습니다)" : "카드를 적용할 수 없는 림켓몬입니다. (림월드 동물·메카에게만 적용할 수 있습니다)"), MessageTypeDefOf.RejectInput, false);
+                Messages.Message(Lang.Tr(boxPick == Pick.Wedge ? "쐐기를 쓸 수 없는 림켓몬이다(림월드 동물·사람만 가능)." : "카드를 쓸 수 없는 림켓몬이다(림월드 동물·메카만 가능)."), MessageTypeDefOf.RejectInput, false);
                 return;
             }
             if (boxPick == Pick.Wedge)
             {
                 var w = pickWedge;
-                AskConfirm(e.C.Name + "에게 쐐기를 쓸까요?\n종족·특성·기술이 전부 바뀝니다. (파티·PC 메뉴의 '쐐기 제거'로 되돌릴 수 있음)", () =>
+                AskConfirm(e.C.Name + "에게 쐐기를 쓸까요?\n능력이 전부 바뀝니다('쐐기 제거'로 되돌릴 수 있음).", () =>
                 {
                     var p = PartyComponent.Instance;
                     if (!p.Wedges.Any(x => x.C == w) || !Paradox.Apply(e.C, w)) { RimketAudio.PlaySe("gui_sel_buzzer"); PickExit(false); return; }
@@ -174,7 +174,7 @@ namespace Rimketmon
             else if (boxPick == Pick.Card && pickCard != null)
             {
                 var card = pickCard;
-                AskConfirm(e.C.Name + ": 「" + CardName(card) + "」을 적용할까요?\n겉모습만 이 포켓몬으로 바뀝니다. (PC 메뉴의 '카드 제거'로 되돌릴 수 있음)", () =>
+                AskConfirm(e.C.Name + ": 「" + CardName(card) + "」을 적용할까요?\n겉모습만 바뀝니다('카드 제거'로 되돌릴 수 있음).", () =>
                 {
                     var p = PartyComponent.Instance;
                     string os; int osh;
@@ -227,13 +227,13 @@ namespace Rimketmon
             if (PokeBody.SheetId(e.C) == null) { Messages.Message(Lang.Tr("이 포켓몬은 카드로 만들 수 없다!"), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }      // 지도에서 걷는 그림이 없는 종족
             int cost = CardCost;
             if (pc.bp < cost) { Messages.Message(Lang.Tr("BP가 부족합니다. (필요 " + cost + " BP, 보유 " + pc.bp + " BP)"), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
-            if (pc.All.Contains(e)) { Messages.Message(Lang.Tr("파티에 있는 림켓몬은 카드로 바꿀 수 없습니다. 먼저 PC 박스에 맡겨 주세요."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }      // 따라다니는 몸체가 남지 않도록 PC 박스에 있는 것만
+            if (pc.All.Contains(e)) { Messages.Message(Lang.Tr("파티에 있는 림켓몬은 카드로 바꿀 수 없다. 먼저 박스에 맡기자."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }      // 따라다니는 몸체가 남지 않도록 PC 박스에 있는 것만
             string name = e.C.Name;
             string warn = "";
             if (e.C.Shiny > 0)
             {
-                warn = "★ 이로치 포켓몬입니다! 카드로 바꾸면 이 이로치 포켓몬은 사라집니다.\n";
-                if (NoWorldShiny.Contains(e.C.Species)) warn += "★ 이 포켓몬은 월드(지도)에서는 이로치 색이 보이지 않습니다. (메뉴·배틀에서는 보임)\n";
+                warn = "★ 이로치입니다! 카드로 바꾸면 사라집니다.\n";
+                if (NoWorldShiny.Contains(e.C.Species)) warn += "★ 지도에서는 이로치 색이 보이지 않습니다.\n";
             }
             AskConfirm(warn + name + "을(를) 카드로 바꿀까요? (-" + cost + " BP)\n포켓몬은 사라지고 카드가 됩니다. (보유 " + pc.bp + " BP, 되돌릴 수 없음)", () =>
             {
@@ -250,7 +250,7 @@ namespace Rimketmon
         private void AskRemoveCard(PartyComponent pc, ExposableCreature e)
         {
             if (e == null || !e.C.HasCard) return;
-            AskConfirm(e.C.Name + "의 카드를 뗄까요?\n원래 겉모습으로 돌아가고, 카드는 카드 목록으로 돌아갑니다.", () =>
+            AskConfirm(e.C.Name + "의 카드를 뗄까요?\n원래 모습으로 돌아가고 카드는 돌려받습니다.", () =>
             {
                 string sp; int sh;
                 if (!PokeCards.Remove(e.C, out sp, out sh)) return;

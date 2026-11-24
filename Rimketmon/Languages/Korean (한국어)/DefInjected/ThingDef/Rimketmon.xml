@@ -17,7 +17,7 @@
   <RimketUltraBallProjectile.label>하이퍼볼</RimketUltraBallProjectile.label>
   <RimketMasterBallProjectile.label>마스터볼</RimketMasterBallProjectile.label>
   <RimketPokemonBody.label>림켓몬</RimketPokemonBody.label>
-  <RimketPokemonBody.description>볼에서 나온 림켓몬의 모습. 겉모습일 뿐이라 다치거나 사라져도 림켓몬 본체에는 영향이 없다.</RimketPokemonBody.description>
+  <RimketPokemonBody.description>볼에서 나온 림켓몬. 겉모습일 뿐이라 다쳐도 본체는 멀쩡하다.</RimketPokemonBody.description>
   <RimketLink.comps.0.useLabel>림켓링크 설치</RimketLink.comps.0.useLabel>
   <RimketMasterBlueprint.comps.0.activateLabelString>설계도 해석</RimketMasterBlueprint.comps.0.activateLabelString>
   <RimketMasterBlueprint.comps.0.activateDescString>마스터볼 설계도를 해석한다.</RimketMasterBlueprint.comps.0.activateDescString>

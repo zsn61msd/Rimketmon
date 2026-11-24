@@ -26,6 +26,31 @@ namespace Rimketmon.Engine
         public static readonly int OwnPreviewSize = MonSize + OwnPickExtra;
         public static readonly int PreviewSize = 1 + TeamSize * OwnPreviewSize + TeamSize * FoePreviewSize;
         public static readonly int Size = BattleSize + PreviewSize;
+        /// <summary>폼 전용 AI의 추가 입력(관측 맨 뒤): 전투 6칸 × (다이맥스·거다이맥스·메가/원시) + 상대 프리뷰 6칸 × (폼 있음·다이맥스).</summary>
+        public const int FormExtra = MaxMons * 2 * 3 + TeamSize * 2;
+        /// <summary>켜면 관측 끝에 FormExtra칸이 붙는다(폼 전용 AI). 기존 AI는 끈 채로 쓴다.</summary>
+        public bool FormObs;
+        public int ObsSize { get { return Size + (FormObs ? FormExtra : 0); } }
+        public static int SizeFor(bool formObs) { return Size + (formObs ? FormExtra : 0); }
+
+        static void FormFlags(float[] o, int p, RimketCreature c)
+        {
+            if (c == null) return;
+            SpeciesInfo sp; bool gmax = SpeciesCatalog.TryGet(c.Species, out sp) && sp.FormKind == "GMAX";
+            if (FormChange.IsDynamaxed(c)) o[p] = 1f;
+            if (gmax) o[p + 1] = 1f;
+            if (c.FormBase != null && !gmax) o[p + 2] = 1f;
+        }
+        void FormPreview(float[] o)
+        {
+            int p = Size + MaxMons * 2 * 3;
+            for (int i = 0; i < TeamSize; i++, p += 2)
+            {
+                var c = pvOpp != null && i < pvOpp.Count ? pvOpp[i] : null; if (c == null) continue;
+                if (c.FormBase != null || c.Dynamax) o[p] = 1f;
+                if (FormChange.IsDynamaxed(c)) o[p + 1] = 1f;
+            }
+        }
 
         static Dictionary<string, int> BuildVocab(bool ability)
         {
@@ -144,8 +169,9 @@ namespace Rimketmon.Engine
         /// <summary>선출 단계의 관측(전투 부분은 0).</summary>
         public float[] EncodePick(IList<int> picked)
         {
-            var o = new float[Size];
+            var o = new float[ObsSize];
             Preview(o, BattleSize, picked, true);
+            if (FormObs) FormPreview(o);
             return o;
         }
 
@@ -180,7 +206,7 @@ namespace Rimketmon.Engine
 
         public float[] Encode(RimketBattle b)
         {
-            var o = new float[Size]; int p = 0;
+            var o = new float[ObsSize]; int p = 0;
             if (pvMine != null)
             {
                 // 프리뷰 부분은 판이 진행되는 동안 변하지 않으므로 한 번만 만들어 복사한다
@@ -206,6 +232,12 @@ namespace Rimketmon.Engine
                 Mon(o, ref p, seen ? c : null, b, false, i == 0, myActive, seen);
             }
             Field(o, ref p, b, me, foe);
+            if (FormObs)
+            {
+                for (int i = 0; i < MaxMons; i++) FormFlags(o, Size + i * 3, i < meC.Count ? meC[i] : null);
+                for (int i = 0; i < MaxMons; i++) { var c = i < foeC.Count ? foeC[i] : null; if (c != null && foeSeen.Contains(c)) FormFlags(o, Size + (MaxMons + i) * 3, c); }
+                if (pvOpp != null) FormPreview(o);
+            }
             return o;
         }
 

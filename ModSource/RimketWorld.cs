@@ -23,7 +23,8 @@ namespace Rimketmon
         // ---- 저장: 따라다니는 림켓몬과, 승부 중에 꺼낸 임시 몸들(불러오면 치운다)
         private Pawn master; private bool followOn;     // 따라다니는 림켓몬(그림만, 폰 없음)의 주인과 켜짐 여부
         private List<Pawn> tempBodies = new List<Pawn>();
-        private WorldBattle fight;                      // 진행 중인 방문자 승부(저장하지 않는다)
+        private WorldBattle fight;                      // 진행 중인 방문자 승부(세이브하면 기록으로 남기고, 불러오면 이어 간다)
+        private WorldDuelState fightSave;
         private int lastAutoRoll;
 
         public override void ExposeData()
@@ -33,6 +34,8 @@ namespace Rimketmon
             Scribe_References.Look(ref master, "rkFollowMaster");
             Scribe_Values.Look(ref followOn, "rkFollowOn", false);
             Scribe_Collections.Look(ref tempBodies, "rkTempBodies", LookMode.Reference);
+            if (Scribe.mode == LoadSaveMode.Saving) { fightSave = null; try { if (fight != null) fightSave = fight.Save(); } catch (Exception ex) { Log.Warning("[림켓몬] 방문자 승부 저장: " + ex.Message); } }
+            Scribe_Deep.Look(ref fightSave, "rkWorldDuel");
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
@@ -42,6 +45,10 @@ namespace Rimketmon
                 tempBodies.Clear();
                 PokeBody.Clear();
                 if (master == null) followOn = false;
+                // 저장할 때 벌어지던 방문자 승부: 같은 판을 기록대로 다시 만들어 이어 간다(몸은 지금 나와 있는 림켓몬으로 새로 세운다)
+                fight = null;
+                var st = fightSave; fightSave = null;
+                if (st != null) LongEventHandler.ExecuteWhenFinished(() => { try { fight = WorldBattle.Load(st, this); } catch (Exception ex) { Log.Warning("[림켓몬] 방문자 승부 이어 하기: " + ex.Message); fight = null; } });
             }
         }
 
@@ -285,6 +292,9 @@ namespace Rimketmon
         }
         public bool AnyFollower { get { return followOn; } }
         private Vector3 fPos, fVel; private int fDir = 2; private bool fMoving, fPosValid; private float fStep;
+        private readonly List<Vector3> trail = new List<Vector3>();      // 주인이 지나간 길(그린 위치)
+        private float fIdle, fDirHold;
+        private Vector3 fHeading;
         public const float FollowGap = 1.3f;              // 주인 등 뒤로 몇 칸
         const float FollowWalk = 2.6f, FollowRun = 7f;    // 칸/게임초: 가까이에선 걷는 속도로(방향을 바꿔도 휙 옮기지 않게), 멀어지면 빨리
 
@@ -296,6 +306,7 @@ namespace Rimketmon
             if (owner == null || owner.Map == null) return;
             var first = Front();
             if (first == null) { Messages.Message(Lang.Tr("꺼낼 림켓몬이 없다."), MessageTypeDefOf.RejectInput, false); return; }
+            if (first.Hp <= 0) { Messages.Message(Lang.Tr(first.Name + "은(는) 쓰러져 있어 꺼낼 수 없다. 먼저 치료하자."), MessageTypeDefOf.RejectInput, false); return; }
             if (!FollowDraw.CanShow(first)) { Messages.Message(Lang.Tr(first.Name + "은(는) 지도에 꺼낼 수 있는 모습이 없다."), MessageTypeDefOf.RejectInput, false); return; }
             if (!cell.InBounds(owner.Map)) cell = owner.Position;
             followOn = true; master = owner; fPos = cell.ToVector3Shifted(); fPosValid = true; fDir = 2;
@@ -338,41 +349,64 @@ namespace Rimketmon
             if (!followOn) return;
             if (master == null || master.Dead || !master.Spawned) { Recall(false); return; }
             var map = master.Map;
-            Vector3 back = master.Rotation.FacingCell.ToVector3();
-            Vector3 target = master.DrawPos - back * FollowGap; target.y = 0f;
-            if (!fPosValid) { fPos = target; fPosValid = true; fVel = Vector3.zero; }
-            fPos.y = 0f;
+            // 림월드 폰처럼: 주인이 실제로 지나간 길(그린 위치 기록)을 FollowGap 칸 뒤에서 그대로 밟아 간다.
+            // 속도는 주인과 같고(따로 가감속하지 않는다), 바라보는 쪽은 림월드 회전 규칙(움직인 각도로 4방향, 45°는 동·서 우선)으로 정한다.
+            Vector3 mp = master.DrawPos; mp.y = 0f;
             float dt = Time.deltaTime * (Find.TickManager.Paused ? 0f : Find.TickManager.TickRateMultiplier);
             if (dt > 0.1f) dt = 0.1f;
-            if (interactKind >= 0) target = fPos;      // 교감 중에는 제자리
-            Vector3 delta = target - fPos; float dist = delta.magnitude;
-            if (dist > 12f) { fPos = target; fVel = Vector3.zero; dist = 0f; delta = Vector3.zero; }      // 너무 멀어지면(순간이동 등) 바로 옆으로
+            if (fPosValid && trail.Count == 0) { trail.Add(fPos); trail.Add(mp); }      // 막 꺼냈다: 볼이 떨어진 자리에서 주인 쪽으로
+            if (!fPosValid || (mp - trail[trail.Count - 1]).magnitude > 6f)
+            {
+                // 처음·순간이동: 주인 등 뒤 자리에서 시작
+                trail.Clear();
+                Vector3 back = master.Rotation.FacingCell.ToVector3();
+                trail.Add(mp - back * FollowGap); trail.Add(mp);
+                fPos = trail[0]; fPosValid = true; fVel = Vector3.zero;
+            }
+            else if ((mp - trail[trail.Count - 1]).magnitude > 0.02f) trail.Add(mp);
+            Vector3 prev = fPos;
+            if (interactKind < 0)
+            {
+                // 주인에서 길을 따라 FollowGap 만큼 뒤의 점
+                float need = FollowGap; Vector3 at = trail[0]; int cut = 0;
+                for (int i = trail.Count - 1; i > 0; i--)
+                {
+                    float seg = (trail[i] - trail[i - 1]).magnitude;
+                    if (seg >= need) { at = Vector3.Lerp(trail[i], trail[i - 1], need / Mathf.Max(1e-4f, seg)); cut = i - 1; need = 0f; break; }
+                    need -= seg;
+                }
+                if (need > 0f) at = trail[0];      // 아직 길이 짧다(막 꺼냈다): 그 자리에 머문다
+                if (cut > 0) trail.RemoveRange(0, cut);
+                fPos = at;
+            }
+            fPos.y = 0f;
+            Vector3 moved = fPos - prev; moved.y = 0f;
+            float spd = dt > 0f ? moved.magnitude / dt : 0f;
+            fVel = dt > 0f ? moved / dt : Vector3.zero;
             if (dt > 0f)
             {
-                // 부드럽게 따라가기: 목표 쪽 속도를 천천히 바꾼다(가속 제한). 가까우면 걷는 속도, 멀면 뛰는 속도까지.
-                // 예전에는 매 프레임 '움직임/멈춤'과 방향이 번갈아 바뀌어 그림이 바르르 떨렸다 → 속도와 문턱(이력)으로 막는다
-                float maxSpeed = Mathf.Lerp(FollowWalk, FollowRun, Mathf.InverseLerp(1.2f, 5f, dist));
-                Vector3 want = dist > 0.02f ? delta / dist * Mathf.Min(maxSpeed, dist * 2.2f) : Vector3.zero;
-                fVel = Vector3.MoveTowards(fVel, want, 12f * dt);
-                fPos += fVel * dt;
-                float spd = fVel.magnitude;
-                if (!fMoving && spd > 0.6f) fMoving = true;
-                else if (fMoving && spd < 0.25f && dist < 0.15f) fMoving = false;
-                if (fMoving)
+                if (!fMoving && spd > 0.3f) fMoving = true;
+                else if (fMoving && spd < 0.05f) { fIdle += dt; if (fIdle > 0.12f) fMoving = false; }
+                if (spd > 0.05f) fIdle = 0f;
+                if (fMoving) fStep += dt * Mathf.Lerp(5f, 9f, Mathf.InverseLerp(FollowWalk, FollowRun, spd));
+                // 방향: 최근 움직임을 부드럽게 모은 방향으로 정하고, 경계(45°) 근처에선 바꾸지 않는다(대각선에서 프레임마다 뒤집혀 떨리던 문제)
+                fHeading = Vector3.Lerp(fHeading, moved.normalized, moved.magnitude > 0.004f ? Mathf.Clamp01(dt * 8f) : 0f);
+                fDirHold -= dt;
+                if (fHeading.sqrMagnitude > 0.04f && fDirHold <= 0f)
                 {
-                    fStep += dt * Mathf.Lerp(5f, 9f, Mathf.InverseLerp(FollowWalk, FollowRun, spd));
-                    if (spd > 0.4f)
+                    float ang = Mathf.Atan2(fHeading.x, fHeading.z) * Mathf.Rad2Deg; if (ang < 0f) ang += 360f;
+                    float center = fDir * 90f;      // 0 북, 1 동, 2 남, 3 서
+                    float off = Mathf.Abs(Mathf.DeltaAngle(ang, center));
+                    if (off > 45f + 18f)      // 지금 방향에서 확실히 벗어났을 때만
                     {
-                        float ax = Mathf.Abs(fVel.x), az = Mathf.Abs(fVel.z);
-                        bool horiz = fDir == 1 || fDir == 3;
-                        if (horiz ? az > ax * 1.3f : ax > az * 1.3f) horiz = !horiz;      // 축은 확실히 바뀔 때만 바꾼다(대각선에서 깜빡이지 않게)
-                        fDir = horiz ? (fVel.x > 0f ? 1 : 3) : (fVel.z > 0f ? 0 : 2);
+                        int nd = ang < 45f || ang > 315f ? 0 : ang <= 135f ? 1 : ang < 225f ? 2 : 3;
+                        if (nd != fDir) { fDir = nd; fDirHold = 0.25f; }
                     }
                 }
             }
-            if (!fMoving) fDir = master.Rotation == Rot4.North ? 0 : master.Rotation == Rot4.East ? 1 : master.Rotation == Rot4.South ? 2 : 3;
             if (map != Find.CurrentMap || RimWorld.Planet.WorldRendererUtility.WorldRendered) return;
             var c = Front(); if (c == null) { Recall(false); return; }
+            if (c.Hp <= 0) { Messages.Message(Lang.Tr(c.Name + "은(는) 쓰러져서 볼로 돌아갔다. 치료해야 다시 꺼낼 수 있다."), MessageTypeDefOf.NeutralEvent, false); Recall(false); return; }      // 맨 앞 림켓몬이 쓰러지면 꺼내 둔 모습도 사라진다
             if (fPos.ToIntVec3().InBounds(map) && fPos.ToIntVec3().Fogged(map)) return;
             int drawDir = fDir;
             FollowDraw.Spin = 0f;
@@ -473,7 +507,7 @@ namespace Rimketmon
         readonly Map map;
         readonly RimketBattle battle;
         readonly EngineSettings settings;
-        readonly int startTick;
+        int startTick;
         int shown, evIndex, nextLine, endAt = -1; bool arrived, over;
         MoveAnimPlayer anim; Pawn animUser, animTarget;
         bool closed;      // 정리된 뒤에는 날아가던 볼에서 림켓몬이 나오지 않는다
@@ -503,7 +537,7 @@ namespace Rimketmon
             var pa = ChallengeBuilder.BuildParty(badges, new GameRng(), s, 3, 3, true).Where(c => RimketWorldComponent.KindFor(c) != null).ToList();
             var pb = ChallengeBuilder.BuildParty(badges, new GameRng(), s, 3, 3, true).Where(c => RimketWorldComponent.KindFor(c) != null).ToList();
             if (pa.Count == 0 || pb.Count == 0) return null;
-            var battle = RimketBattle.OnlineBattle(new GameRng(), s, a.LabelShortCap, pa, b.LabelShortCap, pb);
+            var battle = RimketBattle.OnlineBattle(BattleSave.Rng(new GameRng()), s, a.LabelShortCap, pa, b.LabelShortCap, pb);
             if (RimketmonMod.Settings.envField)
             {
                 var env = BattleEnv.Compute(map, new IntVec3((sa.x + sb.x) / 2, 0, (sa.z + sb.z) / 2));      // 두 사람 사이의 날씨·지형
@@ -514,6 +548,46 @@ namespace Rimketmon
             var go = JobMaker.MakeJob(JobDefOf.Goto, sb); go.locomotionUrgency = LocomotionUrgency.Jog;
             b.jobs.StartJob(go, JobCondition.InterruptForced);
             f.Hold(a, 0);
+            return f;
+        }
+
+        /// <summary>세이브: 두 사람·자리·시작 상태·진행 기록·화면 진행(몇 줄까지 보였나 등).</summary>
+        internal WorldDuelState Save()
+        {
+            if (battle == null || battle.Journal == null || battle.StartPlayer == null || closed) return null;
+            int t = Find.TickManager.TicksGame;
+            return new WorldDuelState
+            {
+                A = who[0], B = who[1], SA = spot[0], SB = spot[1],
+                NameA = battle.Player.Name, NameB = battle.Foe.Name,
+                StartP = battle.StartPlayer.ToList(), StartF = battle.StartFoe.ToList(), Settings = battle.StartSettings,
+                JEntries = battle.Journal.Entries.ToList(), JFoe = battle.Journal.Foe.ToList(), JDraws = battle.Journal.DrawsText(),
+                Shown = shown, EvIndex = evIndex, NextIn = Math.Max(0, nextLine - t), EndIn = endAt >= 0 ? Math.Max(0, endAt - t) : -1,
+                Since = t - startTick, Arrived = arrived, Over = over,
+            };
+        }
+
+        /// <summary>불러오기: 같은 판을 기록대로 다시 만들고 화면 진행을 맞춘다. 나와 있는 림켓몬은 볼 없이 그 자리에 다시 세운다.</summary>
+        internal static WorldBattle Load(WorldDuelState st, RimketWorldComponent comp)
+        {
+            if (st == null || st.A == null || st.B == null || !st.A.Spawned || !st.B.Spawned || st.A.Map != st.B.Map) return null;
+            var s = new EngineSettings(); FlatCodec.Decode(s, st.Settings);
+            var j = new BattleJournal { Entries = st.JEntries.ToList(), Foe = st.JFoe.ToList() }; j.SetDrawsText(st.JDraws);
+            var battle = RimketBattle.OnlineBattle(new JournalRng(new GameRng(), j), s, st.NameA, st.StartP.Select(FlatCodec.DecodeCreature).ToList(), st.NameB, st.StartF.Select(FlatCodec.DecodeCreature).ToList());
+            if (!BattleJournal.Replay(battle, j)) Log.Warning("[림켓몬] 방문자 승부: 기록 일부를 다시 하지 못했습니다.");
+            var f = new WorldBattle(st.A, st.B, st.SA, st.SB, battle, s, comp);
+            int t = Find.TickManager.TicksGame;
+            f.shown = Math.Min(st.Shown, battle.Log.Count); f.evIndex = Math.Min(st.EvIndex, battle.Events.Count);
+            f.nextLine = t + st.NextIn; f.endAt = st.EndIn >= 0 ? t + st.EndIn : -1; f.startTick = t - st.Since; f.arrived = st.Arrived; f.over = st.Over;
+            if (f.arrived)
+                for (int i = 0; i < 2; i++)
+                {
+                    var side = i == 0 ? battle.Player : battle.Foe; var a = side.Active;
+                    if (a == null || a.Fainted || a.IsPerson) continue;
+                    var cell = f.monCell[i]; if (!cell.Standable(f.map)) cell = CellFinder.RandomClosewalkCellNear(cell, f.map, 1);
+                    f.bodyOf[i] = a; f.body[i] = RimketWorldComponent.SpawnBody(a.C, f.who[i].Faction, cell, f.map);
+                    if (f.body[i] != null) { comp.Track(f.body[i]); f.HoldBody(i); }
+                }
             return f;
         }
 
@@ -1034,6 +1108,26 @@ namespace Rimketmon
             if (caster == null || comp == null || caster.Map == null) return;
             if (comp.AnyFollower) { comp.Recall(); return; }
             Projectile_RimketBall.ThrowSummon(caster, target.Cell);
+        }
+    }
+
+    /// <summary>방문자끼리 승부의 세이브 데이터.</summary>
+    public sealed class WorldDuelState : IExposable
+    {
+        public Pawn A, B; public IntVec3 SA, SB; public string NameA, NameB;
+        public List<string> StartP = new List<string>(), StartF = new List<string>(), JEntries = new List<string>(), JFoe = new List<string>();
+        public string Settings, JDraws;
+        public int Shown, EvIndex, NextIn, EndIn = -1, Since; public bool Arrived, Over;
+        public void ExposeData()
+        {
+            Scribe_References.Look(ref A, "a"); Scribe_References.Look(ref B, "b");
+            Scribe_Values.Look(ref SA, "sa"); Scribe_Values.Look(ref SB, "sb");
+            Scribe_Values.Look(ref NameA, "nameA"); Scribe_Values.Look(ref NameB, "nameB");
+            BattleSpec.B64ListPub(ref StartP, "startP"); BattleSpec.B64ListPub(ref StartF, "startF");
+            BattleSpec.B64ListPub(ref JEntries, "jEntries"); BattleSpec.B64ListPub(ref JFoe, "jFoe");
+            BattleSpec.B64Pub(ref Settings, "settings"); BattleSpec.B64Pub(ref JDraws, "jDraws");
+            Scribe_Values.Look(ref Shown, "shown"); Scribe_Values.Look(ref EvIndex, "evIndex"); Scribe_Values.Look(ref NextIn, "nextIn");
+            Scribe_Values.Look(ref EndIn, "endIn", -1); Scribe_Values.Look(ref Since, "since"); Scribe_Values.Look(ref Arrived, "arrived"); Scribe_Values.Look(ref Over, "over");
         }
     }
 }

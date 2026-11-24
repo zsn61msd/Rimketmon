@@ -52,7 +52,8 @@ namespace Rimketmon.Engine
         }
 
         /// <summary>볼을 던진다(그 턴 행동). 잡으면 전투가 끝난다. 빠져나오면 상대는 이번 턴에 행동하지 않는다.</summary>
-        public bool ThrowBall(int tier)
+        public bool ThrowBall(int tier) { bool ok = ThrowBallCore(tier); if (ok) Note("B|" + tier); return ok; }
+        private bool ThrowBallCore(int tier)
         {
             if (!HuntMode || IsTrainer || IsOver || IsDouble || Phase != BattlePhase.Party || PendingSwitch) return false;
             if (tier < 0 || tier > 3 || Balls[tier] <= 0 || Foe.Active == null || Foe.Active.Fainted) return false;

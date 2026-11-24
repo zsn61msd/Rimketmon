@@ -197,6 +197,7 @@ namespace Rimketmon.Engine
         public void ApplyEnvironment(Weather w, Terrain t)
         {
             if (IsOver) return;
+            Note("E|" + (int)w + "|" + (int)t);
             if (w != Weather.None && weather == Weather.None)
             {
                 weather = w; weatherTurns = -1;

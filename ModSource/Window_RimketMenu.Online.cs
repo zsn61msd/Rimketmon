@@ -120,11 +120,11 @@ namespace Rimketmon
             var s = ol.Session;
             oGreeted = s != null;
             if (s == null)
-                Say(ToWalk, "방을 만들었습니다! 방 코드: " + ol.Code, "상대가 들어올 때까지 PC와 훈련 아저씨로 파티를 정리해 두세요. 아래쪽 워프 판으로 나가면 방이 닫힙니다.");
+                Say(ToWalk, "방을 만들었습니다! 방 코드: " + ol.Code, "상대를 기다리는 동안 파티를 정리해 두세요. 워프 판으로 나가면 방이 닫힙니다.");
             else if (s.State == OnlineState.Over && oResult != null)
-                Say(ToWalk, oResult.Split('\n')[0] + (oPaidGame == s.GameNo ? "  (+" + OnlineGameBp + " BP)" : ""), "한 판 더 하려면 접수원에게 말을 걸어 주세요. 채팅은 T 키입니다.");
+                Say(ToWalk, oResult.Split('\n')[0] + (oPaidGame == s.GameNo ? "  (+" + OnlineGameBp + " BP)" : ""), "한 판 더 하려면 접수원에게 말을 거세요. 채팅은 T.");
             else
-                Say(ToWalk, (s.OppName ?? "상대") + " 님과 연결되었습니다!", "준비가 되면 접수원에게 말을 걸어 주세요. PC와 훈련 아저씨도 쓸 수 있고, 채팅은 T 키입니다.");
+                Say(ToWalk, (s.OppName ?? "상대") + " 님과 연결되었습니다!", "준비되면 접수원에게 말을 거세요. 채팅은 T.");
         }
 
         private void OnlineLeaveRoom()
@@ -141,7 +141,7 @@ namespace Rimketmon
             if (s == null) { if (ol != null) Say(ToWalk, "아직 상대 트레이너가 오지 않았어요. 방 코드: " + ol.Code, "코드를 친구에게 알려 주세요. 상대가 들어오면 바로 준비할 수 있어요."); else ToWalk(); return; }
             var pc = PartyComponent.Instance;
             if (s.OppLeft) { Say(ToWalk, "상대 트레이너가 방을 나갔습니다.", "아래쪽 워프 판으로 나가면 방이 닫힙니다."); return; }
-            if (RimketLink.FindLinkPawn() == null) { RimketAudio.PlaySe("gui_sel_buzzer"); Say(ToWalk, "림켓링크 신호가 확인되지 않아요.", "림켓링크 착용자가 없으면 대전을 준비하거나 다시 할 수 없어요. 아래쪽 워프 판으로 나가 주세요."); return; }
+            if (RimketLink.FindLinkPawn() == null) { RimketAudio.PlaySe("gui_sel_buzzer"); Say(ToWalk, "림켓링크 신호가 확인되지 않아요.", "림켓링크 착용자가 없어 대전할 수 없어요. 워프 판으로 나가 주세요."); return; }
             if (s.State == OnlineState.Over)
             {
                 if (s.MyAgain) { Say(ToWalk, "상대 트레이너의 대답을 기다리고 있어요."); return; }
@@ -221,7 +221,7 @@ namespace Rimketmon
         private void OnlineHome(Canvas g, Texture2D win, PartyComponent pc)
         {
             // 경고(눈에 잘 띄게): 아직 실험 기능
-            g.Label("세이브가 날아가지 않도록, 시작하기 전에 세이브 파일을 꼭 따로 백업해 두세요.", 160f, 16f, 8f, Color.white, Canvas.WhiteShadow, TextAnchor.UpperCenter);
+            g.Label("시작하기 전에 세이브를 백업해 두세요.", 160f, 16f, 8f, Color.white, Canvas.WhiteShadow, TextAnchor.UpperCenter);
 
             g.Window(win, 50f, 30f, 220f, 148f);
             g.Label("온라인 배틀", 160f, 35f, 11f, Canvas.White, Canvas.WhiteShadow, TextAnchor.UpperCenter);
@@ -232,7 +232,7 @@ namespace Rimketmon
             var pic = OnlinePicTex();
             if (pic != null) g.ImgFit(pic, false, 72f, 66f, 20f, 24f);
             g.Label("내 이름: " + (named ? RimketmonMod.Settings.onlineName : "(아직 정하지 않음)"), 86f, 58f, 8.5f, named ? Canvas.White : Canvas.RedC, Canvas.WhiteShadow);
-            g.Label(pic != null ? "상대에게 이 그림으로 보입니다 · 이름 수정을 누르면 겉모습을 새로 찍습니다" : "그림 없음(이름을 정할 때 찍습니다)", 86f, 68f, 6.5f, new Color(0.8f, 0.85f, 0.95f), Canvas.WhiteShadow);
+            g.Label(pic != null ? "상대에게 보이는 모습 · 이름 수정 시 갱신" : "그림 없음(이름을 정할 때 찍습니다)", 86f, 68f, 6.5f, new Color(0.8f, 0.85f, 0.95f), Canvas.WhiteShadow);
             DrawRankedButton(g, 214f, 58f, 46f, named ? "이름 수정" : "이름 정하기", true, () => Find.WindowStack.Add(new Dialog_OnlineName()));
 
             string steamWhy; bool steam = RimketOnline.Available(out steamWhy);
@@ -547,7 +547,7 @@ namespace Rimketmon
             Text.Font = GameFont.Medium;
             Widgets.Label(new Rect(0f, 0f, r.width, 34f), Lang.Tr("온라인 대전 이름"));
             Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(0f, 36f, r.width, 64f), Lang.Tr("상대 화면에 보일 이름입니다(최대 20자). 저장하면 지금 림켓링크 착용자의 모습을 찍어 함께 보냅니다. 옷이나 머리를 바꿨다면 이름을 그대로 두고 저장만 눌러도 겉모습이 갱신됩니다."));
+            Widgets.Label(new Rect(0f, 36f, r.width, 64f), Lang.Tr("상대에게 보일 이름(최대 20자). 저장하면 지금 착용자의 모습도 함께 갱신됩니다."));
             GUI.SetNextControlName("OnlineNameField");
             name = Widgets.TextField(new Rect(0f, 104f, r.width, 32f), name ?? "", 20);
             if (Event.current.type == EventType.Repaint && GUI.GetNameOfFocusedControl() != "OnlineNameField") GUI.FocusControl("OnlineNameField");

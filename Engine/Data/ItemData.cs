@@ -431,7 +431,7 @@ public static partial class ItemData {
     new object[]{"LOVEBALL","Love Ball","러브러브볼",3,300,0,"",0,false,"PokeBall","A Poké Ball for catching Pokémon that are the opposite gender of your Pokémon.","자신의 포켓몬과 성별이 다르면 잡기 쉬워지는 조금 특이한 볼."},
     new object[]{"FRIENDBALL","Friend Ball","프렌드볼",3,300,0,"",0,false,"PokeBall","A Poké Ball that makes caught Pokémon more friendly.","잡은 야생 포켓몬이 바로 친밀해지는 조금 특이한 볼."},
     new object[]{"MOONBALL","Moon Ball","문볼",3,300,0,"",0,false,"PokeBall","A Poké Ball for catching Pokémon that evolve using the Moon Stone.","달의돌로 진화하는 포켓몬이 잡기 쉬워지는 조금 특이한 볼."},
-    new object[]{"DREAMBALL","Dream Ball","드림볼",3,300,0,"",0,false,"PokeBall","A somewhat different Poké Ball that makes it easier to catch wild Pokémon while they're asleep.","잠듦 상태의 포켓몬을 잡기 쉬운 조금 특이한 볼."},
+    new object[]{"DREAMBALL","Dream Ball","드볼",3,300,0,"",0,false,"PokeBall","A somewhat different Poké Ball that makes it easier to catch wild Pokémon while they're asleep.","잠듦 상태의 포켓몬을 잡기 쉬운 조금 특이한 볼."},
     new object[]{"BEASTBALL","Beast Ball","울트라볼",3,1000,0,"",0,false,"PokeBall","A special Poké Ball designed to catch Ultra Beasts. It has a low success rate for catching others.","포켓몬을 잡기 어려운 조금 특이한 볼."},
     new object[]{"TM01","TM01","기술머신01",4,3000,150,"",0,false,"Fling_150","The user focuses its mind before launching a punch. This move fails if the user is hit before it is used.","굉장한 힘을 담은 킥으로 상대를 걷어차서 공격한다."},
     new object[]{"TM02","TM02","기술머신02",4,3000,80,"",0,false,"Fling_80","The user slashes the target with huge sharp claws.","상대의 몸에 돈을 세게 던져서 공격한다. 배틀 후에 돈을 받을 수 있다."},

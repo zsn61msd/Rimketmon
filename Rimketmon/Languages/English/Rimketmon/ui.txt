@@ -75,7 +75,7 @@
 현재 경험치	Exp. Points
 다음 레벨까지	To Next Lv.
 지닌 도구가 없습니다 (클릭 / Enter: 도구 주기)	No held item (Click / Enter: give item)
-아직 포획한 림켓몬이 없습니다. 림볼을 야생 동물에게 던져 보세요.	You haven't caught any Rimketmon yet. Throw a Rimball at a wild animal.
+아직 포획한 림켓몬이 없습니다. 볼을 야생 동물에게 던져 보세요.	You haven't caught any Rimketmon yet. Throw a ball at a wild animal.
 림켓몬 센터	Rimketmon Center
 림켓몬 상점	Rimketmon Shop
 관장 도전	Gym Challenge
@@ -83,7 +83,7 @@
 맡기신 림켓몬의 HP와 PP를 전부 회복해 드립니다. 비용은 없습니다.	We'll fully restore HP and PP of your Rimketmon. Free of charge.
 림켓몬의 HP와 PP를 전부 회복합니다. 비용은 없습니다.	Fully restores HP and PP. Free of charge.
 파티를 확인하고 순서를 바꾸거나 림켓몬을 볼에서 풀어줍니다.	Check your party, reorder it, or release Rimketmon from their balls.
-은으로 림볼을 구매합니다. 보급 포드로 투하됩니다.	Buy Rimballs with silver. They arrive by supply pod.
+은으로 볼을 구매합니다. 보급 포드로 투하됩니다.	Buy balls with silver. They arrive by supply pod.
 은으로 구매합니다. 물건은 보급 포드로 투하됩니다.	Buy with silver. Goods arrive by supply pod.
 이세계 림켓몬 트레이너에게 도전합니다. 상대는 추첨으로 정해집니다.	Challenge a parallel-world Rimketmon trainer. The opponent is drawn at random.
 랭크전은 준비 중입니다.	Ranked mode is coming soon.
@@ -111,7 +111,6 @@
 HP 바 속도	HP bar speed
 메시지 넘김	Message advance
 트레이너 그림	Trainer art
-어둠의 배틀·관장·사천왕·챔피언·랭크 상위권(1800점 이상)은 학습된 AI 사용	Learned AI for dark battles, gyms, Elite Four, champions and top ranked (1800+)
 도트	Pixel
 일러스트	Artwork
 트레이너 공식 일러스트 사용	Use official trainer artwork
@@ -155,11 +154,10 @@ BGM 음량	BGM volume
 메시지를 클릭	Click message
 결과 확인	Confirm result
 선택	Select
-취소	Cancel
-림볼이 없다.	You have no Rimball.
+볼이 없다.	You have no ball.
 야생 동물을 클릭하세요.	Click a wild animal.
 야생 동물이나 우리 정착지의 동물에게만 던질 수 있다.	Can only be thrown at wild animals or animals of your colony.
-초능력 레벨 1 이상이어야 림볼을 쓸 수 있다.	Psychic level 1+ is required to use a Rimball.
+초능력 레벨 1 이상이어야 볼을 쓸 수 있다.	Psychic level 1+ is required to use a ball.
 개  ·  관장 	  ·  Leaders 
 개 — 야생 레벨 상한 	  — wild level cap 
   ·  보유 림켓몬 	  ·  Rimketmon owned: 
@@ -295,7 +293,6 @@ BGM 음량	BGM volume
 가방에 도구가 없습니다. 상점에서 구매하세요.	No items in the bag. Buy some at the shop.
 도구 빼기	Take item
 림켓몬 상점 — 도구	Rimketmon Shop — Items
-림볼	Rimket Ball
 도구	Items
 은으로 구매하면 가방에 들어갑니다. 요약 화면에서 림켓몬에게 줄 수 있습니다.	Buy with silver; items go into the bag. Give them to a Rimketmon from the summary screen.
 구매 완료	purchased
@@ -542,12 +539,9 @@ HP가 부족해서 대타를 만들 수 없다!	Not enough HP to make a substitu
 회복봉인 때문에 쓸 수 없다!	 can't use it because of Heal Block!
 흰안개가 사라졌다.	The mist disappeared.
 흰안개가 아군을 감쌌다!	Mist shrouded the team!
-의 명중률이	's accuracy
-의 회피율이	's evasiveness
 의 특성이 	's ability became 
 의 특성은 	's ability is 
 의 멸망 카운트가 	's perish count is 
-
 # ---- 화면 문구(2026-11) ----
    (←→ 값 조절, Shift ±10, Ctrl ±100, Z 선택)	   (←→ adjust, Shift ±10, Ctrl ±100, Z select)
   (비어 있음)	  (empty)
@@ -555,7 +549,7 @@ HP가 부족해서 대타를 만들 수 없다!	Not enough HP to make a substitu
   (챔피언 승리 시 100)	  (100 for beating the Champion)
   (평균 뇌 손상 	  (average brain damage 
   vs 챔피언 	  vs Champion 
-  ·  모습 	  ·  forms 
+  ·  모습 	  ·  one of 
   ·  잡음 	  ·  caught 
   ·  챔피언 	  ·  Champion 
   · 순위 	  · rank 
@@ -564,7 +558,7 @@ HP가 부족해서 대타를 만들 수 없다!	Not enough HP to make a substitu
  (다른 정착민이 쓰고 있다)	 (another colonist is using it)
  (도달할 수 없다)	 (can't reach)
  (상한 120)	 (cap 150)
- (순위 보너스 	 (rank bonus 
+ (순위 보너스 	 (incl. rank bonus 
  (순위표 상위 	 (leaderboard top 
  (으)로 바꿈	 changed to
  (이미 다른 정착민이 쓰고 있다)	 (another colonist is already using it)
@@ -622,13 +616,13 @@ HP가 부족해서 대타를 만들 수 없다!	Not enough HP to make a substitu
  훈련 완료 (	 training done (
 %  ·  포획률 	%  ·  catch rate 
 '(으)로 정했다.	'.
-(개발자) 실제로는 림켓링크 착용자의 상태 때문에 걸어오지 않는 상황입니다.	(Dev) The visitor isn't coming because of the Rimketlink wearer's condition.
-(몬스터볼 연구를 끝내면 열리는 퀘스트로 림켓링크를 얻을 수 있어요.)	(Finish the monster ball research to unlock a quest that gives you a Rimketlink.)
+(개발자) 실제로는 림켓링크 착용자의 상태 때문에 걸어오지 않는 상황입니다.	(Dev) The visitor isn't coming because of the RimketLink wearer's condition.
+(몬스터볼 연구를 끝내면 열리는 퀘스트로 림켓링크를 얻을 수 있어요.)	(Finish the Poké Ball research to unlock a quest that gives you a RimketLink.)
 (비어 있음)	(empty)
 (새로운 모험이 열렸다)	(a new adventure has opened)
 (아직 정하지 않음)	(not chosen yet)
-(으)로 덮어씌워졌다!	was overwritten!
-(으)로 진화했다!	evolved!
+(으)로 덮어씌워졌다!	 was overwritten!
+(으)로 진화했다!	 evolved!
 (이)라… 좋아, 이제부터 	… Good, from now on 
 (이)라네!	!
 (이)라네.	.
@@ -644,13 +638,9 @@ HP가 부족해서 대타를 만들 수 없다!	Not enough HP to make a substitu
 . 우하단 아이콘으로 다시 설치할 수 있다.	. You can reinstall it from the bottom-right icon.
 /4 격파	/4 defeated
 0%면 가망이 없을 때만 항복한다.	At 0%, it only surrenders when there's no hope.
-0%면 걸어오지 않는다. 림켓링크 착용자가 다쳤거나 아프거나 의식이 없으면 확률과 상관없이 걸어오지 않는다.	At 0%, they never challenge. If the Rimketlink wearer is hurt, sick or unconscious, they never challenge regardless of the chance.
-100%가 기본(1000점 이하 30% → 1500점 이상 3%). 0%면 실수하지 않는다.	100% is the default (≤1000 pts 30% → ≥1500 pts 3%). At 0%, no mistakes.
 3마리를 순서대로 고르세요	Choose 3 in order
-6마리 중에서 3마리를 골라 싸우는 승부야. 이기면 점수가 오르고 등급도 올라가.	A battle where you pick 3 of your 6. Win and your rating goes up, and so does your tier.
-6티어는 정말 드물게 만날 수 있어. 그리고... 정체를 알 수 없는 '?티어'가 있다는 소문도 있더라.	Tier 6 is really rare to meet. And... there are rumors of a mysterious '? tier'.
 : 눈이 마주쳤으니 승부다! 림켓몬을 꺼내!	: Our eyes met, so let's battle! Send out your Rimketmon!
-: 림볼 +5, 마스터볼 +5, 초능력 레벨 	: Rimball +5, master ball +5, psylink level 
+: 볼 +5, 마스터볼 +5, 초능력 레벨 	: ball +5, Master Ball +5, psylink level 
 : 림켓몬 승부 시작.	: Rimketmon battle started.
 </b>와(과) 눈이 마주쳤다!\n\n방문자 	</b>!\n\nVisitor 
 <color=#ff2a2a><b>■■■ 경 고 ■■■</b></color>\n	<color=#ff2a2a><b>■■■ WARNING ■■■</b></color>\n
@@ -660,18 +650,14 @@ HP가 부족해서 대타를 만들 수 없다!	Not enough HP to make a substitu
 <color=#ff2a2a>어둠의 림켓몬 배틀 신청! 수송포드를 타고 아포크립톤이 내려온다.</color>	<color=#ff2a2a>A dark Rimketmon battle challenge! Apocriton is coming down in a transport pod.</color>
 ??? 이벤트 즉시 방문(챔피언 조건 무시)	??? event visits now (ignore Champion requirement)
 ?티어는 뭐야?	What's the ? tier?
-?티어는 종족도, 능력도, 기술도 전부 완전히 무작위로 만들어진 림켓몬이야. 어떤 아이가 나올지는 나도 몰라.	The ? tier is a Rimketmon whose species, stats and moves are all completely random. Even I don't know what you'll get.
 BP 부족	Not enough BP
 BP가 모자라는군. 	You're short on BP. 
 BP가 부족하다.	Not enough BP.
 BP가 부족합니다 (	Not enough BP (
-BP가 필요하니까 랭크전에서 모아 두는 게 좋을 거야.	You'll need BP, so it's a good idea to save some up in Ranked Battles.
-BP를 넉넉히 주면 부적을 갈고닦아 주겠네. 이로치 부적은 이로치를, 레어 부적은 드문 포켓몬을 더 자주 만나게 해 주지.	Give me plenty of BP and I'll polish your charms. The Shiny Charm finds more shinies, and the Rare Charm finds rare Pokémon more often.
 Ctrl+V 로 붙여넣기 · Enter 로 참가	Paste with Ctrl+V · Join with Enter
 Enter / 클릭: 다음	Enter / click: next
 Enter 선택 · 드래그로 옮기기 · Q/E 박스 · R 정렬 · Esc	Enter select · drag to move · Q/E box · R sort · Esc
 Enter: 사용   Del: 버리기   Esc: 뒤로	Enter: use   Del: discard   Esc: back
-PC로는 파티랑 박스를 정리하고, 마트에서는 도구랑 나무열매를 뽑기로 얻을 수 있어. 1회, 5회, 10회 뽑기가 있고, 직접 사는 것보다 조금 싸!	Use the PC to sort your party and boxes, and at the mart you can get items and berries from draws. There are 1x, 5x and 10x draws, and they're a bit cheaper than buying directly!
 PC를 켰다.	Booted up the PC.
 WASD 이동  ·  Esc	WASD move  ·  Esc
 Z / Enter / 스페이스: 말 걸기	Z / Enter / Space: talk
@@ -685,10 +671,9 @@ Z / Enter / 스페이스: 말 걸기	Z / Enter / Space: talk
 pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation project
 · 림켓몬끼리의 승부입니다(상대 	· A battle between Rimketmon (opponent 
 · 림켓몬끼리의 승부입니다. 져도 정착민은 다치지 않습니다(항복 가능).	· A battle between Rimketmon. Colonists aren't hurt if you lose (you can surrender).
-· 모드가 만든 물건(볼·림켓링크 등), 건강 상태, 생각, 능력, 퀘스트, 연구 진행, 이벤트를 모두 정리합니다.\n	· Cleans up everything the mod made (balls, Rimketlinks, etc.), health conditions, thoughts, abilities, quests, research progress and events.\n
 · 볼에 든 림월드 동물·메카·사람은 아래에서 고르세요.\n	· Choose below what to do with RimWorld animals, mechs and people in balls.\n
 · 이기면 	· If you win 
-· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다.	· Even after removal the bottom-right monster ball icon stays; click it to reinstall from scratch.\n\nThis can't be undone.
+· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다.	· Even after removal the bottom-right Poké Ball icon stays; click it to reinstall from scratch.\n\nThis can't be undone.
 · 진짜 포켓몬(림월드 몸이 없는 림켓몬)은 사라집니다.\n	· Real Pokémon (Rimketmon without a RimWorld body) will disappear.\n
 — 고마운 분들 —	— Special Thanks —
 — 만든 사람들 —	— Made By —
@@ -720,18 +705,15 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 【사천왕 	【Elite Four 
 【재도전】 챔피언이 된 당신을 위해 관장도 진심을 냈다.\n	【Rematch】 The leader is going all out for you, the Champion.\n
 【챔피언전】\n	【Champion Battle】\n
-가끔 방문자들끼리 림켓몬 승부를 벌이기도 해. 구경하는 것도 재미있을 거야.	Sometimes visitors hold Rimketmon battles among themselves. It's fun to watch, too.
 가망이 없다며	saying there's no hope
 가방 ×	Bag ×
-가지 중 하나	one of
+가지 중 하나	 forms
 가진 아이템이 지금은 효과가 없다.	Your item has no effect right now.
 간식 주기	Give a snack
-간호사님께 말을 걸면 림켓몬을 전부 무료로 회복시켜 주셔.	Talk to the nurse and she'll heal all your Rimketmon for free.
 감정적인 항복 빈도 (실수 뒤 민망함·급소)	Emotional surrender rate (embarrassment after mistakes, crits)
 강제 해제	Force quit
 강한 비	Heavy rain
 강한 햇살	Harsh sunlight
-같이 시간을 보내면 친밀도가 올라가. 반대로 때리면… 친밀도가 떨어지고 무서워해. 그러지 말자, 응?	Spending time together raises friendship. If you hit it... friendship drops and it gets scared. Let's not do that, okay?
 개 · 최대 	· max 
 개 모두 뽑기	— draw all
 개, 특성 	, ability 
@@ -756,23 +738,16 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 교체할 림켓몬 선택	Choose a Rimketmon to switch in
 교체할 림켓몬을 고르세요	Choose a Rimketmon to switch in
 교체할 수 있는 림켓몬이 없다.	No Rimketmon can switch in.
-규칙은 랭크전과 같아. 싱글은 3마리, 더블은 4마리를 골라. 점수와 BP는 변하지 않으니까 마음 편히 겨뤄 봐. 둘 다 스팀으로 게임을 켜야 하고, 모드 버전이 같아야 해.	The rules are the same as Ranked. Pick 3 for Single, 4 for Double. Rating and BP don't change, so relax and compete. Both players must launch the game through Steam and have the same mod version.
 그 방은 이미 가득 찼습니다.	That room is already full.
 그 코드의 방을 찾지 못했습니다. 코드를 다시 확인하세요.	No room with that code was found. Check the code again.
 그 행동은 낼 수 없습니다. 다시 고르세요.	That action isn't allowed. Choose again.
 그거 알아? 챔피언이 되면 갈 수 있는 곳이 있어. 바로 포켓몬 세계야! 숲, 바다, 화산, 우주까지 어디든 갈 수 있어!	Did you know? Once you become Champion, there's somewhere you can go. The Pokémon world! Forests, seas, volcanoes, even space!
 그곳엔 림켓몬이 아니라 진짜 포켓몬이 살고 있어. 림켓몬 메뉴에 '사냥'을 열어 둘게. BP를 내고 들어가면 한 번에 열 번 싸울 수 있어.	Real Pokémon live there instead of Rimketmon. I'll open 'Hunt' in the Rimketmon menu. Pay BP to enter and you can fight ten times in one go.
 그래, 또 놀러 오렴!	Okay, come play again!
-그래도 정착민의 초능력 레벨이랑 정신감응력이 높으면, 조금은 더 강하게 싸울 수 있어.	Still, if your colonist has a high psylink level and psychic sensitivity, they can fight a bit stronger.
 그래서 이건 내가 주는 선물이야. 학습장치! 이걸 켜 두면, 싸우지 않은 파티의 림켓몬들도 싸운 아이와 똑같은 경험치를 받아.	So this is my gift to you. The Exp. Share! When it's on, Rimketmon in your party that didn't fight get the same experience as the one that did.
 그래스필드	Grassy Terrain
-그러니까 더 강해지고 싶다면 체육관에서 배지를 모아야 해!	So if you want to get stronger, collect badges at the gyms!
-그러면 며칠 안에 어둠의 림켓몬 트레이너가 찾아와. 어둠의 승부는 지면 목숨이 걸려 있으니까 각오하고 불러야 해.	Then a dark Rimketmon trainer will come within a few days. A dark battle risks lives if you lose, so be prepared before calling one.
-그런데 완전히 무작위이기 때문에, 원래 포켓몬에서는 볼 수 없었던 엄청난 고점이 나올 수도 있어. 종족값도, 기술의 폭도 평범하지 않거든.	But because it's completely random, you might get an incredible high roll you'd never see in real Pokémon. Neither its base stats nor its move range are ordinary.
-그런데... 챔피언 배지를 얻고 나서 그걸 만지면 뭔가 특별한 일이 일어난다는 소문이 있어.	But... there's a rumor that something special happens if you touch it after getting the Champion badge.
 그럼 또 오게나.	Come again, then.
 그리고 이 여정을 끝까지 함께한 당신에게.	And to you, who saw this journey to the end.
-그리고 포켓몬이랑은 다르게, 림켓몬은 진화를 하지 않아. 잡았을 때의 모습 그대로 함께하는 거야.	And unlike Pokémon, Rimketmon don't evolve. They stay with you just as they were when caught.
 그리고… 아주 드물게 색이 다른 '이로치' 포켓몬도 나온대. 반짝이는 걸 보면 놓치지 마!	And... very rarely, differently colored 'shiny' Pokémon appear. If you see one sparkle, don't let it get away!
 그림 없음(이름을 정할 때 찍습니다)	No picture (taken when you set your name)
 그림 없음(이름표로 나옴)	No picture (shown as a name tag)
@@ -784,17 +759,14 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 기본 위치로 되돌리기	Reset to default position
 기술 상성 힌트 표시	Show move effectiveness hints
 기술 위력/명중/PP 표시	Show move power/accuracy/PP
-기술을 골라서 서로 번갈아 공격하는 거야. 기술 위에 마우스를 올려 보렴, 어떤 효과인지 알려 줄게.	You each pick a move and take turns attacking. Hover over a move and I'll tell you what it does.
 꺼낸 림켓몬이랑 놀 수 있어?	Can I play with my sent-out Rimketmon?
 꺼낼 림켓몬이 없다.	No Rimketmon to send out.
 꺼냅니까?	Send it out?
-꺼져 있으면 방문자는 림월드 동물만 데려온다. 켜면 아래 비율만큼 포켓몬이, 나머지는 림켓몬(림월드 동물)이 섞여 나온다(나와의 승부, 방문자끼리의 승부 모두). 2마리 이상이면 둘이 반드시 섞인다.	When off, visitors only bring RimWorld animals. When on, Pokémon appear at the ratio below and the rest are Rimketmon (RimWorld animals), both in battles with you and between visitors. With 2 or more, both kinds always mix.
 꼬리 잡아당기기	Pull its tail
 끄면 새로 찾아오지 않는다. 이미 와 있는 트레이너는 그대로다.	When off, no new trainers come. Trainers already here stay.
 나가기	Leave
 나간다	Leave
 나는 이름 짓기 아저씨라네.	I'm the Name Rater.
-나도 자세히는 몰라. 직접 확인해 보는 건 어때?	I don't know much either. Why not check it out yourself?
 나무가 많음	Many trees
 나무열매	Berries
 나무열매 뽑기	Berry draw
@@ -802,7 +774,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 남는다	Stay
 납치됨	Kidnapped
 내 레벨 상한 	My level cap 
-내 림켓몬의 레벨은 배지 개수로 정해져. 배지가 N개면 레벨 (N+1)x10까지야.	Your Rimketmon's level depends on your badge count. With N badges, the cap is level (N+1)x10.
 내 이름: 	My name: 
 내 쪽 가운데 어긋남(	my side off-center (
 내 쪽 화면 밖	my side off-screen
@@ -819,7 +790,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 다시 하고 싶어 함	wants a rematch
 다시 하기	Play again
 다시 하기 기다림	Waiting for rematch
-다시 한 번 쓰면 볼로 돌아와. 밖에 나와 있는 건 겉모습일 뿐이라, 다쳐도 림켓몬 본체는 멀쩡하니까 걱정 마.	Use it once more and it returns to the ball. What's outside is just an outer shell, so even if it gets hurt the Rimketmon itself is fine. Don't worry.
 다음 배지도 응원할게. 힘내!	I'll cheer you on for the next badge, too. Good luck!
 다음 사천왕이 기다린다. 지면 처음부터 다시 도전해야 한다.	The next Elite Four member awaits. If you lose, you must start over.
 다음 상대: 	Next opponent: 
@@ -838,11 +808,9 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 도감 · 만난 림켓몬·포켓몬의 기록	Pokédex · records of Rimketmon and Pokémon you've met
 도감 데이터  PokeAPI	Pokédex data  PokeAPI
 도감 순	Dex order
-도감에는 지금까지 만난 아이들이 기록돼. 진짜 포켓몬처럼 배틀에서 직접 만나야 칸이 열려. 랭크전에서 만난 것도 쳐!	The Pokédex records everyone you've met. Like real Pokémon, you must meet them in battle to fill a slot. Ones met in Ranked count too!
 도감은 뭐야?	What's the Pokédex?
 도구 뽑기	Item draw
 도구가 없습니다.	No items.
-도구는 쓸 수 없어. 이기면 BP도 받을 수 있어.	You can't use items. Win and you get BP too.
 도망쳤다	ran away
 도발 방송	Taunt broadcast
 도발 방송을 듣고 어둠의 림켓몬 트레이너 	Hearing the taunt broadcast, the dark Rimketmon trainer 
@@ -851,7 +819,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 도움말 (	Help (
 도전할 관장이 없다	No leader to challenge
 도전할 정착민 없음	No colonist to challenge
-도중에 림켓몬이 다 쓰러지거나 볼이 떨어지면 돌아와. 한 판이 끝날 때마다 계속할지 돌아갈지 고를 수 있어.	If all your Rimketmon faint or you run out of balls, you come back. After each battle you can choose to continue or return.
 독으로	with poison
 돌아가기	Back
 돌아간다	Go back
@@ -864,7 +831,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 동물: 내 파티에 추가(복제)	Animal: add to my party (copy)
 동물: 배틀 즉시 시작(선택/첫 정착민이 던짐)	Animal: start battle now (selected/first colonist throws)
 동물·메카·사람은 지도로 돌려보내고 제거	Send animals, mechs and people back to the map, then remove
-되었다	became
 둘 다 준비되었어요. 시작합니다!	Both ready. Starting!
 들어간다	Go in
 들어서 던지기	Pick up and throw
@@ -883,58 +849,50 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 랭크 순위표 · 시즌 	Ranked leaderboard · Season 
 랭크 점수  	Ranked rating  
 랭크 점수를 	Ranked rating 
-랭크전 시즌 	Ranked season 
+랭크전 시즌 	Ranked Season 
 랭크전 시즌 종료	Ranked season ended
 랭크전에서는 가방 아이템을 쓸 수 없다.	You can't use bag items in Ranked.
 랭크전은?	What about Ranked?
 레벨 순	Level order
 레벨은 어떻게 올라?	How do levels go up?
-레어 부적 (최고 단계)	Rare Charm (max level)
+레어 부적 (최고 단계)	Rare Charm (max)
 레어 부적 ×	Rare Charm ×
 로그오프	Log off
 리그 도전	League challenge
-림볼은 어떻게 써?	How do I use Rimballs?
-림볼을 가진 정착민을 고르면 아래에 '림볼 던지기' 버튼이 생겨. 야생 동물을 가리키면 승부가 시작돼!	Select a colonist with Rimballs and a 'Throw Rimball' button appears below. Target a wild animal and the battle begins!
+볼은 어떻게 써?	How do I use balls?
 림월드	RimWorld
 림월드  Ludeon Studios	RimWorld  Ludeon Studios
 림월드 동물	RimWorld animals
-림월드 동물들은 한 칸에 묶여 있고, 정체불명의 ?티어도 따로 한 칸이 있어. 모두 모아 보자!	RimWorld animals share one slot, and the mysterious ? tier has its own slot too. Collect them all!
-림월드의 동물들에게 포켓몬의 종족이랑 기술, 특성이 깃든 거야. 신기하지?	RimWorld's animals were imbued with Pokémon species, moves and abilities. Neat, right?
 림켓 신호: 떨어지는 수송포드	Rimket signal: falling transport pod
-림켓링크 신호가 확인되지 않아요.	No Rimketlink signal detected.
-림켓링크 신호가 확인되지 않아요. 림켓링크를 두뇌에 설치한 분만 이용하실 수 있어요.	No Rimketlink signal detected. Only those with a Rimketlink installed in their brain can use this.
-림켓링크 없음	No Rimketlink
-림켓링크 착용자가 없어 대기실에 들어갈 수 없습니다.	No Rimketlink wearer, so you can't enter the lobby.
-림켓링크 착용자가 없어 대전 준비가 취소되었다.	Battle prep was canceled because there's no Rimketlink wearer.
-림켓링크 착용자가 없으면 대전을 준비하거나 다시 할 수 없어요. 아래쪽 워프 판으로 나가 주세요.	Without a Rimketlink wearer you can't prepare or rematch. Please leave through the warp panel below.
-림켓링크 착용자가 필요하다.	A Rimketlink wearer is needed.
-림켓링크 추출: 	Extract Rimketlink: 
-림켓링크 퀘스트 생성(수락 대기)	Create Rimketlink quest (awaiting acceptance)
-림켓링크 퀘스트: 세상에 링크가 있는지 검사	Rimketlink quest: check whether a link exists in the world
-림켓링크 퀘스트를 만들었다. 퀘스트 탭에서 수락하세요.	Created the Rimketlink quest. Accept it in the Quests tab.
-림켓링크가 세상에 	Rimketlinks in the world: 
-림켓링크가 필요하다.	A Rimketlink is needed.
-림켓링크는 뇌에 박혀 있어서, 링크를 단 사람이 죽으면 시체를 우클릭해서 '림켓링크 추출'로 다시 뽑을 수 있어.	The Rimketlink is embedded in the brain, so if its wearer dies you can right-click the corpse and use 'Extract Rimketlink' to get it back.
-림켓링크로 변환된 이 행성의 생물들. 머팔로에서 트럼보까지, 변경계의 짐승은 볼에 들어가는 순간 신경 신호가 포켓몬과 같은 틀로 다시 짜인다. 	Creatures of this planet converted by Rimketlink. From muffalo to thrumbo, the moment a rimworld beast enters a ball its neural signals are rewoven in the same frame as a Pokémon. 
-림켓링크를 두뇌에 설치한 정착민이 있어야 온라인 배틀을 할 수 있습니다.	A colonist with a Rimketlink installed in their brain is needed for online battles.
-림켓링크를 잃어버렸어!	The Rimketlink was lost!
+림켓링크 신호가 확인되지 않아요.	No RimketLink signal detected.
+림켓링크 신호가 확인되지 않아요. 림켓링크를 두뇌에 설치한 분만 이용하실 수 있어요.	No RimketLink signal detected. Only those with a RimketLink installed in their brain can use this.
+림켓링크 없음	No RimketLink
+림켓링크 착용자가 없어 대기실에 들어갈 수 없습니다.	No RimketLink wearer, so you can't enter the lobby.
+림켓링크 착용자가 없어 대전 준비가 취소되었다.	Battle prep was canceled because there's no RimketLink wearer.
+림켓링크 착용자가 필요하다.	A RimketLink wearer is needed.
+림켓링크 추출: 	Extract RimketLink: 
+림켓링크 퀘스트 생성(수락 대기)	Create RimketLink quest (awaiting acceptance)
+림켓링크 퀘스트: 세상에 링크가 있는지 검사	RimketLink quest: check whether a link exists in the world
+림켓링크 퀘스트를 만들었다. 퀘스트 탭에서 수락하세요.	Created the RimketLink quest. Accept it in the Quests tab.
+림켓링크가 세상에 	RimketLinks in the world: 
+림켓링크가 필요하다.	A RimketLink is needed.
+림켓링크로 변환된 이 행성의 생물들. 머팔로에서 트럼보까지, 변경계의 짐승은 볼에 들어가는 순간 신경 신호가 포켓몬과 같은 틀로 다시 짜인다. 	Creatures of this planet converted by RimketLink. From muffalo to thrumbo, the moment a rimworld beast enters a ball its neural signals are rewoven in the same frame as a Pokémon. 
+림켓링크를 두뇌에 설치한 정착민이 있어야 온라인 배틀을 할 수 있습니다.	A colonist with a RimketLink installed in their brain is needed for online battles.
+림켓링크를 잃어버렸어!	The RimketLink was lost!
 림켓몬 (제거됨 · 눌러서 다시 설치)	Rimketmon (removed · click to reinstall)
 림켓몬 다시 설치	Reinstall Rimketmon
 림켓몬 도감	Rimketmon Pokédex
 림켓몬 동물 배틀 그림 검사  	Rimketmon animal battle sprite check  
-림켓몬 메뉴 위쪽, 내 얼굴 버튼 옆의 학습장치 버튼을 누르면 켜고 끌 수 있어.	Press the Exp. Share button next to your face button at the top of the Rimketmon menu to turn it on or off.
 림켓몬 메뉴의 내 얼굴 옆에 있는 학습장치 버튼으로 언제든 켜고 끌 수 있어. 지금은 켜 둘게!	You can turn it on or off anytime with the Exp. Share button next to your face in the Rimketmon menu. I'll leave it on for now!
 림켓몬 보관함	Rimketmon storage
 림켓몬 승부 신청	Rimketmon battle challenge
 림켓몬 제거	Remove Rimketmon
 림켓몬 파티를 비웠다.	Emptied the Rimketmon party.
 림켓몬\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)	Rimketmon\n(right-click: quick menu · right-drag: move)
-림켓몬끼리만 싸우니까 다칠 걱정은 없어. 이기면 상금으로 은을 받을 수 있지.	Only Rimketmon fight, so there's no risk of getting hurt. Win and you get silver as prize money.
 림켓몬끼리의 승부. 져도 도전자는 다치지 않는다.	A battle between Rimketmon. The challenger isn't hurt even on a loss.
 림켓몬부터 바로 치료해 드릴게요.	I'll heal your Rimketmon right away.
-림켓몬을 꺼내 두면 림켓링크를 단 사람을 고르고 따라오는 림켓몬을 우클릭해 봐. 놀아 주기, 안아 주기, 간식 주기 같은 걸 할 수 있어.	With a Rimketmon sent out, select the person with the Rimketlink and right-click the Rimketmon following them. You can play, hug, give snacks and more.
 림켓몬을 다시 설치할까요?\n처음 설치한 상태로 시작합니다(연구부터 다시).	Reinstall Rimketmon?\nYou'll start from the initial state (from research again).
-림켓몬을 다시 설치했다. 몬스터볼 연구부터 시작하세요.	Rimketmon was reinstalled. Start with the monster ball research.
+림켓몬을 다시 설치했다. 몬스터볼 연구부터 시작하세요.	Rimketmon was reinstalled. Start with the Poké Ball research.
 림켓몬을 데려오면 새 이름을 붙여 주지.	Bring me a Rimketmon and I'll give it a new name.
 림켓몬을 밖에 꺼낼 수 있어?	Can I send Rimketmon outside?
 림켓몬을 쉬게 해 드릴까요?	Shall I rest your Rimketmon?
@@ -950,12 +908,10 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 마리가 필요해요. PC에서 파티를 정리해 주세요.	are needed. Sort your party at the PC.
 마리를 순서대로 고르세요	in order
 마비되어	is paralyzed and
-마스터볼	Master ball
+마스터볼	Master Ball
 마스터볼 설계도	Master ball blueprint
-마스터볼 설계도 생성	Spawn master ball blueprint
-마스터볼은 싸우지 않고 바로 잡을 수 있는 볼이야. 사람도 잡을 수 있다니... 조금 놀랍지?	The master ball catches without a fight. It can even catch people... a little surprising, right?
-마스터볼이 없다.	No master ball.
-만나면 모습이랑 이름, 잡으면 키랑 몸무게, 설명까지 볼 수 있어.	Meet them to see their form and name; catch them to see height, weight and description.
+마스터볼 설계도 생성	Spawn Master Ball blueprint
+마스터볼이 없다.	No Master Ball.
 만들기 도움  Claude	Built with  Claude
 맡기실 림켓몬이 없네요.	You don't have any Rimketmon to leave with me.
 멋진 이름이로군!	What a fine name!
@@ -963,7 +919,7 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 메시지 클릭으로 넘기기	Advance messages by clicking
 메시지와 연출 속도를 바꿉니다. 모드 설정에서도 바꿀 수 있습니다.	Changes message and animation speed. You can also change it in mod settings.
 메카도 잡을 수 있어?	Can I catch mechs too?
-명 안!)	in it!)
+명 안!)	!)
 명 중 무작위	random among
 몇 개 먹일까요? (가진 것 	How many to feed? (you have 
 모든 관장을 쓰러뜨렸다!	You defeated all the gym leaders!
@@ -973,9 +929,8 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 모습: 림월드 동물	Form: RimWorld animal
 모습: 포켓몬	Form: Pokémon
 목숨을 건 배틀	Battle of life and death
-몬스터볼	Monster ball
-몬스터볼 연구가 마무리되자 궤도 어딘가에서 이상한 신호가 잡혔다. 누군가 실려 있는 수송포드가 이쪽으로 떨어지고 있는 모양이다.\n\n	As the monster ball research finished, a strange signal was picked up somewhere in orbit. It seems a transport pod carrying someone is falling this way.\n\n
-몸 색깔이 다른 아주 드문 포켓몬이야. 기본 2048분의 1 확률로 나와(이로치 아저씨에게 부적을 맡기면 더 잘 나와). 나올 때 반짝반짝 빛나니까 바로 알 수 있어!	A very rare Pokémon with a different body color. By default it appears at 1 in 2048 (more often if you leave charms with the shiny man). It sparkles when it appears, so you'll know right away!
+몬스터볼	Poké Ball
+몬스터볼 연구가 마무리되자 궤도 어딘가에서 이상한 신호가 잡혔다. 누군가 실려 있는 수송포드가 이쪽으로 떨어지고 있는 모양이다.\n\n	As the Poké Ball research finished, a strange signal was picked up somewhere in orbit. It seems a transport pod carrying someone is falling this way.\n\n
 몸무게 	Weight 
 몸이 저려	numb
 무덤 근처	near a grave
@@ -992,8 +947,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 바닥 깔린 곳	Floored area
 바위 지형	Rocky terrain
 바이옴	Biome
-바이옴마다 나오는 포켓몬과 확률이 달라. 사냥 화면 오른쪽 표에 그림이랑 확률이 다 나와 있고, 지금 시간대(새벽·낮·저녁·밤)에 따라서도 바뀌어.	Each biome has different Pokémon and odds. The table on the right of the hunt screen shows the pictures and odds, which also change with the time of day (dawn/day/evening/night).
-박스 안에서는 림켓몬을 집어서 옮길 수 있고 정렬도 돼. 놓아줄 때는 한 번 더 물어보니까 걱정 마.	Inside a box you can pick up and move Rimketmon and sort them. Releasing asks once more, so don't worry.
 박스에 맡기기	Leave in box
 반드시 잡힌다	Always catches
 발로 차기	Kick
@@ -1009,7 +962,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 방 코드를 복사했습니다.	Copied the room code.
 방 코드를 친구에게 알려 주고 대전합니다. 규칙은 랭크배틀과 같음 · 한 판마다 양쪽 +	Share the room code with a friend and battle. Same rules as Ranked · each game both players +
 방문자	Visitor
-방문자 두 명이 지도 위에서 림켓몬을 꺼내 승부한다(구경용). 0%면 일어나지 않는다.	Two visitors send out Rimketmon on the map and battle (to watch). At 0% it never happens.
 방문자 승부 상금(은): 	Visitor battle prize (silver): 
 방문자 파티 중 포켓몬 비율	Share of Pokémon in visitor parties
 방문자가 데려오는 림켓몬 수: 	Rimketmon visitors bring: 
@@ -1033,12 +985,9 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 방을 찾는 중	Looking for the room
 방을 찾지 못했습니다: 	Couldn't find the room: 
 방장과 모드 버전이 다릅니다. 같은 버전으로 맞춘 뒤 다시 시도하세요.	Your mod version differs from the host's. Match versions and try again.
-방향키나 W A S D로 움직이고, Enter나 Z로 결정, Esc나 X로 취소야. 마우스 클릭이랑 휠도 쓸 수 있어.	Move with the arrow keys or W A S D, confirm with Enter or Z, cancel with Esc or X. Mouse clicks and the wheel work too.
 배지 +1 (레벨 상한 +10)	Badge +1 (level cap +10)
 배지 8개 달성	8 badges collected
 배지 획득: 	Badge earned: 
-배지가 4개 이상이면 통신기를 우클릭해서 BP를 내고 '도발 방송'을 할 수 있어. 누구 한 명이 아니라 듣는 사람 전부한테 보내는 거야.	With 4 or more badges, right-click the comms console and pay BP to send a 'taunt broadcast'. It goes out to everyone who's listening, not just one person.
-배지를 8개 모으면 체육관 창이 포켓몬 리그로 바뀌어. 사천왕 4명을 차례로 이기고 나면 챔피언과 싸울 수 있어. 도중에 한 번이라도 지면 처음부터 다시야!	Collect 8 badges and the gym window becomes the Pokémon League. Beat the four Elite Four in turn and you can fight the Champion. Lose even once along the way and you start over!
 배틀 개시	Battle begins
 배틀 시작	Start battle
 배틀 정착민: 	Battle colonist: 
@@ -1058,20 +1007,15 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 별로인 듯	Doesn't seem to like it
 보관함을 	Storage 
 보정 없음	No modifier
-볼은 림월드에서 만든 것만 쓸 수 있어. 림켓링크를 단 사람의 소지품에 있는 볼 개수가 그대로 쓰이고, 던지면 하나씩 줄어. 볼에서 빠져나온 포켓몬은 그 턴에 공격하지 않으니까 안심해!	You can only use balls made in RimWorld. The number of balls in the Rimketlink wearer's inventory is used as is, and each throw uses one. A Pokémon that breaks out of a ball doesn't attack that turn, so relax!
-볼은 림월드에서 만든 것만 쓸 수 있어. 림켓링크를 단 사람이 가지고 있는 볼이 그대로 쓰이니까 넉넉히 챙겨 가!	You can only use balls made in RimWorld. The Rimketlink wearer's own balls are used, so bring plenty!
-볼은 마트에서 팔지 않아. 림월드에서 직접 만들어야 해. 훈련아저씨도 계시니까 한번 만나 봐.	The mart doesn't sell balls. You have to make them yourself in RimWorld. The training man is here too, so go meet him.
-볼은 몬스터볼, 슈퍼볼, 하이퍼볼, 마스터볼이 있어.	There are monster balls, great balls, ultra balls and master balls.
+볼은 림월드에서 만든 것만 쓸 수 있어. 림켓링크를 단 사람이 가지고 있는 볼이 그대로 쓰이니까 넉넉히 챙겨 가!	You can only use balls made or bought in RimWorld. The RimketLink wearer's own balls are used, so bring plenty!
 볼을 던졌다!	Threw a ball!
 볼이 다 떨어져 돌아왔다.	Out of balls, you came back.
 볼이 없다. 림월드에서 볼을 만들어 착용자의 소지품에 넣자.	No balls. Make balls in RimWorld and put them in the wearer's inventory.
 부자연적 어둠	Unnatural darkness
 불볕더위	Extreme heat
-빛에 휩싸여 모습이 바뀌는 동안 우클릭이나 Esc를 누르면 진화를 멈출 수 있어. 이브이처럼 갈래가 여럿이면 어떤 모습으로 진화할지 골라.	While it's glowing and changing form, right-click or press Esc to stop the evolution. If there are several branches, like Eevee, choose which form to evolve into.
 뽑기 결과	Draw results
 사냥 · 바이옴을 골라 야생 포켓몬을 잡으러 간다	Hunt · choose a biome and go catch wild Pokémon
 사냥에서 포켓몬을 잡으려면?	How do I catch Pokémon on a hunt?
-사냥에서는 진짜 포켓몬처럼 싸우는 도중에 '아이템'에서 볼을 골라 던져. 쓰러뜨리면 못 잡으니까 조심!	On a hunt, pick a ball from 'Items' and throw it mid-battle like real Pokémon. You can't catch them once they faint, so be careful!
 사냥이 열렸다(BP +5000).	Hunting is now open (BP +5000).
 사이코필드	Psychic Terrain
 사천왕 	Elite Four 
@@ -1085,11 +1029,9 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 상대 트레이너에게 물어볼게요.	I'll ask the opposing trainer.
 상대 트레이너의 대답을 기다리고 있어요.	Waiting for the opposing trainer's answer.
 상대 트레이너의 준비를 기다리고 있어요.	Waiting for the opposing trainer to get ready.
-상대 화면에 보일 이름입니다(최대 20자). 저장하면 지금 림켓링크 착용자의 모습을 찍어 함께 보냅니다. 옷이나 머리를 바꿨다면 이름을 그대로 두고 저장만 눌러도 겉모습이 갱신됩니다.	The name shown on your opponent's screen (max 20 characters). Saving also takes a picture of your current Rimketlink wearer and sends it. If you changed clothes or hair, just press Save without changing the name to update the look.
 상대가 	Opponent 
 상대가 고르는 중	Opponent is choosing
 상대가 기술·선출·다음 림켓몬을 고르는 데 쓰는 시간의 배율.	Multiplier on the time the opponent takes to pick moves, team picks and the next Rimketmon.
-상대가 들어올 때까지 PC와 훈련 아저씨로 파티를 정리해 두세요. 아래쪽 워프 판으로 나가면 방이 닫힙니다.	Until the opponent arrives, sort your party with the PC and the training man. Leaving through the warp panel below closes the room.
 상대가 사라졌다	The opponent disappeared
 상대가 선출하는 중	Opponent is picking their team
 상대가 항복하기도 한다	Opponents may surrender
@@ -1097,7 +1039,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 상대도 원하네요! 준비가 되면 다시 말을 걸어 주세요.	The opponent wants to as well! Talk to me again when you're ready.
 상대를 기다리는 중	Waiting for an opponent
 상대를 찾는 중	Searching for an opponent
-상대에게 이 그림으로 보입니다 · 이름 수정을 누르면 겉모습을 새로 찍습니다	Your opponent sees this picture · press Edit name to retake your look
 상대와 정보를 주고받지 못했습니다(시간 초과).	Couldn't exchange info with the opponent (timed out).
 상대와 파티를 주고받지 못했습니다(시간 초과).	Couldn't exchange parties with the opponent (timed out).
 상대의 생각 시간	Opponent's thinking time
@@ -1114,10 +1055,7 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 선출 완료	Team picked
 성격 선택	Choose nature
 세레나	Serena
-세상 어디에도 림켓링크가 없으면 하루 안에 수송포드 퀘스트가 다시 열려. 다른 사람에게 새로 달면 원래 링크는 사라지니까 조심!	If there are no Rimketlinks anywhere in the world, the transport pod quest reopens within a day. Installing it on someone new removes the original link, so be careful!
-세이브가 날아가지 않도록, 시작하기 전에 세이브 파일을 꼭 따로 백업해 두세요.	So you don't lose your save, be sure to back up your save file before starting.
 센터에서는 뭘 해?	What do you do at the Center?
-센터의 훈련아저씨가 능력 포인트, 성격, 기술, 특성을 바꿔 주셔.	The training man at the Center can change stat points, natures, moves and abilities.
 소금에 절여졌다	is being salted
 소금절임으로	by Salt Cure
 소지금	Money
@@ -1126,8 +1064,7 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 수고하셨습니다!	Good game!
 수송포드 낙하	Transport pod crash
 순위표	Leaderboard
-숫자를 바꿀 때 Shift를 누르면 10씩, Ctrl을 누르면 100씩 바뀌어.	When changing numbers, hold Shift for steps of 10 and Ctrl for steps of 100.
-슈퍼볼	Great ball
+슈퍼볼	Great Ball
 스팀 방 만들기에 실패했습니다. (	Failed to create a Steam room. (
 스팀 연결이 준비되지 않았습니다. 게임을 스팀으로 실행했는지 확인하세요.	The Steam connection isn't ready. Make sure you launched the game through Steam.
 스팀을 찾을 수 없습니다. 스팀판 림월드에서만 온라인 배틀을 쓸 수 있습니다.	Steam not found. Online battles only work in the Steam version of RimWorld.
@@ -1164,7 +1101,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 아니오	No
 아니요	No
 아래쪽 워프 판으로 나가면 방이 닫힙니다.	Leaving through the warp panel below closes the room.
-아예 진화를 멈춰 둘 수도 있어. 다시 진화시키고 싶으면 파티 메뉴에서 '진화 멈춤 해제'를 고르면 돼. 림월드 동물 모습의 림켓몬은 진화하지 않아.	You can also stop evolution entirely. To let it evolve again, choose 'Allow evolution' in the party menu. Rimketmon in RimWorld-animal form don't evolve.
 아직 기록이 없다. 챔피언을 이기면 그날의 파티가 여기에 남는다.	No records yet. Beat the Champion and that day's party will be kept here.
 아직 만나지 못했다.	Not met yet.
 아직 뽑지 않은 	Not yet drawn 
@@ -1177,8 +1113,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 안녕하세요! 테스트용 컴퓨터입니다. 준비하시면 저도 준비할게요.	Hello! I'm the test computer. When you're ready, I'll get ready too.
 안아 주기	Hug
 알 수 없는 오류	Unknown error
-야생 동물을 림볼로 잡으면 내 파티가 되어 줘. 겉모습은 그 동물 그대로인데, 싸우는 힘은 포켓몬이거든.	Catch a wild animal with a Rimball and it joins your party. It looks just like that animal, but it fights like a Pokémon.
-야생 림켓몬이나 어둠의 트레이너와 싸울 때는, 림켓몬이 전부 쓰러지면 정착민이 직접 싸워야 해... 지면 목숨이 위험하니까 정말 조심해야 해.	When fighting wild Rimketmon or dark trainers, if all your Rimketmon faint, the colonist has to fight directly... Losing can cost their life, so be really careful.
 어느 림켓몬에게 새 이름을 지어 줄까?	Which Rimketmon shall I rename?
 어둠의 림켓몬 도발 방송 (	Dark Rimketmon taunt broadcast (
 어둠의 림켓몬 배틀	Dark Rimketmon battle
@@ -1197,16 +1131,15 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 얼음 지형	Icy terrain
 없다(곧 퀘스트가 열린다)	none (a quest will open soon)
 에 들어갈까? (	? (
-에게 간식을 주었다	was given a snack
+에게 간식을 주었다	 was given a snack
 에게 도전합니다.\n\n	.\n\n
-에게 림켓링크가 설치되어 있습니다.\n\n	has a Rimketlink installed.\n\n
-에게 새로 설치하면 원래 설치된 림켓링크는 사라집니다.\n정말 설치하시겠습니까?	— installing a new one removes the currently installed Rimketlink.\nReally install it?
-에게 쐐기를 쓸까요?\n종족·특성·기술이 전부 바뀝니다. (파티·PC 메뉴의 '쐐기 제거'로 되돌릴 수 있음)	? Its species, ability and moves will all change. (You can undo it with 'Remove wedge' in the party/PC menu)
-에게 이겼다. (사천왕 	was defeated. (Elite Four 
-에게 이겼다. 레벨 상한 	was defeated. Level cap 
-에게 이겼다. 이제 포켓몬 리그에 도전할 수 있다. +	was defeated. You can now challenge the Pokémon League. +
+에게 림켓링크가 설치되어 있습니다.\n\n	 has a RimketLink installed.\n\n
+에게 새로 설치하면 원래 설치된 림켓링크는 사라집니다.\n정말 설치하시겠습니까?	— installing a new one removes the currently installed RimketLink.\nReally install it?
+에게 이겼다. (사천왕 	 was defeated. (Elite Four 
+에게 이겼다. 레벨 상한 	 was defeated. Level cap 
+에게 이겼다. 이제 포켓몬 리그에 도전할 수 있다. +	 was defeated. You can now challenge the Pokémon League. +
 에게 이상한사탕 	— Rare Candy 
-에게 일이 생겼다	something happened to
+에게 일이 생겼다	 something happened to
 에게 패배했다.	— you lost.
 에게 패배했다. 다시 도전할 수 있다.	— you lost. You can challenge again.
 에게 패배했다. 리그는 처음부터 다시 도전해야 한다.	— you lost. You must restart the League from the beginning.
@@ -1229,12 +1162,11 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 온라인 이름을 '	Set your online name to '
 온라인에 낼 수 없는 림켓몬: 	Rimketmon that can't be used online: 
 온라인에 낼 수 없는 림켓몬이 있어요: 	Some Rimketmon can't be used online: 
-와(과) 신나게 놀았다	had a great time playing
+와(과) 신나게 놀았다	 had a great time playing
 와(과)의 림켓몬 승부에서 이겼다. 상금으로 은 	— won the Rimketmon battle. Prize: silver 
 와(과)의 재대결에서 이겼다! (배지는 이미 8개)	— won the rematch! (already have 8 badges)
 와(과)의 재도전에서 이겼다! +	— won the rechallenge! +
-우리 것이 아닌 메카는 마스터볼로만 잡을 수 있다.	Mechs that aren't ours can only be caught with a master ball.
-우리 것이 아닌 메카는 마스터볼로만 잡을 수 있어. 다시 풀어 주면 우리 메카였던 아이는 연결이 끊긴 메카가 되고…	Mechs that aren't ours can only be caught with a master ball. If you release them, ones that were our mechs become disconnected mechs, and...
+우리 것이 아닌 메카는 마스터볼로만 잡을 수 있다.	Mechs that aren't ours can only be caught with a Master Ball.
 우클릭 / Esc: 진화를 멈춘다	Right-click / Esc: stop evolving
 우클릭 뒤로	right-click back
 우클릭: 뒤로	Right-click: back
@@ -1250,83 +1182,75 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 으로 정렬했다.	— sorted.
 으로 초기화	— reset
 으로 초기화했다.	— reset.
-은(는) 눈앞이 깜깜해졌다!	blacked out!
-은(는) 다시 진화할 수 있다. 다음에 레벨이 오르면 진화한다.	can evolve again. It will evolve the next time it levels up.
-은(는) 신경 접속을 쓸 수 없다.	can't use a neural link.
-은(는) 이미 레벨 상한(Lv.	is already at the level cap (Lv.
-은(는) 지도에 꺼낼 수 있는 모습이 없다.	has no form that can be sent out on the map.
+은(는) 눈앞이 깜깜해졌다!	 blacked out!
+은(는) 다시 진화할 수 있다. 다음에 레벨이 오르면 진화한다.	 can evolve again. It will evolve the next time it levels up.
+은(는) 신경 접속을 쓸 수 없다.	 can't use a neural link.
+은(는) 이미 레벨 상한(Lv.	 is already at the level cap (Lv.
+은(는) 지도에 꺼낼 수 있는 모습이 없다.	 has no form that can be sent out on the map.
 은(는) 파티가 가득 차 PC로 보내졌다.	— the party is full, so it was sent to the PC.
-을(를) PC에 맡겼다.	was left at the PC.
-을(를) 공처럼 뻥 찼다	was kicked away like a ball
-을(를) 꺾었다. 	was defeated. 
-을(를) 꺾었다. 레벨 상한 	was defeated. Level cap 
-을(를) 꺾은 날의 파티	The party on the day they beat
-을(를) 꼭 안아 주었다	got a big hug
-을(를) 남겼다.	was left behind.
-을(를) 들고 있다 — 놓을 칸을 고르세요 (Enter / 클릭, Esc 취소)	is held — choose a slot to drop it (Enter / click, Esc cancel)
-을(를) 들어서 던졌다	was picked up and thrown
-을(를) 때렸다	got hit
-을(를) 림볼에 넣었다. (티어 	was put into a Rimball. (tier 
-을(를) 마스터볼로 포획했다! (Lv.	was caught with a master ball! (Lv.
-을(를) 마스터볼로 포획했다! (티어 	was caught with a master ball! (tier 
-을(를) 볼에서 풀어주었다. 연결이 끊긴 메카가 되었다(메카나이터가 다시 연결할 수 있다).	was released from the ball. It became a disconnected mech (a mechanitor can reconnect it).
-을(를) 볼에서 풀어주었다. 우리 정착지의 가축이 되었다.	was released from the ball. It became an animal of our colony.
-을(를) 볼에서 풀어주었다. 적 메카가 풀려나 공격해 온다!	was released from the ball. A hostile mech is free and attacking!
-을(를) 볼에서 풀어 주었다.	was released from the ball.
-을(를) 쓰러뜨렸다. 어떻게 할까?	was defeated. What will you do?
-을(를) 얻었다. (지능 기술 경험치 +	was obtained. (Intellectual skill XP +
-을(를) 잡았다!	was caught!
+을(를) PC에 맡겼다.	 was left at the PC.
+을(를) 공처럼 뻥 찼다	 was kicked away like a ball
+을(를) 꺾었다. 	 was defeated. 
+을(를) 꺾었다. 레벨 상한 	 was defeated. Level cap 
+을(를) 꺾은 날의 파티	 The party on the day they beat
+을(를) 꼭 안아 주었다	 got a big hug
+을(를) 남겼다.	 was left behind.
+을(를) 들고 있다 — 놓을 칸을 고르세요 (Enter / 클릭, Esc 취소)	 is held — choose a slot to drop it (Enter / click, Esc cancel)
+을(를) 들어서 던졌다	 was picked up and thrown
+을(를) 때렸다	 got hit
+을(를) 볼에 넣었다. (티어 	 was put into a ball. (tier 
+을(를) 마스터볼로 포획했다! (Lv.	 was caught with a Master Ball! (Lv.
+을(를) 마스터볼로 포획했다! (티어 	 was caught with a Master Ball! (tier 
+을(를) 볼에서 풀어주었다. 우리 정착지의 가축이 되었다.	 was released from the ball. It became an animal of our colony.
+을(를) 볼에서 풀어주었다. 적 메카가 풀려나 공격해 온다!	 was released from the ball. A hostile mech is free and attacking!
+을(를) 볼에서 풀어 주었다.	 was released from the ball.
+을(를) 쓰러뜨렸다. 어떻게 할까?	 was defeated. What will you do?
+을(를) 얻었다. (지능 기술 경험치 +	 was obtained. (Intellectual skill XP +
+을(를) 잡았다!	 was caught!
 을(를) 정말 풀어 줄까요?	— really release it?
-을(를) 파티에 데려왔다.	was brought to the party.
-을(를) 풀어 주었다. 어디론가 떠나갔다…	was released. It went off somewhere...
+을(를) 파티에 데려왔다.	 was brought to the party.
+을(를) 풀어 주었다. 어디론가 떠나갔다…	 was released. It went off somewhere...
 음, 지금 이름이 마음에 드는 모양이군.	Hmm, it seems to like its current name.
-응! 림켓링크를 단 사람은 '림켓몬 꺼내기' 능력을 쓸 수 있어. 가리킨 자리에 볼을 던지면 파티 맨 앞의 림켓몬이 나와서 뒤를 졸졸 따라다녀.	Yes! Someone with a Rimketlink can use 'Send out Rimketmon'. Throw a ball at a spot and the Rimketmon at the front of your party comes out and follows you around.
-응! 메카도 동물이랑 똑같이 림켓몬이 돼. 우리 메카는 그냥 볼로 바로 넣을 수 있고, 볼에 넣으면 메카나이터 대역폭에서 빠져.	Yes! Mechs become Rimketmon just like animals. Our own mechs can be put straight into a ball, and once inside they no longer use mechanitor bandwidth.
 의 꼬리를 잡아당겼다	's tail was pulled
 의 뇌에 가상현실 신경 과부하 손상이 남았다.	's brain was left with virtual-reality neural overload damage.
-의 뇌에서 림켓링크를 뽑아냈다.	— the Rimketlink was extracted from their brain.
+의 뇌에서 림켓링크를 뽑아냈다.	— the RimketLink was extracted from their brain.
 의 동물을 가로채 호감도가 떨어졌다.	's animal was taken, lowering goodwill.
-의 림켓링크가 사라졌다.	's Rimketlink disappeared.
+의 림켓링크가 사라졌다.	's RimketLink disappeared.
 의 모습이 바뀌었다!	's form changed!
 의 모습이…!	's form is...!
-의 변화가 멈췄다!	stopped changing!
+의 변화가 멈췄다!	 stopped changing!
 의 소지품): 몬스터 	's inventory): monster 
-의 유전자 쐐기를 뺄까요?\n쐐기를 쓰기 전의 종족·특성·기술로 돌아가고, 쐐기는 다시 쓸 수 있게 돌려받습니다.	— remove its genetic wedge?\nIt returns to its species, ability and moves from before the wedge, and you get the wedge back to use again.
 의 정보가 	's info 
 의 진화를 계속 멈춰 둘까?	— keep its evolution stopped?
 의 진화를 멈췄다. (림켓몬 요약 화면에서 다시 켤 수 있다)	's evolution was stopped. (you can turn it back on from the Rimketmon summary)
-의 털을 정성껏 빗어 주었다	was carefully brushed
+의 털을 정성껏 빗어 주었다	 was carefully brushed
 이 기술은 PP가 남아 있지 않다!	There's no PP left for this move!
 이 동물은 림켓몬이 될 수 없다.	This animal can't become a Rimketmon.
 이 세이브에서 림켓몬 제거…	Remove Rimketmon from this save…
-이 세이브에서는 제거된 상태입니다. 우하단 몬스터볼 아이콘을 누르면 다시 설치할 수 있습니다.	Removed from this save. Click the bottom-right monster ball icon to reinstall.
-이(가) 겁먹었다.	got scared.
-이(가) 기다리다 못해 왔다.</b></color>\n\n	got tired of waiting and came.</b></color>\n\n
-이(가) 끝났습니다.\n\n	has ended.\n\n
-이(가) 남았다.	remained.
-이(가) 림켓몬 승부를 걸어왔다.\n\n	challenged you to a Rimketmon battle.\n\n
-이(가) 모든 주파수에 도발을 퍼부었다.\n\n"림켓몬으로 우리를 이길 수 있는 녀석이 있다면 와 봐라!"\n\n	blasted a taunt across every frequency.\n\n"If anyone thinks they can beat us with Rimketmon, come at us!"\n\n
-이(가) 목숨을 건 승부를 걸어왔다.</color>	challenged you to a battle of life and death.</color>
-이(가) 배틀을 신청했다.</b></color>\n\n	challenged you to a battle.</b></color>\n\n
+이(가) 겁먹었다.	 got scared.
+이(가) 기다리다 못해 왔다.</b></color>\n\n	 got tired of waiting and came.</b></color>\n\n
+이(가) 끝났습니다.\n\n	 has ended.\n\n
+이(가) 남았다.	 remained.
+이(가) 림켓몬 승부를 걸어왔다.\n\n	 challenged you to a Rimketmon battle.\n\n
+이(가) 모든 주파수에 도발을 퍼부었다.\n\n"림켓몬으로 우리를 이길 수 있는 녀석이 있다면 와 봐라!"\n\n	 blasted a taunt across every frequency.\n\n"If anyone thinks they can beat us with Rimketmon, come at us!"\n\n
+이(가) 목숨을 건 승부를 걸어왔다.</color>	 challenged you to a battle of life and death.</color>
+이(가) 배틀을 신청했다.</b></color>\n\n	 challenged you to a battle.</b></color>\n\n
 이(가) 없다.	— none.
-이(가) 직접 싸웁니다.	fights directly.
-이(가) 직접 싸워 경험치 	fought directly and gained experience 
-이(가) 진화하려 한다! 어떤 모습으로 진화시킬까?	is trying to evolve! Which form should it evolve into?
-이(가) 찾아왔다.	has come.
+이(가) 직접 싸웁니다.	 fights directly.
+이(가) 직접 싸워 경험치 	 fought directly and gained experience 
+이(가) 진화하려 한다! 어떤 모습으로 진화시킬까?	 is trying to evolve! Which form should it evolve into?
+이(가) 찾아왔다.	 has come.
 이겼다! 한 판 더 하실래요?	I won! Want another round?
 이기면 그 상대의 정보가 담긴 유전자 쐐기를 반드시 얻습니다.\n\n쐐기를 림켓몬에게 쓰면 종족·속성·종족값·개체값·성격·특성·기술이 쐐기의 정보로 완전히 덮어씌워집니다. 레벨·이름·겉모습은 그대로입니다. 되돌릴 수 없으니 신중하게 고르세요.	Win and you're guaranteed a genetic wedge holding that opponent's data.\n\nUsing a wedge on a Rimketmon completely overwrites its species, type, base stats, IVs, nature, ability and moves with the wedge's data. Level, name and appearance stay the same. Choose carefully.
-이기면 유전자 쐐기를 꼭 얻을 수 있어. 림켓몬에게 쓰면 그 정보로 완전히 바뀌니까... 신중하게 골라야 해.	Win and you always get a genetic wedge. Using it on a Rimketmon changes it completely to that data... so choose carefully.
 이로치 부적 (최고 단계)	Shiny Charm (max level)
 이로치 부적 ×	Shiny Charm ×
 이로치가 뭐야?	What's a shiny?
-이로치에도 등급이 있어. 보통 이로치(노란 별), 레어 이로치(파란 별), 에픽 이로치(빨간 별) 순으로 드물고 색도 더 특별해.	Shinies have grades too. Normal shiny (yellow star), rare shiny (blue star) and epic shiny (red star), each rarer with more special colors.
 이름 수정	Edit name
 이름 순	Name order
 이름 정하기	Set name
-이미 제거된 상태입니다. 우하단 몬스터볼 아이콘으로 다시 설치할 수 있습니다.	Already removed. You can reinstall it with the bottom-right monster ball icon.
 이미 진행 중인 승부가 있다.	A battle is already in progress.
 이미 진행 중인 신청이 있다.	A challenge is already in progress.
-이번 시즌에는 랭크전을 하지 않아 보상이 없습니다.	You didn't play Ranked this season, so there's no reward.
+이번 시즌에는 랭크전을 하지 않아 보상이 없습니다.	No reward: you didn't play ranked this season.
 이상한사탕 	Rare Candy 
 이상한사탕 — 	Rare Candy — 
 이상한사탕: 	Rare Candy: 
@@ -1336,7 +1260,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 이제 챔피언이 기다린다.	Now the Champion awaits.
 인공자아핵	AI persona core
 인공자아핵 1개를 소모하고 입장할까요?	Spend 1 AI persona core to enter?
-인공자아핵을 하나 내고 6티어나 ?티어 림켓몬이랑 싸우는 특별한 승부야.	A special battle where you pay one AI persona core to fight a tier-6 or ? tier Rimketmon.
 인공자아핵이 없습니다.	No AI persona core.
 일 · 상위 	days · top 
 일 남음	days left
@@ -1352,9 +1275,7 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 잠들었다	fell asleep
 잡았다!	Caught!
 잡으면 자세한 기록이 남는다.	Catch it to keep a detailed record.
-잡힐 확률은 진짜 포켓몬 공식 그대로야. 체력이 적을수록, 잠듦·얼음이면 2.5배, 마비·화상·독이면 1.5배 잘 잡혀. 슈퍼볼은 1.5배, 하이퍼볼은 2배, 마스터볼은 반드시 잡혀.	Catch odds follow the real Pokémon formula. Lower HP helps, sleep or freeze makes it 2.5x easier, paralysis, burn or poison 1.5x. Great balls are 1.5x, ultra balls 2x, and master balls always catch.
 재도전: 상대 6마리 전원 Lv.100 · 이기면 	Rematch: all 6 foes Lv.100 · win to get 
-적이었던 메카는 풀려나자마자 덤벼드니까 조심해!	Mechs that were hostile attack the moment they're released, so be careful!
 전당 · 챔피언을 이긴 날의 파티 기록	Hall of Fame · parties from the days you beat the Champion
 전당 등록	Hall of Fame entry
 전당 등록은?	What's the Hall of Fame?
@@ -1379,9 +1300,7 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 정신을 차려 보니 림켓몬들이 모두 회복되어 있었다.	When you came to, all your Rimketmon had been healed.
 정신이 드셨나요? 림켓몬 센터예요.	Are you awake? This is the Rimketmon Center.
 정신이 드셨나요? 쓰러지신 걸 보고 여기로 모셔 왔어요.	Are you awake? We saw you collapse and brought you here.
-정착민: 림볼 5개 + 마스터볼 5개 + 초능력 레벨 +1 + 림켓링크	Colonist: 5 Rimballs + 5 master balls + psylink level +1 + Rimketlink
-정착지 근처에 수송포드가 떨어졌다. 안에는 시체 한 구가 실려 있다.\n\n신호는 그 머릿속에서 나오고 있었다. 정착민으로 시체를 우클릭하면 뇌에 박힌 림켓링크를 뽑아낼 수 있다(소지품에는 몬스터볼 10개).	A transport pod crashed near the colony. Inside is a corpse.\n\nThe signal was coming from inside its head. Right-click the corpse with a colonist to extract the Rimketlink embedded in its brain (10 monster balls in its inventory).
-정착지에 놀러 온 방문자가 가끔 눈이 마주치면 림켓몬 승부를 걸어와. 눈이 마주친 이상 피할 수 없어!	Visitors to your colony sometimes challenge you to a Rimketmon battle when your eyes meet. Once your eyes meet, there's no escape!
+정착민: 볼 5개 + 마스터볼 5개 + 초능력 레벨 +1 + 림켓링크	Colonist: 5 balls + 5 Master Balls + psylink level +1 + RimketLink
 제거 중 오류가 났다(로그 확인). 일부만 정리되었을 수 있다.	An error occurred during removal (check the log). It may have been only partly cleaned up.
 제작  RimGall	Made by  RimGall
 졌네요… 한 판 더?	I lost... Another round?
@@ -1402,7 +1321,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 종족값 순	Base stat order
 종족값 합 	Base stat total 
 종족값 합계 	Base stat total 
-종족값을 전부 더해서 1티어부터 6티어까지 나눈 거야. 숫자가 클수록 강하지.	It's the base stat total divided into tiers 1 to 6. The bigger the number, the stronger.
 좋아요!	Nice!
 좌클릭: 빠르게 · 우클릭/Esc: 건너뛰기	Left-click: speed up · right-click/Esc: skip
 주변 물	Water nearby
@@ -1413,7 +1331,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 준비 중	Getting ready
 준비 취소	Cancel ready
 준비가 되면 말을 걸어 주세요.	Talk to me when you're ready.
-준비가 되면 접수원에게 말을 걸어 주세요. PC와 훈련 아저씨도 쓸 수 있고, 채팅은 T 키입니다.	When you're ready, talk to the receptionist. You can use the PC and the training man too, and chat is the T key.
 준비가 되면 접수원에게 말을 걸어 주세요. 채팅은 T 키입니다.	When you're ready, talk to the receptionist. Chat is the T key.
 준비를 취소할까요?	Cancel ready?
 준비를 취소했어요.	Ready canceled.
@@ -1425,7 +1342,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 지난 시즌: 	Last season: 
 지닌 도구	Held item
 지닌 도구 없음	No held item
-지면... 눈앞이 깜깜해지고, 정신을 차려 보면 림켓몬 센터일 거야. 간호사 언니가 바로 치료해 주실 테니 걱정 마.	If you lose... everything goes dark, and when you come to you'll be at the Rimketmon Center. The nurse will treat you right away, so don't worry.
 지하동굴	Undercave
 진심을 낸 	Going all out, 
 진화 멈춤 해제	Allow evolution
@@ -1443,33 +1359,24 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 챔피언 배지는?	What's the Champion badge?
 챔피언 승리 뒤 이벤트 보기(전당 등록 → 크레딧 → 세레나·사냥 개방)	Watch the post-Champion event (Hall of Fame → credits → Serena, hunt unlocked)
 챔피언 승리!	Champion victory!
-챔피언에게 또 이기면 그때마다 새 기록이 남아. 추억이 쌓이는 거지!	Each time you beat the Champion again, a new record is kept. Memories pile up!
-챔피언을 이기면 그날 함께 싸운 파티가 전당에 기록돼. 림켓몬 메뉴의 '전당'에서 언제든 다시 볼 수 있어.	When you beat the Champion, the party that fought that day is recorded in the Hall of Fame. You can view it anytime from 'Hall of Fame' in the Rimketmon menu.
-챔피언이 되면 열리는 곳이야. 포켓로그의 바이옴 중 하나를 골라 BP를 내고 들어가면, 한 번에 열 번까지 야생 포켓몬과 싸울 수 있어.	It opens when you become Champion. Pick one of PokéRogue's biomes and pay BP to enter, and you can fight up to ten wild Pokémon in one go.
 챔피언전	Champion battle
-챔피언전에서 이기면 마지막 배지, 챔피언 배지를 받아. 배지 판 오른쪽에 크게 놓이는 그거야.	Win the Champion battle and you get the last badge, the Champion badge. It's the big one on the right of the badge board.
-천만에! 궁금한 게 생기면 언제든 또 물어봐. 힘내!	You're welcome! Ask me again anytime you're curious. Good luck!
 천천히 생각해 보세요. 나가실 때는 아래쪽 문으로!	Take your time to think. When you leave, use the door below!
 첫 배지 이벤트 보기(세레나의 학습장치 선물)	Watch the first-badge event (Serena's Exp. Share gift)
 첫 배지 축하 선물	First badge gift
-첫 배지를 따면 내가 선물로 주는 거야. 켜 두면 배틀에 나가지 않은 파티 림켓몬도 싸운 아이와 똑같은 경험치를 받아.	It's my gift for your first badge. When it's on, party Rimketmon that didn't battle get the same experience as the one that did.
 첫 배지를 땄구나! 정말 축하해! 관장님이랑 싸우는 모습, 나도 보고 있었어.	You got your first badge! Congratulations! I was watching you fight the leader too.
 체력이 낮을 때 경고음	Low HP warning sound
 체육관 · 포켓몬 리그(창 위쪽 탭)	Gym · Pokémon League (tabs at the top of the window)
-체육관 관장님들은 이세계에서 온 트레이너야. 이기면 배지가 하나씩 늘어나!	The gym leaders are trainers from another world. Win and you get one more badge!
 체육관 배지  8개	Gym badges  8
-체육관은 림켓몬끼리의 승부라서, 져도 정착민은 다치지 않아. 힘들면 항복해도 괜찮으니까 마음 편히 도전해 봐.	Gyms are battles between Rimketmon, so colonists aren't hurt even if you lose. You can surrender if it's tough, so challenge them without worry.
 체육관은?	What about gyms?
 초능력 기운	Psychic aura
 최고 점수  	Best rating  
-최종 등급: 	Final tier: 
-최종 순위: 	Final rank: 
+최종 등급: 	Final rank: 
+최종 순위: 	Final place: #
 추락한 우주선 즉시 떨어뜨리기(퀘스트 자동 수락)	Drop the crashed ship now (quest auto-accepted)
 추첨 중…	Drawing…
 취소 (볼은 소모되지 않음)	Cancel (no ball used)
 친구가 알려 준 6글자 코드	6-character code from your friend
 친구에게 이 코드를 알려 주세요	Tell your friend this code
-친구와 방 코드로 만나서 싸우는 거야. 한 명이 방을 만들고 6글자 코드를 알려 주면, 다른 한 명이 그 코드를 입력해서 들어와.	You meet a friend with a room code and battle. One creates a room and shares the 6-character code, and the other enters that code to join.
 친밀도 	Friendship 
 친밀도 +	Friendship +
 코드 복사	Copy code
@@ -1496,7 +1403,6 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 티어라 	tier 
 파티 비우기	Empty party
 파티가 바뀌어 대전 준비가 취소되었다. 접수원에게 다시 말을 걸어 주세요.	The party changed, so battle prep was canceled. Talk to the receptionist again.
-파티는 6마리까지야. 더 잡으면 PC 박스로 가. 박스는 40개나 있고 한 박스에 30칸이거든.	A party holds up to 6. Catch more and they go to the PC boxes. There are 40 boxes with 30 slots each.
 파티에 데려가기	Take to party
 파티에 추가: 	Add to party: 
 파티와 교체	Swap with party
@@ -1507,15 +1413,12 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 패러독스 배틀 너머에서만 모습을 드러내는 정체불명의 존재. 종족값도 타입도 기술도 만날 때마다 뒤섞여 있어 어떤 분류에도 들어맞지 않는다. 	A mysterious being that only appears beyond Paradox battles. Its base stats, types and moves are shuffled every time, fitting no classification. 
 패러독스 배틀은 평소 만나기 힘든 6티어 림켓몬과 ?티어(올랜덤) 림켓몬을 만나는 특별한 배틀입니다.\n\n입장할 때마다 인공자아핵 1개를 소모합니다. (정착지에 있는 인공자아핵)	A Paradox battle lets you meet tier-6 Rimketmon, rarely seen otherwise, and ? tier (all random) Rimketmon.\n\nEach entry uses 1 AI persona core. (AI persona cores in your colony)
 패러독스 배틀은?	What's a Paradox battle?
-패배 시 정착민 사망 (야생·어둠의 배틀. 체육관·랭크는 해당 없음)	Colonist dies on defeat (wild and dark battles. Not gyms or Ranked)
-평소에는 만날 수 없고, 패러독스 배틀 같은 특별한 곳에서만 마주칠 수 있대. 만나면 꼭 한번 겨뤄 봐!	You can't meet them normally — only in special places like Paradox battles. If you meet one, be sure to battle it!
 포인트 	Points 
 포켓로그  pagefaultgames와 기여자들	PokéRogue  pagefaultgames and contributors
 포켓몬  Nintendo · Creatures · GAME FREAK	Pokémon  Nintendo · Creatures · GAME FREAK
 포켓몬 리그	Pokémon League
 포켓몬 리그  사천왕 4명 · 챔피언 격파	Pokémon League  4 Elite Four · Champion defeated
 포켓몬 리그 (배지 8개)	Pokémon League (8 badges)
-포켓몬 모습인 아이들은 진짜 포켓몬처럼 레벨이 오르면 진화해! 배틀이 끝나고 레벨이 올랐으면 진화가 시작돼.	Ones in Pokémon form evolve when they level up, just like real Pokémon! If it leveled up after a battle, evolution begins.
 포켓몬 사냥	Pokémon hunt
 포켓몬 사냥 바로 열기(세레나 이벤트 없이)	Open Pokémon hunt now (without Serena event)
 포켓몬 사냥 입장 비용	Pokémon hunt entry cost
@@ -1525,11 +1428,10 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 포획에 실패	Failed to catch
 포획했다	Caught it
 풀이 무성	Lush grass
-하이퍼볼	Ultra ball
+하이퍼볼	Ultra Ball
 학습장치: 켜면 싸우지 않은 파티 림켓몬도 같은 경험치	Exp. Share: when on, party Rimketmon that didn't fight get the same experience
 학습장치는?	What's the Exp. Share?
 한 판 더 대전할까요?	Battle another round?
-한 판 더 하려면 접수원에게 말을 걸어 주세요. 채팅은 T 키입니다.	To play another round, talk to the receptionist. Chat is the T key.
 한 판 더 해요!	Let's play another round!
 항복한다	Surrender
 행방불명	Missing
@@ -1552,44 +1454,34 @@ pokefirered  pret 디컴파일 프로젝트	pokefirered  pret decompilation proj
 훈련은 뭐야?	What's training?
 훈련할 림켓몬	Rimketmon to train
 휠: 더 보기 (	Wheel: more (
-흔함 · 보통 · 드묾 · 아주 드묾 · 극히 드묾	Common · Uncommon · Rare · Very rare · Extremely rare
+흔함 · 보통 · 드묾 · 아주 드묾 · 극히 드묾	Common · Uncommon · Rare · Very rare · Ultra rare
  (풀 	 (pool 
 기술 풀 	Move pool 
-림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)	Rimketmon (needs a colonist with a Rimketlink)\n(right-click: quick menu · right-drag: move)
-림켓링크를 두뇌에 설치한 정착민이 살아 있어야 림켓몬 메뉴를 열 수 있습니다. (몬스터볼 연구를 끝내면 열리는 퀘스트로 림켓링크를 얻을 수 있어요.)	A living colonist with a Rimketlink installed in their brain is needed to open the Rimketmon menu. (Finish the monster ball research to unlock a quest that gives you a Rimketlink.)
 티어 	 tier 
-
 # 몬스터볼 아이콘 우클릭 빠른 메뉴
 PC로 가기	Go to PC
 센터 치료하기	Heal at Center
-PC로 가기 (림켓링크 필요)	Go to PC (needs Rimketlink)
-센터 치료하기 (림켓링크 필요)	Heal at Center (needs Rimketlink)
+PC로 가기 (림켓링크 필요)	Go to PC (needs RimketLink)
+센터 치료하기 (림켓링크 필요)	Heal at Center (needs RimketLink)
 회복시킬 림켓몬이 없다.	No Rimketmon to heal.
-림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)	Rimketmon (needs a colonist with a Rimketlink)\n(right-drag: move · double right-click: reset position)
+림켓몬 (림켓링크를 단 정착민이 있어야 열 수 있습니다)\n(우클릭 끌기: 옮기기 · 우클릭 두 번: 원래 자리로)	Rimketmon (needs a colonist with a RimketLink)\n(right-drag: move · double right-click: reset position)
 카드 목록 (	Cards (
-카드가 없습니다.\n\nPC 화면에서 포켓몬을 골라 '카드로 전환'하면 카드가 만들어집니다. (림월드 동물·사람은 카드로 만들 수 없습니다)	No cards.\n\nPick a Pokémon on the PC screen and choose 'Convert to card' to make one. (RimWorld animals and people can't be made into cards.)
-림월드 동물·메카에게 적용하면 겉모습만 이 포켓몬으로 바뀝니다. 능력치·기술은 그대로이고, 정착지에서도 이 모습이 유지됩니다.	Applied to a RimWorld animal or mech, only its look changes to this Pokémon. Stats and moves stay the same, and the look is kept in your colony.
 카드 적용 (PC 화면)	Apply card (PC screen)
 카드를 적용할 수 있는 림켓몬이 없습니다.	No Rimketmon can receive a card.
 쐐기를 쓸 림켓몬을 고르세요 (Enter / 클릭, Esc 취소)	Pick a Rimketmon to use the wedge on (Enter / click, Esc to cancel)
 」을 적용할 림켓몬을 고르세요 (Enter / 클릭, Esc 취소)	」 — pick a Rimketmon to apply it to (Enter / click, Esc to cancel)
-쐐기를 쓸 수 없는 림켓몬입니다. (포켓몬에게는 쓸 수 없고, 림월드 동물·사람에게만 쓸 수 있습니다)	This Rimketmon can't receive the wedge. (It can't be used on Pokémon, only on RimWorld animals and people.)
-카드를 적용할 수 없는 림켓몬입니다. (림월드 동물·메카에게만 적용할 수 있습니다)	This Rimketmon can't receive a card. (Only RimWorld animals and mechs can.)
-」을 적용할까요?\n겉모습만 이 포켓몬으로 바뀝니다. (PC 메뉴의 '카드 제거'로 되돌릴 수 있음)	」 — apply it?\nOnly its look changes to this Pokémon. (You can undo it with “Remove card” in the PC menu.)
 의 겉모습이 	's look changed to 
 (으)로 바뀌었다!	!
 이 포켓몬은 카드로 만들 수 없다!	This Pokémon can't be made into a card!
 BP가 부족합니다. (필요 	Not enough BP. (Need 
  BP, 보유 	 BP, you have 
 BP가 부족합니다.	Not enough BP.
-파티에 있는 림켓몬은 카드로 바꿀 수 없습니다. 먼저 PC 박스에 맡겨 주세요.	A Rimketmon in your party can't be turned into a card. Deposit it in the PC box first.
 을(를) 카드로 바꿀까요? (-	 — turn into a card? (-
 \n포켓몬은 사라지고 카드가 됩니다. (보유 	\nThe Pokémon disappears and becomes a card. (You have 
  BP, 되돌릴 수 없음)	 BP; this cannot be undone)
 을(를) 카드로 바꿨다. (-	 was turned into a card. (-
 카드로 전환	Convert to card
 카드 제거	Remove card
-의 카드를 뗄까요?\n원래 겉모습으로 돌아가고, 카드는 카드 목록으로 돌아갑니다.	 — remove its card?\nIt returns to its original look, and the card goes back to your card list.
 의 카드를 뗐다. 카드는 카드 목록으로 돌아갔다.	 had its card removed. The card went back to the card list.
 카드 · 포켓몬 카드를 림월드 동물에게 적용해 겉모습을 바꾼다	Cards · apply a Pokémon card to a RimWorld animal to change its look
 카드 제작 비용 	Card cost: 
@@ -1597,12 +1489,10 @@ Enter: 적용   Esc: 뒤로	Enter: Apply   Esc: Back
 Esc: 뒤로	Esc: Back
 림켓몬 창(배틀·메뉴) 위치·크기	Rimketmon window (battle/menu) position & size
 기본 위치·크기로 되돌리기	Reset to default position & size
-위 줄을 끌면 창이 움직입니다.\n오른쪽 아래 모서리를 끌면 크기가 바뀝니다.\n창이 이상한 곳에 있으면 [창 초기화] (모드 설정에도 같은 버튼이 있습니다).	Drag the top bar to move the window.\nDrag the bottom-right corner to resize it.\nIf the window ends up somewhere odd, press [Reset window] (the mod settings have the same button).
 창 위치와 크기를 처음 상태로 되돌립니다.	Resets the window position and size to default.
 끌어서 크기 조절 (가로세로 비율 고정)	Drag to resize (aspect ratio locked)
 림월드 시간 조작	World time control
 림켓몬 창이 열려 있어도 림월드 시간·월드 조작	Control RimWorld time and the world while the Rimketmon window is open
-켜면 창이 조금 작아지고 림월드 시간이 흐른다. 창 밖(월드)을 누르면 월드를, 창 안을 누르면 림켓몬을 조작한다. 야생동물·방문자·어둠의 배틀·???·온라인 배틀 중에는 시간이 멈추고 조작할 수 없다. 끄면 예전처럼 전체 화면에서 시간이 항상 멈춘다.	When on, the window is a bit smaller and RimWorld time keeps running. Click outside the window (the world) to control the world, inside to control Rimketmon. During wild-animal, visitor, dark and ??? battles and online matches, time stays stopped and cannot be changed. When off, the window is full screen and time is always stopped, as before.
 배틀 중에는 시간을 움직일 수 없다.	You can't change the time during this battle.
 림켓몬 창이 열려 있는 동안에는 배틀을 시작할 수 없다.	You can't start a battle while a Rimketmon window is open.
 림켓몬 창이 열려 있는 동안에는 시작할 수 없다.	You can't start this while a Rimketmon window is open.
@@ -1621,7 +1511,6 @@ Esc: 뒤로	Esc: Back
 휴게실에서 림켓몬이 모두 회복되었다.	Your Rimketmon were all healed in the lounge.
 배틀타워에서는 가방 아이템을 쓸 수 없다.	Bag items cannot be used in the Battle Tower.
 볼에 넣었다 꺼내도 동물의 훈련·장비·보철물 유지	Keep an animal's training, gear and prosthetics when it goes in a ball
-끄면 예전처럼 볼에 넣을 때 동물을 지우고, 꺼낼 때 새로 만든다(훈련·장비·보철물이 사라진다). 우리 정착지 동물에만 적용된다.	When off, the animal is deleted when put in a ball and created anew when released (training, gear and prosthetics are lost), as before. Applies only to your colony's animals.
 배틀 후 정착민 신경 손상 (끄면 뇌 손상·혼수가 전혀 없음)	Colonist neural damage after battles (off = no brain damage or coma at all)
  먼저 세이브를 다른 이름으로 저장해 두세요.\n모드를 아예 빼려면: 제거 → 저장 → 게임 종료 → 모드 끄기 순서로 하세요.	 Save a backup copy of this save first.\nTo take the mod out completely: remove → save → quit the game → disable the mod.
 이미 다른 배틀이 진행 중이다.	Another battle is already in progress.
@@ -1653,12 +1542,11 @@ Esc: 뒤로	Esc: Back
 \n(림월드 물건으로 정착지에 도착한다)	\n(Arrives at your colony as a RimWorld item)
 온라인 배틀 중에는 최소화할 수 없습니다.	You can't minimize during an online battle.
 온라인 방에서는 최소화할 수 없습니다.	You can't minimize while in an online room.
-림켓몬 창을 숨겼습니다. 화면 아래 탭이나 몬스터볼 아이콘을 누르면 이어서 합니다.	RimKéMoN is hidden. Click the tab at the bottom of the screen to continue.
 최소화 (림켓몬을 잠시 멈추고 숨기기)	Minimize (pause RimKéMoN and hide it)
 다시 열기	Reopen
 숨겨 둔 림켓몬 창을 다시 엽니다 (멈춘 곳부터 이어서)	Reopen the hidden RimKéMoN window (continues where it stopped)
-5층마다 회복 · 가방 아이템 사용 금지	Full heal every 5 floors · no bag items
-지면 도전 끝 · 경험치는 전투가 끝난 뒤 받는다	Lose once and the run ends · EXP is paid after each battle
+5층마다 회복 · 가방 아이템 사용 금지	Healed every 5 floors · No bag items
+지면 도전 끝 · 경험치는 전투가 끝난 뒤 받는다	A loss ends the run · EXP after each battle
 ★ 이로치 포켓몬입니다! 카드로 바꾸면 이 이로치 포켓몬은 사라집니다.	★ This is a shiny Pokémon! Turning it into a card removes this shiny Pokémon.
 ★ 이 포켓몬은 월드(지도)에서는 이로치 색이 보이지 않습니다. (메뉴·배틀에서는 보임)	★ This Pokémon's shiny colors don't show on the map (they do show in menus and battles).
 오토: 기본 AI가 대신 싸우고 멈추지 않고 올라간다.	Auto: the default AI fights for you and keeps climbing without stopping.
@@ -1668,3 +1556,258 @@ AUTO ▶ 켜기	AUTO ▶ Start
 오토를 멈췄다. 직접 조종한다.	Auto stopped. You're in control.
 레어 부적 Lv.	Rare Charm Lv.
 입장 	Entry 
+나는 포켓몬의 숨은 모습을 끌어내는 연구를 하고 있지.	I research drawing out Pokémon's hidden forms.
+BP를 넉넉히 주면 포켓몬의 숨은 모습을 영원히 끌어내 주지.	Pay enough BP and I'll draw out a hidden form for good.
+어느 포켓몬을 볼까?	Which Pokémon shall I look at?
+원래대로 되돌리기 (BP는 돌려받지 못함)	Revert to normal (BP not refunded)
+되돌린다	Revert
+메가진화	Mega Evolution
+원시회귀	Primal Reversion
+거다이맥스	Gigantamax
+다이맥스	Dynamax
+다이월	Max Guard
+모든 공격을 막는다.	Blocks all attacks.
+다이맥스 기술.	Max Move.
+다이맥스한 포켓몬에게는 통하지 않는다!	It doesn't affect a Dynamaxed Pokémon!
+거다이맥스 기술의 여파!	Hurt by the G-Max Move's aftermath!
+거다이맥스 기술의 여파가 사라졌다.	The G-Max Move's aftermath faded.
+상대는 도망칠 수 없게 되었다!	The foe can no longer escape!
+오로라베일이 아군을 지킨다!	Aurora Veil protects your team!
+주변의 장애물이 날아갔다!	The obstacles were blown away!
+다이어택	Max Strike
+다이번	Max Flare
+다이스트림	Max Geyser
+다이그래스	Max Overgrowth
+다이썬더	Max Lightning
+다이아이스	Max Hailstorm
+다이너클	Max Knuckle
+다이애시드	Max Ooze
+다이어스	Max Quake
+다이제트	Max Airstream
+다이사이코	Max Mindstorm
+다이웜	Max Flutterby
+다이록	Max Rockfall
+다이할로우	Max Phantasm
+다이드라군	Max Wyrmwind
+다이아크	Max Darkness
+다이스틸	Max Steelspike
+다이페어리	Max Starfall
+거다이편달	G-Max Vine Lash
+거다이백화요란	G-Max Wildfire
+거다이포격	G-Max Cannonade
+거다이린분	G-Max Befuddle
+거다이만뢰	G-Max Volt Crash
+거다이코인샤워	G-Max Gold Rush
+거다이회심격	G-Max Chi Strike
+거다이환영	G-Max Terror
+거다이포말	G-Max Foam Burst
+거다이선율	G-Max Resonance
+거다이포옹	G-Max Cuddle
+거다이재생	G-Max Replenish
+거다이악취	G-Max Malodor
+거다이유동	G-Max Meltdown
+거다이난타	G-Max Drum Solo
+거다이화염구	G-Max Fireball
+거다이저격	G-Max Hydrosnipe
+거다이폭풍	G-Max Wind Rage
+거다이천도	G-Max Gravitas
+거다이암진	G-Max Stonesurge
+거다이분석	G-Max Volcalith
+거다이산격	G-Max Tartness
+거다이감로	G-Max Sweetness
+거다이사진	G-Max Sandblast
+거다이격전	G-Max Stun Shock
+거다이백열	G-Max Centiferno
+거다이천벌	G-Max Smite
+거다이잠	G-Max Snooze
+거다이피날레	G-Max Finale
+거다이강철	G-Max Steelsurge
+거다이감쇠	G-Max Depletion
+거다이일격	G-Max One Blow
+거다이연격	G-Max Rapid Flow
+볼이 없다. 림월드에서 볼을 만들거나 사서 거점에 두자.	No balls. Make or buy balls and keep them at your base.
+ 소지품+거점): 몬스터 	's inventory + base): Poké 
+SQUISHY 연동: 배틀 스프라이트 반동·피격 흔들림	SQUISHY link: recoil and hit shake on battle sprites
+SQUISHY 연동 세기	SQUISHY link strength
+입장료 무료 (1~10층 시작)	Free entry (floors 1–10)
+입장료 무료 · 11층부터 은 150, 10층마다 +50	Free entry · From floor 11: 150 silver, +50 every 10 floors
+림켓몬 배틀을 저장한 곳부터 이어 갑니다.	Resuming the RimKéMoN battle from where it was saved.
+저장된 림켓몬 배틀을 이어 가지 못했습니다. 배틀은 취소됩니다.	Couldn't resume the saved RimKéMoN battle. The battle has been cancelled.
+(물/	(Water/
+/물 /	/Water /
+(물 /	(Water /
+ 물 type	 Water type
+(풀/	(Grass/
+/풀 /	/Grass /
+(풀 /	(Grass /
+ 풀 type	 Grass type
+(독/	(Poison/
+/독 /	/Poison /
+(독 /	(Poison /
+ 독 type	 Poison type
+(땅/	(Ground/
+/땅 /	/Ground /
+(땅 /	(Ground /
+ 땅 type	 Ground type
+(악/	(Dark/
+/악 /	/Dark /
+(악 /	(Dark /
+ 악 type	 Dark type
+'s 독 was cured	's poisoning was cured
+몬스터볼을 던졌다!	Threw a Poké Ball!
+슈퍼볼을 던졌다!	Threw a Great Ball!
+하이퍼볼을 던졌다!	Threw an Ultra Ball!
+마스터볼을 던졌다!	Threw a Master Ball!
+(물/풀 /	(Water/Grass /
+(물/독 /	(Water/Poison /
+(물/땅 /	(Water/Ground /
+(물/악 /	(Water/Dark /
+(풀/물 /	(Grass/Water /
+(풀/독 /	(Grass/Poison /
+(풀/땅 /	(Grass/Ground /
+(풀/악 /	(Grass/Dark /
+(독/물 /	(Poison/Water /
+(독/풀 /	(Poison/Grass /
+(독/땅 /	(Poison/Ground /
+(독/악 /	(Poison/Dark /
+(땅/물 /	(Ground/Water /
+(땅/풀 /	(Ground/Grass /
+(땅/독 /	(Ground/Poison /
+(땅/악 /	(Ground/Dark /
+(악/물 /	(Dark/Water /
+(악/풀 /	(Dark/Grass /
+(악/독 /	(Dark/Poison /
+(악/땅 /	(Dark/Ground /
+끄면 볼에 넣었다 꺼낼 때 훈련·장비·보철물이 사라진다.	If off, training, gear and prosthetics are lost when an animal goes into a ball.
+림켓링크 착용자가 다쳤거나 아프면 걸어오지 않는다.	Never happens while the RimketLink wearer is hurt or sick.
+끄면 방문자는 림월드 동물만 데려온다.	If off, visitors only bring RimWorld animals.
+방문자끼리 지도 위에서 승부한다(구경용).	Two visitors battle each other on the map (just to watch).
+0%면 실수하지 않는다.	At 0%, opponents never make mistakes.
+강한 상대(어둠의 배틀·관장·리그·랭크 상위)는 학습된 AI 사용	Strong opponents (dark battles, leaders, league, top ranks) use the trained AI
+켜면 메뉴가 열려 있어도 시간이 흐르고 월드를 조작할 수 있다. 배틀 중에는 멈춘다.	If on, time keeps running and you can control the world while the menu is open. Battles still pause the game.
+SQUISHY 설정을 배틀 연출에 반영한다.	Uses your SQUISHY settings for battle animations.
+이 세이브에서 제거됨. 우하단 몬스터볼 아이콘으로 다시 설치할 수 있다.	Removed from this save. Click the Poké Ball icon (bottom right) to reinstall.
+패배 시 정착민 사망 (야생·어둠의 배틀)	Colonist dies on defeat (wild and dark battles)
+6티어·?티어 림켓몬과 싸우는 특별한 배틀.\n\n입장할 때마다 인공자아핵 1개. 상대는 2번까지 다시 뽑을 수 있다.	A special battle against Tier 6 and Tier ? Rimketmon.\n\nCosts 1 persona core per entry. You can reroll the opponent twice.
+내 파티 최대 6마리 대 Lv.150 상대 1마리. 도구·경험치 없음.	Up to 6 of yours vs. one Lv.150 foe. No items, no EXP.
+이기면 그 상대의 유전자 쐐기를 얻는다.\n\n쐐기를 쓰면 능력이 그 상대로 바뀐다(겉모습은 그대로). 림월드 동물·사람에게만 쓸 수 있다.	Win to get that foe's gene wedge.\n\nA wedge turns a Rimketmon's stats and moves into the foe's (looks stay the same). Only for RimWorld animals and people.
+쐐기 3개로 무작위 쐐기 1개를 만들 수 있다(쐐기 목록에서 R). 쓴 쐐기는 '쐐기 제거'로 되돌린다.	Combine 3 wedges into 1 random wedge (R in the wedge list). Use 'Remove wedge' to undo a wedge.
+쐐기를 쓸 수 있는 림켓몬이 없다(림월드 동물·사람만 가능).	No Rimketmon can use a wedge (only RimWorld animals and people).
+에게 쐐기를 쓸까요?\n능력이 전부 바뀝니다('쐐기 제거'로 되돌릴 수 있음).	 — use a wedge on it?\nAll its stats and moves change (undo with 'Remove wedge').
+쐐기를 쓸 수 없는 림켓몬이다(림월드 동물·사람만 가능).	This Rimketmon can't use a wedge (only RimWorld animals and people).
+카드가 없습니다.\n\nPC에서 포켓몬을 골라 '카드로 전환'하면 만들어집니다.	No cards.\n\nPick a Pokémon in the PC and choose 'Turn into card'.
+림월드 동물·메카의 겉모습만 이 포켓몬으로 바꾼다.	Changes only the look of a RimWorld animal or mech into this Pokémon.
+카드를 쓸 수 없는 림켓몬이다(림월드 동물·메카만 가능).	This Rimketmon can't use a card (only RimWorld animals and mechs).
+」을 적용할까요?\n겉모습만 바뀝니다('카드 제거'로 되돌릴 수 있음).	」 — apply it?\nOnly the look changes (undo with 'Remove card').
+파티에 있는 림켓몬은 카드로 바꿀 수 없다. 먼저 박스에 맡기자.	Party members can't be turned into cards. Move it to a box first.
+★ 이로치입니다! 카드로 바꾸면 사라집니다.\n	★ It's shiny! It will be gone once turned into a card.\n
+★ 지도에서는 이로치 색이 보이지 않습니다.\n	★ Shiny colors don't show on the map.\n
+의 카드를 뗄까요?\n원래 모습으로 돌아가고 카드는 돌려받습니다.	 — remove its card?\nIt goes back to its old look and you get the card back.
+상대를 기다리는 동안 파티를 정리해 두세요. 워프 판으로 나가면 방이 닫힙니다.	Set up your party while you wait. Leaving by the warp pad closes the room.
+준비되면 접수원에게 말을 거세요. 채팅은 T.	Talk to the receptionist when ready. Press T to chat.
+한 판 더 하려면 접수원에게 말을 거세요. 채팅은 T.	Talk to the receptionist for a rematch. Press T to chat.
+림켓링크 착용자가 없어 대전할 수 없어요. 워프 판으로 나가 주세요.	No RimketLink wearer, so you can't battle. Please leave by the warp pad.
+시작하기 전에 세이브를 백업해 두세요.	Back up your save before you start.
+상대에게 보일 이름(최대 20자). 저장하면 지금 착용자의 모습도 함께 갱신됩니다.	Name shown to your opponent (max 20). Saving also updates your look.
+상대에게 보이는 모습 · 이름 수정 시 갱신	How you look to opponents · updated when you edit your name
+· 몬스터볼 아이콘으로 다시 설치할 수 있습니다.\n\n되돌릴 수 없으니 먼저 세이브를 따로 저장하세요.\n모드를 끄려면: 제거 → 저장 → 종료 → 모드 끄기.	· You can reinstall from the Poké Ball icon.\n\nThis can't be undone, so save a copy first.\nTo turn the mod off: remove → save → quit → disable the mod.
+· 모드가 만든 물건·상태·퀘스트·연구를 모두 지웁니다.\n	· Removes all items, conditions, quests and research added by the mod.\n
+이미 제거됨. 몬스터볼 아이콘으로 다시 설치할 수 있다.	Already removed. Reinstall from the Poké Ball icon.
+위 줄을 끌어 옮기고, 오른쪽 아래 모서리로 크기를 바꿉니다.\n창이 이상하면 [창 초기화].	Drag the top bar to move, the bottom-right corner to resize.\nIf the window gets lost, use [Reset window].
+림켓몬 창을 숨겼습니다. 아래 탭이나 몬스터볼 아이콘으로 다시 엽니다.	Rimketmon window hidden. Use the bottom tab or the Poké Ball icon to reopen.
+림켓링크를 단 정착민이 있어야 열 수 있습니다. (몬스터볼 연구 후 퀘스트로 얻습니다)	Needs a colonist with a RimketLink. (Get one from the quest after Poké Ball research.)
+림켓몬 (림켓링크를 단 정착민 필요)\n(우클릭: 빠른 메뉴 · 우클릭 끌기: 옮기기)	Rimketmon (needs a RimketLink colonist)\n(Right-click: quick menu · right-drag: move)
+정착지 근처에 수송포드가 떨어졌다. 안에는 시체가 있다.\n\n시체를 우클릭하면 뇌의 림켓링크를 뽑아낼 수 있다(몬스터볼 10개 소지).	A transport pod crashed near the colony. There's a corpse inside.\n\nRight-click the corpse to extract the RimketLink from its brain (it also carries 10 Poké Balls).
+모습을 바꿀 수 있는 포켓몬을 파티에 넣고 오게나.	Come back with a Pokémon that can change form in your party.
+BP를 주면 부적을 강화해 주지. 이로치 부적은 이로치를, 레어 부적은 드문 포켓몬을 더 자주 만나게 해 준다네.	Give me BP and I'll upgrade your charms. The Shiny Charm finds more shinies, the Rare Charm more rare Pokémon.
+을(를) 풀어주었다. 연결이 끊긴 메카가 되었다.	 was released. It's now a disconnected mech.
+의 유전자 쐐기를 뺄까요?\n원래 능력으로 돌아가고 쐐기는 돌려받습니다.	 — remove its gene wedge?\nIt gets its old stats back and you get the wedge back.
+림월드 동물에 포켓몬의 힘이 깃든 거야. 볼로 잡으면 파티가 돼!	RimWorld animals with the power of Pokémon. Catch them with a ball and they join your party!
+응! 우리 메카는 그냥 볼에 넣을 수 있고, 남의 메카는 마스터볼로만 잡혀.	Yes! Your own mechs go straight into a ball. Other mechs need a Master Ball.
+적이었던 메카는 풀어 주면 바로 덤벼드니까 조심해!	Careful: a released enemy mech attacks right away!
+링크를 단 사람이 죽으면 시체를 우클릭해서 다시 뽑을 수 있어.	If the wearer dies, right-click the corpse to extract it.
+세상에 링크가 하나도 없으면 하루 안에 퀘스트가 다시 열려.	If no RimketLink exists anywhere, the quest comes back within a day.
+포켓몬 모습인 아이는 레벨이 오르면 배틀 뒤에 진화해. 우클릭이나 Esc로 멈출 수 있어.	Pokémon evolve after a battle when they level up. Right-click or Esc to stop it.
+림월드 동물 모습은 진화하지 않아.	RimWorld animals don't evolve.
+배틀에서 만난 아이들이 기록돼. 잡으면 설명까지 볼 수 있어.	It records everyone you meet in battle. Catch them to see their full entry.
+켜 두면 싸우지 않은 파티 림켓몬도 같은 경험치를 받아. 메뉴 위 내 얼굴 옆 버튼으로 켜고 꺼.	When on, party members who didn't fight get the same EXP. Toggle it next to my face at the top of the menu.
+따라오는 림켓몬을 우클릭하면 놀아 주기·간식 주기 같은 걸 할 수 있어. 친밀도가 올라가!	Right-click your follower to play with it or give it treats. Friendship goes up!
+배지 4개부터 통신기에서 BP를 내고 도발 방송을 할 수 있어. 어둠의 트레이너가 찾아오니까 각오해!	From 4 badges, pay BP at a comms console to broadcast a taunt. A dark trainer will come, so be ready!
+챔피언이 되면 열려. BP를 내고 지역을 고르면 한 번에 10번까지 야생 포켓몬과 싸울 수 있어.	Unlocked after becoming Champion. Pay BP, pick an area, and fight up to 10 wild Pokémon in a row.
+지역과 시간대마다 나오는 포켓몬이 달라. 오른쪽 표를 확인해!	Each area and time of day has different Pokémon. Check the table on the right!
+배틀 중에 '아이템'에서 볼을 던져. 체력이 적거나 잠듦·마비면 잘 잡혀.	Throw a ball from 'Items' during battle. Low HP, sleep or paralysis make it easier.
+볼은 림켓링크 착용자의 소지품과 거점에 있는 것만 쓸 수 있어.	You can only use balls in the wearer's inventory or at your base.
+색이 다른 아주 드문 포켓몬이야. 반짝이면 놓치지 마!	A very rare Pokémon with different colors. Don't miss it when it sparkles!
+챔피언을 이기면 그 파티가 전당에 남아. 메뉴의 '전당'에서 볼 수 있어.	Beat the Champion and your team enters the Hall of Fame. See it under 'Hall of Fame'.
+볼을 가진 정착민을 고르고 '볼 던지기'로 야생 동물을 가리키면 승부가 시작돼.	Select a colonist with a ball and use 'Throw ball' on a wild animal to start a battle.
+마스터볼은 싸우지 않고 바로 잡아. 사람도!	A Master Ball catches instantly, no battle. Even people!
+기술을 골라 번갈아 싸워. 기술에 마우스를 올리면 설명이 나와.	Pick moves and take turns. Hover a move to see what it does.
+야생·어둠의 배틀에서 림켓몬이 다 쓰러지면 정착민이 직접 싸워야 해. 조심!	In wild and dark battles, if all your Rimketmon faint, your colonist has to fight. Careful!
+강함 등급이야. 1티어부터 6티어까지 있고, 정체불명의 ?티어도 있대.	A strength rank from Tier 1 to Tier 6. There's also a mysterious Tier ?.
+레벨 상한은 배지 수로 정해져. 더 강해지려면 배지를 모아!	Your level cap depends on badges. Collect badges to get stronger!
+간호사님은 무료 회복, PC는 파티·박스 정리, 마트는 도구 뽑기야.	The nurse heals for free, the PC manages party and boxes, and the mart sells item draws.
+볼은 마트에서 안 팔아. 림월드에서 만들어야 해.	The mart doesn't sell balls. Craft them in RimWorld.
+파티는 6마리까지, 나머지는 PC 박스로 가.	Up to 6 in your party; the rest go to the PC boxes.
+훈련아저씨가 BP를 받고 능력 포인트·성격·기술·특성을 바꿔 주셔.	The Trainer changes stat points, nature, moves and abilities for BP.
+관장을 이기면 배지를 얻어. 8개를 모으면 포켓몬 리그에 도전할 수 있어.	Beat a leader to earn a badge. With 8, you can challenge the Pokémon League.
+체육관에서는 져도 정착민이 다치지 않아.	Losing at a gym never hurts your colonist.
+눈이 마주치면 피할 수 없어! 이기면 은을 받고, 져도 다치지 않아.	Once eyes meet, there's no escape! Win for silver; losing doesn't hurt.
+응! 링크 착용자가 '림켓몬 꺼내기'를 쓰면 파티 맨 앞 아이가 따라다녀. 다시 쓰면 돌아와.	Yes! The wearer uses 'Send out Rimketmon' and your lead follows them. Use it again to call it back.
+6마리 중 3마리를 골라 싸워. 이기면 점수와 BP를 받아. 도구는 못 써.	Pick 3 of 6 and battle. Wins give points and BP. No items.
+방을 만들고 6글자 코드를 친구에게 알려 주면 돼. 둘 다 스팀판, 같은 모드 버전이어야 해.	Make a room and share the 6-letter code. Both need Steam and the same mod version.
+모든 게 무작위로 섞인 림켓몬이야. 패러독스 배틀 같은 곳에서만 만날 수 있대.	A Rimketmon where everything is random. Only found in places like Paradox Battles.
+인공자아핵을 내고 6티어나 ?티어와 싸워. 이기면 유전자 쐐기를 얻어.	Pay a persona core to fight a Tier 6 or Tier ?. Win to get a gene wedge.
+챔피언을 이기면 받는 마지막 배지야. 만져 보면… 뭔가 일어난대.	The last badge, earned by beating the Champion. Touch it and… something happens.
+방향키·WASD로 이동, Enter·Z로 결정, Esc·X로 취소. 숫자는 Shift로 10씩, Ctrl로 100씩.	Arrows/WASD to move, Enter/Z to confirm, Esc/X to cancel. Shift changes numbers by 10, Ctrl by 100.
+천만에! 궁금하면 언제든 또 물어봐!	Anytime! Ask me again whenever you like!
+시작 층	Start floor
+  ·  포획률 	  ·  Catch rate 
+친밀도 160 이상으로 레벨업	Level up with high friendship
+두 컴퓨터의 전투 상태가 어긋났다(동기화 오류). 이 판은 무효 처리됩니다.	The two games went out of sync. This match is void.
+상대 림켓몬 검사 실패: 	Opponent's Rimketmon failed the check: 
+상대 파티가 너무 크다	Opponent's party is too big
+상대 파티의 림켓몬이 모자란다	Opponent's party is too small
+상대가 규칙에 맞지 않는 행동을 보냈다.	The opponent sent an illegal action.
+상대가 나갔다.	The opponent left.
+상대가 선출하지 않아 대전이 취소되었다.	The opponent didn't pick a team. Match cancelled.
+상대가 응답하지 않아 승리 처리되었다.	The opponent stopped responding. You win.
+상대가 중단했다: 	The opponent quit: 
+상대의 선출이 규칙에 맞지 않는다	The opponent's team breaks the rules
+서로 고른 대전 방식(싱글/더블)이 다르다.	You picked different formats (single/double).
+서로 모드 버전이 다르다. 같은 버전으로 맞춘 뒤 다시 시도하세요.	Mod versions differ. Use the same version and try again.
+시간 안에 선출하지 않았다.	You didn't pick a team in time.
+시간 초과로 항복 처리되었다.	Time ran out. You forfeited.
+시드 오류	Seed error
+잘못된 접속 정보	Invalid connection info
+파티 전송이 어긋났다	Party transfer failed
+행동 정보 오류	Action data error
+같은 도구는 함께 낼 수 없다.	Can't bring the same item twice.
+같은 종족은 함께 낼 수 없다.	Can't bring the same species twice.
+이(가) 끝났습니다.	 has ended.
+점)	 pts)
+위 (순위표 상위 	 (top 
+위\n	\n
+ 포함)	)
+시즌 	Season 
+ 시작: 등급이 한 단계 내려갑니다.	 begins: your rank drops one step.
+몬스터볼급	Poké Ball class
+슈퍼볼급	Great Ball class
+하이퍼볼급	Ultra Ball class
+마스터볼급	Master Ball class
+ (림켓링크 필요)	 (needs RimketLink)
+). 가능한 곳까지 이어 갑니다.	). Continuing as far as possible.
+  강함: 	  Strong: 
+  약함: 	  Weak: 
+3개를 넣으면 무작위 쐐기 1개가 나옵니다	Put in 3 to get 1 random wedge
+Enter: 사용   R: 재조합   Esc: 뒤로	Enter: Use   R: Combine   Esc: Back
+\n넣은 쐐기는 사라지고, 무작위 쐐기 1개가 나옵니다.	\nThey will be used up and you get 1 random wedge.
+▼ 상대 정보	▼ Opponent
+리롤 기회를 다 썼습니다.	No rerolls left.
+새 유전자 쐐기가 만들어졌다!	A new gene wedge was made!
+쐐기 3개를 재조합할까요?\n	Combine these 3 wedges?\n
+이 상대를 포기할까요?\n소모한 인공자아핵은 돌아오지 않습니다.	Give up on this opponent?\nThe persona core will not be returned.
+패러독스 상대 출현!	A Paradox foe appeared!
+ (엘리베이터)	 (elevator)
+교역 지점에 놓았습니다.	Placed at the trade spot.
+이(가) 모든 주파수에 도발을 퍼부었다.\n\n\"림켓몬으로 우리를 이길 수 있는 녀석이 있다면 와 봐라!\"\n\n	 blasted a taunt on every frequency.\n\n\"If anyone can beat us with Rimketmon, come and try!\"\n\n
+배틀타워 · 	Battle Tower · 

@@ -136,7 +136,7 @@ namespace Rimketmon.Engine
             "MIRA|미루|true|named",
             "MOLAYNE|멀레인|true|named",
             "MUSICIAN|뮤지션|true|class",
-            "MUSTARD|마스터드|true|named",
+            "MUSTARD|마스타드|true|named",
             "MYSTERIOUS_SISTERS|이상한 자매|true|class",
             "NATE|nate|true|class",
             "NEMONA|네모|true|named",

@@ -125,7 +125,7 @@ namespace Rimketmon
         private void AskRemoveWedge(ExposableCreature e)
         {
             if (e == null || !Paradox.HasWedge(e.C)) return;
-            AskConfirm(e.C.Name + "의 유전자 쐐기를 뺄까요?\n쐐기를 쓰기 전의 종족·특성·기술로 돌아가고, 쐐기는 다시 쓸 수 있게 돌려받습니다.", () =>
+            AskConfirm(e.C.Name + "의 유전자 쐐기를 뺄까요?\n원래 능력으로 돌아가고 쐐기는 돌려받습니다.", () =>
             {
                 var pc = PartyComponent.Instance;
                 var w = Paradox.Remove(e.C);

@@ -31,10 +31,10 @@ namespace Rimketmon
 
         private static readonly string[] PdHelp =
         {
-            "패러독스 배틀은 평소 만나기 힘든 6티어 림켓몬과 ?티어(올랜덤) 림켓몬을 만나는 특별한 배틀입니다.\\n\\n입장할 때마다 인공자아핵 1개를 소모합니다. (정착지에 있는 인공자아핵)\n\n만난 상대가 마음에 들지 않으면 2번까지 다시 돌릴(리롤) 수 있습니다.",
-            "배틀은 내 파티 최대 6마리(원래 레벨 그대로) 대 Lv.150 상대 1마리입니다. 도구는 쓸 수 없고 경험치도 없습니다.\\n\\n6티어 림켓몬은 종족마다(다른 모습 포함) 1%씩, 나머지 확률은 전부 ?티어입니다.",
-            "이기면 그 상대의 정보가 담긴 유전자 쐐기를 반드시 얻습니다.\\n\\n쐐기를 림켓몬에게 쓰면 종족·속성·종족값·개체값·성격·특성·기술이 쐐기의 정보로 완전히 덮어씌워집니다. 레벨·이름·겉모습은 그대로입니다. 쐐기는 림월드 동물·사람에게만 쓸 수 있고 포켓몬에게는 쓸 수 없습니다.",
-            "필요 없는 쐐기는 3개를 모아 재조합하면 무작위 쐐기 1개로 바꿀 수 있습니다. (쐐기 목록에서 R)\n\n쓴 쐐기는 파티·PC 메뉴의 '쐐기 제거'로 원래대로 되돌릴 수 있습니다.",
+            "6티어·?티어 림켓몬과 싸우는 특별한 배틀.\\n\\n입장할 때마다 인공자아핵 1개. 상대는 2번까지 다시 뽑을 수 있다.",
+            "내 파티 최대 6마리 대 Lv.150 상대 1마리. 도구·경험치 없음.",
+            "이기면 그 상대의 유전자 쐐기를 얻는다.\\n\\n쐐기를 쓰면 능력이 그 상대로 바뀐다(겉모습은 그대로). 림월드 동물·사람에게만 쓸 수 있다.",
+            "쐐기 3개로 무작위 쐐기 1개를 만들 수 있다(쐐기 목록에서 R). 쓴 쐐기는 '쐐기 제거'로 되돌린다.",
         };
 
         private void DrawParadox(Canvas g, Texture2D win, PartyComponent pc)
@@ -174,14 +174,20 @@ namespace Rimketmon
             if (!pc.ActiveParty().Any(p => !p.IsFainted)) { pdMsg = "싸울 수 있는 림켓몬이 없습니다."; RimketAudio.PlaySe("gui_sel_buzzer"); return; }
             var foe = pc.paradoxPending.C;
             pc.paradoxPending = null; pc.paradoxRerolls = 0;
-            BattleFlow.StartParadox(foe, won =>
-            {
-                var pc = PartyComponent.Instance;
-                pdWon = won; pdGot = null; pdRecombined = false;
-                if (won) { pc.paradoxWins++; pdGot = Paradox.MakeWedge(foe); pc.Wedges.Add(new ExposableCreature { C = pdGot }); }
-                else pc.paradoxLosses++;
-                pdS = PD.Result;
-            });
+            BattleFlow.StartParadox(foe, won => FinishParadox(foe, won));
+        }
+
+        /// <summary>패러독스 결과 반영 + 결과 화면(세이브에서 이어 한 배틀도 이것으로 끝낸다).</summary>
+        internal static void FinishParadox(RimketCreature foe, bool won)
+        {
+            var pc = PartyComponent.Instance; if (pc == null) return;
+            var w = Find.WindowStack.WindowOfType<Window_RimketMenu>();
+            if (w == null) { w = new Window_RimketMenu(); Find.WindowStack.Add(w); }
+            w.view = View.Paradox;
+            w.pdWon = won; w.pdGot = null; w.pdRecombined = false;
+            if (won) { pc.paradoxWins++; w.pdGot = Paradox.MakeWedge(foe); pc.Wedges.Add(new ExposableCreature { C = w.pdGot }); }
+            else pc.paradoxLosses++;
+            w.pdS = PD.Result;
         }
 
         // ---- 쐐기 정보 패널
@@ -311,7 +317,7 @@ namespace Rimketmon
         private List<ExposableCreature> pdTargets = new List<ExposableCreature>();
         private void ParadoxTargets(PartyComponent pc)
         {
-            if (!pc.All.Concat(pc.Box).Any(e => Paradox.CanReceive(e.C))) { Messages.Message(Lang.Tr("쐐기를 쓸 수 있는 림켓몬이 없습니다. (포켓몬에게는 쓸 수 없고, 림월드 동물·사람에게만 쓸 수 있습니다)"), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
+            if (!pc.All.Concat(pc.Box).Any(e => Paradox.CanReceive(e.C))) { Messages.Message(Lang.Tr("쐐기를 쓸 수 있는 림켓몬이 없다(림월드 동물·사람만 가능)."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
             if (pdWedge < 0 || pdWedge >= pc.Wedges.Count) return;
             BeginPick(Pick.Wedge, pc.Wedges[pdWedge].C, null);      // PC 화면으로 넘어가 거기서 대상을 고른다
         }
@@ -354,7 +360,7 @@ namespace Rimketmon
         private void ParadoxAsk(RimketCreature wedge)
         {
             var target = pdTargets[pdTarget];
-            AskConfirm(target.C.Name + "에게 쐐기를 쓸까요?\n종족·특성·기술이 전부 바뀝니다. (파티·PC 메뉴의 '쐐기 제거'로 되돌릴 수 있음)", () =>
+            AskConfirm(target.C.Name + "에게 쐐기를 쓸까요?\n능력이 전부 바뀝니다('쐐기 제거'로 되돌릴 수 있음).", () =>
             {
                 var pc = PartyComponent.Instance;
                 if (!Paradox.Apply(target.C, wedge)) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }

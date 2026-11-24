@@ -26,7 +26,10 @@ namespace Rimketmon.Engine
         public string Item;               // 지닌 도구 id(ItemCatalog). 없으면 null. 전투 중 변화는 전투 안에서만 유효하다
         public string Ability;            // 특성 id (스폰 시 종족의 일반 특성 중 무작위). 정착민/트레이너 본인은 없음
         public int BasicLevel = 1;        // 사람(Neutral)의 기본 공격 단계 1~6 → 위력 40~90
-        public string WedgeBackup;        // 유전자 쐐기를 쓰기 전 원래 정보(Paradox.Backup 형식). 있으면 쐐기를 뺄 수 있다
+        public string WedgeBackup;
+        public string FormBase;           // 메가·원시·거다이맥스로 바뀌기 전 종족 id(되돌릴 때). 없으면 null
+        public string FormBaseAbility;    // 바뀌기 전 특성
+        public bool Dynamax;              // 다이맥스(영구): 배틀 내내 HP 2배, 기술이 다이맥스 기술이 된다. 거다이맥스 폼은 언제나 다이맥스        // 유전자 쐐기를 쓰기 전 원래 정보(Paradox.Backup 형식). 있으면 쐐기를 뺄 수 있다
         public bool Neutral;              // true면 속성이 없다(정착민/트레이너 본인): 상성 보정 없음
         public int Tier;                  // 최종 티어(상향 반영 후)
         public int BaseTier;              // 상향 전 기본 티어
@@ -86,6 +89,7 @@ namespace Rimketmon.Engine
         public void RecalculateStats()
         {
             MaxHp = (int)((2.0 * BaseHp + Iv[0] + 2 * Sp[0]) * Level / 100.0) + Level + 10;
+            if (FormChange.IsDynamaxed(this)) MaxHp *= 2;      // 다이맥스(영구): 배틀 내내 HP 2배
             if (Species == "SHEDINJA") { MaxHp = 1; if (Hp > 1) Hp = 1; }      // 껍질몬은 언제나 HP 1(원작)
             Atk = Other(BaseAtk, 0);
             Def = Other(BaseDef, 1);

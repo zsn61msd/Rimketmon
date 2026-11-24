@@ -370,6 +370,26 @@ namespace Rimketmon
             Find.CameraDriver.StartCoroutine(LoadSe(name));
         }
 
+        // 경험치 바가 차는 동안만 나는 소리(원작: 바가 차기 시작할 때 재생, 다 차면 멈춘다)
+        private static AudioSource loopSrc;
+        public static void PlaySeStoppable(string name)
+        {
+            if (string.IsNullOrEmpty(name) || !RimketmonMod.Settings.sfxEnabled) return;
+            AudioClip c;
+            if (!seCache.TryGetValue(name, out c)) { PlaySe(name); return; }      // 아직 안 불러왔으면 일반 재생(다음부터는 멈출 수 있다)
+            if (c == null) return;
+            if (loopSrc == null)
+            {
+                var go = new GameObject("RimketSeStop");
+                UnityEngine.Object.DontDestroyOnLoad(go);
+                loopSrc = go.AddComponent<AudioSource>(); loopSrc.spatialBlend = 0f; loopSrc.playOnAwake = false;
+            }
+            loopSrc.Stop(); loopSrc.clip = c; loopSrc.loop = false;
+            loopSrc.volume = Mathf.Clamp01(RimketmonMod.Settings.sfxVolume * RimketmonMod.Settings.masterVolume);
+            loopSrc.Play();
+        }
+        public static void StopSeStoppable() { if (loopSrc != null) loopSrc.Stop(); }
+
         private static void PlaySeClip(AudioClip c)
         {
             if (c == null) return;

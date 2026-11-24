@@ -26,6 +26,27 @@ static class Program
 {
     static readonly string[] Formats = { "pu", "nu", "ru", "uu", "ou", "ubers" };
     static readonly EngineSettings settings = new EngineSettings();
+    /// <summary>폼 전용 AI 학습: 상대 팀(foe6)의 1~6마리를 메가·원시·거다이맥스·다이맥스로 바꾼다(RIMKET_FORMFOE=1). 학습 AI 쪽은 기본 조합 그대로.</summary>
+    static readonly bool FormFoe = Environment.GetEnvironmentVariable("RIMKET_FORMFOE") == "1";
+    /// <summary>관측 끝에 폼 입력을 붙인다(RIMKET_FORMOBS=1, 폼 전용 AI). 기존 AI 평가 때는 끈다.</summary>
+    static readonly bool FormObs = Environment.GetEnvironmentVariable("RIMKET_FORMOBS") == "1";
+    static readonly int ObsN = AiEncoder.SizeFor(FormObs);
+
+    /// <summary>팀의 1~6마리(바꿀 수 있는 것 중)를 무작위 폼으로 바꾼다. 같은 종류(메가 등) 여러 마리도 허용.</summary>
+    static void InjectForms(List<RimketCreature> team, SystemRng rng)
+    {
+        var can = team.Where(c => FormChange.Options(c).Count > 0 || FormChange.CanDynamax(c)).ToList();
+        if (can.Count == 0) return;
+        int n = rng.Next(1, can.Count + 1);
+        for (int k = 0; k < n; k++)
+        {
+            int j = rng.Next(k, can.Count); var t = can[j]; can[j] = can[k]; can[k] = t;
+            var opts = FormChange.Options(t); bool dmax = FormChange.CanDynamax(t);
+            int pick = rng.Next(0, opts.Count + (dmax ? 1 : 0));
+            if (pick < opts.Count) FormChange.Apply(t, opts[pick]); else { t.Dynamax = true; t.RecalculateStats(); }
+            t.FullHeal();
+        }
+    }
     static readonly bool AutoPick = Environment.GetEnvironmentVariable("RIMKET_AUTOPICK") == "1";
 
     /// <summary>환경 하나(한 판의 진행 상태).</summary>
@@ -34,7 +55,7 @@ static class Program
         RimketBattle b; AiEncoder enc; double shape; int lastOwn, lastFoe, steps, curSeed; bool done = true;
         List<RimketCreature> mine, foe;
         NeuralPolicy oppPolicy; AiEncoder oppEnc; IRng oppRng;      // 자기학습: 상대(Foe)를 조종하는 과거 시점의 정책
-        public float[] Obs = new float[AiEncoder.Size]; public bool[] Mask = new bool[AiEncoder.Actions];
+        public float[] Obs = new float[ObsN]; public bool[] Mask = new bool[AiEncoder.Actions];
         public float Reward; public bool Done, Win; public int Turn;
         public bool Started { get { return b != null || picking; } }
         // 멈춤 감시용: 지금 처리 중인 판의 정보와 시작 시각(쉬는 중이면 0)
@@ -53,9 +74,10 @@ static class Program
             string fmt = Formats[rng.Next(0, Formats.Length)]; curFmt = fmt;       // 두 팀은 같은 포맷에서 뽑는다(랭크 매치처럼 비슷한 급끼리 → 팀 운 감소)
             mine6 = RankedBuilder.Build(fmt, RankedRules.PartySize, RankedLadder.BattleLevel, rng, settings);
             foe6 = RankedBuilder.Build(fmt, RankedRules.PartySize, RankedLadder.BattleLevel, rng, settings);
+            if (FormFoe) InjectForms(foe6, rng);
             oppPolicy = mode == 3 && policyPath != null ? LoadPolicy(policyPath) : null;
             b = null; mine = null; foe = null; done = false; lastOwn = 0; lastFoe = 0; picks.Clear();
-            enc = new AiEncoder(settings); enc.SetPreview(mine6, foe6);
+            enc = new AiEncoder(settings) { FormObs = FormObs }; enc.SetPreview(mine6, foe6);
             var mask = enc.PickMask(picks);
             if (AutoPick) { picks.AddRange(RankedRules.PickForFoe(mine6, foe6, rng, settings)); StartBattle(); return; }      // 점검용: 선출을 규칙에 맡긴다
             if (!mask.Any(x => x)) { picks.AddRange(RankedRules.PickForFoe(mine6, foe6, rng, settings)); StartBattle(); return; }      // 고를 수 있는 조합이 없는 드문 팀: 규칙으로 정한다
@@ -93,7 +115,7 @@ static class Program
             picking = false; bool crashed = false;
             try
             {
-                if (oppPolicy != null) { oppEnc = new AiEncoder(settings, true); oppEnc.SetPreview(foe6, mine6); oppRng = new SystemRng(curSeed ^ 0x5bd1e995); }
+                if (oppPolicy != null) { oppEnc = new AiEncoder(settings, true) { FormObs = FormObs }; oppEnc.SetPreview(foe6, mine6); oppRng = new SystemRng(curSeed ^ 0x5bd1e995); }
                 var foePicks = FoePicks();
                 mine = RankedRules.Brought(mine6, picks, RankedLadder.BattleLevel);
                 foe = RankedRules.Brought(foe6, foePicks, RankedLadder.BattleLevel);
@@ -192,9 +214,46 @@ static class Program
         }
     }
 
+    /// <summary>
+    /// 폼 팀 대응 학습 도구(distill.py가 부른다). 모두 --full-info 조건.
+    ///   --collect 정책.bin 시작판 판수 출력.bin [sims depth eps threads]  : 미리 계산 AI의 결정 기록
+    ///   --bench   정책.bin 시작판 판수 rule|learned|look [sims depth threads] : 상대 쪽(기본 팀) 승률
+    /// </summary>
+    static int FormTool(string[] a)
+    {
+        AiEncoder.FullInfo = true;
+        var s = new EngineSettings(); var pol = NeuralPolicy.Load(a[1]); int from = int.Parse(a[2]), n = int.Parse(a[3]);
+        int th = Environment.ProcessorCount;
+        Action<string> rep = m => Console.Error.WriteLine(m);
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        if (a[0] == "--collect")
+        {
+            int sims = a.Length > 5 ? int.Parse(a[5]) : 24, depth = a.Length > 6 ? int.Parse(a[6]) : 4;
+            double eps = a.Length > 7 ? double.Parse(a[7], CultureInfo.InvariantCulture) : 0.1; if (a.Length > 8) th = int.Parse(a[8]);
+            int r = FormBench.Collect(pol, s, from, n, sims, depth, eps, th, a[4], rep);
+            Console.WriteLine("RESULT collect " + r + " " + sw.Elapsed.TotalSeconds.ToString("F0", CultureInfo.InvariantCulture));
+        }
+        else if (a[0] == "--pick")
+        {
+            // --pick 정책.bin 시작판 판수 fixed|rule|policy|best learned|look [sims depth threads]
+            int sims = a.Length > 6 ? int.Parse(a[6]) : 24, depth = a.Length > 7 ? int.Parse(a[7]) : 4; if (a.Length > 8) th = int.Parse(a[8]);
+            double wr = FormBench.BenchPick(a[4], a[5], pol, s, from, n, sims, depth, th, rep);
+            Console.WriteLine("RESULT pick " + a[4] + " " + a[5] + " " + wr.ToString("F4", CultureInfo.InvariantCulture) + " " + sw.Elapsed.TotalSeconds.ToString("F0", CultureInfo.InvariantCulture));
+        }
+        else
+        {
+            int sims = a.Length > 5 ? int.Parse(a[5]) : 24, depth = a.Length > 6 ? int.Parse(a[6]) : 4; if (a.Length > 7) th = int.Parse(a[7]);
+            double wr = FormBench.Bench(a[4], pol, s, from, n, sims, depth, th, rep);
+            Console.WriteLine("RESULT bench " + a[4] + " " + wr.ToString("F4", CultureInfo.InvariantCulture) + " " + sw.Elapsed.TotalSeconds.ToString("F0", CultureInfo.InvariantCulture));
+        }
+        return 0;
+    }
+
     static int Main(string[] args)
     {
         AiEncoder.FullInfo = Environment.GetEnvironmentVariable("RIMKET_FULLINFO") == "1";      // 상대 정보를 전부 보는 모델(랭크AI와 같은 조건)
+        RimketBattle.QuietLog = Environment.GetEnvironmentVariable("RIMKET_LOG") != "1";      // 학습 중에는 배틀 문장을 만들지 않는다(결과는 같음, 속도용)
+        if (args.Length > 0 && (args[0] == "--collect" || args[0] == "--bench" || args[0] == "--pick")) return FormTool(args);
         var input = Console.In;
         var outp = new BinaryWriter(new BufferedStream(Console.OpenStandardOutput(), 1 << 20));
         var single = new Env();
@@ -205,7 +264,7 @@ static class Program
             var t = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (t.Length == 0) continue;
             if (t[0] == "quit") { SaveMeta(); break; }
-            if (t[0] == "info") { outp.Write(AiEncoder.Size); outp.Write(AiEncoder.Actions); outp.Flush(); continue; }
+            if (t[0] == "info") { outp.Write(ObsN); outp.Write(AiEncoder.Actions); outp.Flush(); continue; }
 
             if (t[0] == "binit")
             {
@@ -225,7 +284,7 @@ static class Program
                 var e0 = envs; var p0 = pick;
                 Parallel.For(0, n, i => NewGame(e0[i], p0[i], bShape, selfFrac, poolDir));
                 StartWatchdog(envs);
-                outp.Write(AiEncoder.Size); outp.Write(AiEncoder.Actions);
+                outp.Write(ObsN); outp.Write(AiEncoder.Actions);
                 WriteBatch(outp, envs, false);
                 continue;
             }
@@ -327,7 +386,7 @@ static class Program
     static System.IO.MemoryMappedFiles.MemoryMappedFile shm; static System.IO.MemoryMappedFiles.MemoryMappedViewStream shmView; static byte[] shmBuf;
     static void OpenShm(string path, int n)
     {
-        long cap = (long)n * AiEncoder.Size * 4 + (long)n * AiEncoder.Actions + n * 4 + n + n;
+        long cap = (long)n * ObsN * 4 + (long)n * AiEncoder.Actions + n * 4 + n + n;
         var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
         fs.SetLength(cap);
         shm = System.IO.MemoryMappedFiles.MemoryMappedFile.CreateFromFile(fs, null, cap, System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false);
@@ -337,7 +396,7 @@ static class Program
 
     static void WriteShm(BinaryWriter outp, Env[] envs, bool withResult, float[] rew, bool[] dn, bool[] wn)
     {
-        int n = envs.Length, size = AiEncoder.Size, acts = AiEncoder.Actions;
+        int n = envs.Length, size = ObsN, acts = AiEncoder.Actions;
         int mo = n * size * 4, ro = mo + n * acts, d0 = ro + n * 4, w0 = d0 + n;
         var buf = shmBuf;
         Parallel.For(0, n, i =>
@@ -358,7 +417,7 @@ static class Program
     static void WriteBatch(BinaryWriter outp, Env[] envs, bool withResult, float[] rew = null, bool[] dn = null, bool[] wn = null)
     {
         if (shmView != null) { WriteShm(outp, envs, withResult, rew, dn, wn); return; }
-        int n = envs.Length, size = AiEncoder.Size;
+        int n = envs.Length, size = ObsN;
         if (obsBytes.Length != n * size * 4) obsBytes = new byte[n * size * 4];
         for (int i = 0; i < n; i++) Buffer.BlockCopy(envs[i].Obs, 0, obsBytes, i * size * 4, size * 4);
         outp.Write(obsBytes);
@@ -383,7 +442,7 @@ static class Program
         {
             NeuralPolicy p;
             if (policies.TryGetValue(path, out p)) return p;
-            try { p = NeuralPolicy.Load(path); if (p.InputSize != AiEncoder.Size || p.OutputSize != AiEncoder.Actions) return null; }
+            try { p = NeuralPolicy.Load(path); if (p.InputSize != ObsN || p.OutputSize != AiEncoder.Actions) return null; }
             catch (Exception) { return null; }
             policies[path] = p; policyOrder.Add(path);
             while (policyOrder.Count > 12) { policies.Remove(policyOrder[0]); policyOrder.RemoveAt(0); }

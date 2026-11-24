@@ -230,7 +230,7 @@ namespace Rimketmon
         {
             float t = Time.realtimeSinceStartup - t0;
             float dt = lastT < 0f ? 0f : Mathf.Clamp(t - lastT, 0f, 0.1f); lastT = t;
-            bool hold = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.Space);
+            bool hold = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Z);
             float total = 0f; foreach (var ln in lines) total += ln.Value + 6f;
             float maxScroll = 190f - 118f + total;      // 마지막 줄의 아래가 화면 가운데쯤(118)에 오면 멈춘다
             if (holdStart < 0f) scroll += dt * Speed * (fast || hold ? 6f : 1f);      // 좌클릭(또는 Enter·스페이스)을 누르고 있거나 한 번 눌러 켜면 6배 빠르게

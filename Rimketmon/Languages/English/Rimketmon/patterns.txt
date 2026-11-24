@@ -69,8 +69,8 @@
 ^(.+)의 (.+)이\\(가\\) 반격했다!$	$1's $2 struck back!
 ^(.+)의 (.+)이\\(가\\) 발동했다!$	$1's $2 activated!
 # 배틀타워
-^(\\d+)층$	$1F
-^(\\d+)층 \\(엘리베이터\\)$	$1F (elevator)
+^(\\d+)층$	Floor $1
+^(\\d+)층 \\(엘리베이터\\)$	Floor $1 (elevator)
 ^배틀타워 · (\\d+)층부터$	Battle Tower · from floor $1
 ^이 구간 (\\d+)~(\\d+)층 \\(Lv\\.(\\d+)~(\\d+) 레벨대\\)$	Stage: floors $1~$2 (Lv.$3~$4 band)
 ^일반: (\\d+)마리, Lv\\.(\\d+)~(\\d+)만 사용$	Regular: $1 mons, Lv.$2~$3 only
@@ -81,17 +81,17 @@
 ^91~100층 전승 (\\d+) BP = 랭크전 연승 보너스 없는 10승$	91~100F sweep $1 BP (= 10 ranked wins, no streak)
 ^기록: 최고 (\\d+)층 · 엘리베이터 (\\d+)층 · 도전 (\\d+)번$	Record: best floor $1 · elevator floor $2 · $3 runs
 ^기록: 최고 (\\d+)층 · 엘리베이터 없음 · 도전 (\\d+)번$	Record: best floor $1 · no elevator yet · $2 runs
-^파티 (\\d+)마리 · 선두 없음$	Party: $1 · no lead
-^파티 (\\d+)마리 · 선두 (.+) Lv\\.(\\d+)$	Party: $1 · lead $2 Lv.$3
+^파티 (\\d+)마리 · 선두 없음$	Party: $1 · Lead: none
+^파티 (\\d+)마리 · 선두 (.+) Lv\\.(\\d+)$	Party: $1 · Lead: $2 Lv.$3
 ^도전하면 (\\d+)층의 트레이너와 먼저 싸운다\\.$	You will face the floor $1 trainer first.
 ^(\\d+)층부터 도전할까\\?$	Start from floor $1?
 ^(\\d+)층으로 올라간다$	Go up to floor $1
 ^(\\d+)층 클리어! \\+(\\d+) BP$	Floor $1 cleared! +$2 BP
-^(\\d+)층 클리어 보너스 \\+(\\d+) BP!$	Floor $1 clear bonus +$2 BP!
-^엘리베이터가 열렸다! 다음부터 (\\d+)층에서 시작할 수 있다\\.$	The elevator is open! Next time you can start from floor $1.
-^이번 도전 누적 (\\d+) BP$	This run total: $1 BP
-^(\\d+)층에서 쓰러졌다… 타워 직원이 림켓몬을 회복시켜 주었다\\.$	Defeated on floor $1... A tower attendant healed your Rimketmon.
-^(\\d+)층을 클리어했지만 싸울 수 있는 림켓몬이 없어 내려왔다\\.$	Cleared floor $1, but no Rimketmon could keep fighting, so you came down.
+^(\\d+)층 클리어 보너스 \\+(\\d+) BP!$	Floor $1 clear bonus: +$2 BP!
+^엘리베이터가 열렸다! 다음부터 (\\d+)층에서 시작할 수 있다\\.$	Elevator unlocked! You can now start from floor $1.
+^이번 도전 누적 (\\d+) BP$	This run: $1 BP
+^(\\d+)층에서 쓰러졌다… 타워 직원이 림켓몬을 회복시켜 주었다\\.$	Defeated on floor $1… The staff healed your Rimketmon.
+^(\\d+)층을 클리어했지만 싸울 수 있는 림켓몬이 없어 내려왔다\\.$	Cleared floor $1, but no one can fight. You left the tower.
 ^\\(이번 도전 BP \\+(\\d+) · 최고 (\\d+)층\\)$	(This run: BP +$1 · best floor $2)
 ^\\(이번 도전 BP \\+(\\d+)\\)$	(This run: BP +$1)
 ^경험치 (\\d+)은\\(는\\) 전투가 끝난 뒤에 받는다\\.$	EXP $1 will be paid after the battle.
@@ -102,16 +102,78 @@
 ^일반: (\\d+)마리, Lv\\.(\\d+)~(\\d+) · 학습 AI · 도구 (\\d+)%$	Regular: $1 mons, Lv.$2–$3 · learned AI · items $4%
 ^(.+)은\\(는\\) (.+)을\\(를\\) 배우고 싶다!$	$1 wants to learn $2!
 ^(.+)을\\(를\\) 잊고 (.+)을\\(를\\) 배울까\\?$	Forget $1 and learn $2?
-^(.+)을\\(를\\) 배우지 않을까\\?$	Give up on learning $1?
+^(.+)을\\(를\\) 배우지 않을까\\?$	Stop learning $1?
 ^우선도 (.+)$	Priority $1
 ^부가효과 (\\d+)%$	Effect $1%
 ^(.+) (\\d+)개 구매 완료 \\(은 (\\d+)\\)\\. (.+) 옆에 놓았습니다\\.$	Bought $2 × $1 ($3 silver). Placed next to $4.
 ^(.+) (\\d+)개 구매 완료 \\(은 (\\d+)\\)\\. 교역 지점에 놓았습니다\\.$	Bought $2 × $1 ($3 silver). Placed at the trade drop spot.
-^(\\d+)~(\\d+)층: (\\d+)마리 · Lv\\.(\\d+)~(\\d+)$	Floors $1–$2: $3 mons · Lv.$4–$5
-^(\\d+)층 챔피언: (\\d+)마리 · Lv\\.(\\d+)$	Floor $1 champion: $2 mons · Lv.$3
-^(\\d+)층 강적: (\\d+)마리 · Lv\\.(\\d+)$	Floor $1 boss: $2 mons · Lv.$3
-^승리 (\\d+)~(\\d+) BP · (\\d+)층까지 이기면 \\+(\\d+) BP$	Win $1–$2 BP · +$4 BP for clearing up to floor $3
+^(\\d+)~(\\d+)층: (\\d+)마리 · Lv\\.(\\d+)~(\\d+)$	Floors $1–$2: $3 each · Lv.$4–$5
+^(\\d+)층 챔피언: (\\d+)마리 · Lv\\.(\\d+)$	Floor $1 Champion: $2 · Lv.$3
+^(\\d+)층 강적: (\\d+)마리 · Lv\\.(\\d+)$	Floor $1 Boss: $2 · Lv.$3
+^승리 (\\d+)~(\\d+) BP · (\\d+)층까지 이기면 \\+(\\d+) BP$	Wins: $1–$2 BP · Clear floor $3: +$4 BP
 ^입장료 은 (\\d+) \\(창고 (\\d+)\\)$	Entry fee: $1 silver (stock $2)
 ^(\\d+)층부터 도전할까\\? \\(입장료 은 (\\d+)\\)(.*)$	Start from floor $1? (Entry fee $2 silver)$3
 ^레어 부적 (\\d+)→(\\d+)단계 \\((\\d+) BP\\)$	Rare Charm Lv.$1→$2 ($3 BP)
 ^이제 사냥에서 드묾 ×(.+) · 아주 드묾 ×(.+) · 극히 드묾 ×(.+)\\(이\\)라네\\.$	Now hunts give Rare ×$1 · Very rare ×$2 · Ultra rare ×$3.
+^(.+) → (.+) \\((\\d+) BP\\)$	$1 → $2 ($3 BP)
+^다이맥스 \\((\\d+) BP\\)$	Dynamax ($1 BP)
+^(.+)은\\(는\\) (.+)\\(으\\)로 모습이 바뀌었다!$	$1 changed into $2!
+^(.+)은\\(는\\) 다이맥스의 힘을 얻었다! \\(배틀 내내 HP 2배·다이맥스 기술\\)$	$1 gained the power of Dynamax! (Double HP and Max Moves in every battle)
+^(.+)을\\(를\\) 원래 모습으로 되돌릴까요\\?$	Revert $1 to its original form?
+^낸 BP는 돌려받지 못합니다\\.$	The BP you paid will not be refunded.
+^(.+)은\\(는\\) 원래 모습으로 돌아왔다\\.$	$1 returned to its original form.
+^BP가 모자라는군\\. \\(필요 (\\d+) BP, 보유 (\\d+) BP\\)$	Not enough BP. (Need $1, have $2)
+^(.+)에게 (.+)을\\(를\\) 할까요\\? \\(-(\\d+) BP\\)$	Apply $2 to $1? (-$3 BP)
+^영구로 바뀝니다\\. 되돌릴 수 있지만 BP는 돌려받지 못합니다\\.$	This is permanent. You can revert, but BP is not refunded.
+^상대 진영이 (.+)에 휩싸였다!$	The foe's side is engulfed by $1!
+^(.+)의 (.+) PP가 줄었다!$	$1's $2 lost PP!
+^입장료 은 (\\d+)$	Entry: $1 silver
+^입장료 은 (\\d+) · 은 부족$	Entry: $1 silver · Not enough silver
+^입장료 은 (\\d+) \\(창고 (\\d+)\\) · 10층마다 \\+50$	Entry: $1 silver (you have $2) · +50 every 10 floors
+^(\\d+)층부터 도전할까\\?$	Challenge from floor $1?
+^(.+)은\\(는\\) 쓰러져 있어 꺼낼 수 없다\\. 먼저 치료하자\\.$	$1 has fainted and can't come out. Heal it first.
+^(.+)은\\(는\\) 쓰러져서 볼로 돌아갔다\\. 치료해야 다시 꺼낼 수 있다\\.$	$1 fainted and returned to its ball. Heal it to bring it out again.
+^(.+)은\\(는\\) (.+)을\\(를\\) 배우고 싶다… 하지만 기술을 (\\d+)개 알고 있다!$	$1 wants to learn $2… But it already knows $3 moves!
+^(\\d+)층부터 도전할까\\? \\(입장료 은 (\\d+)\\)$	Start from floor $1? (Entry: $2 silver)
+^(.+) · 지금은 (.+) 등장표$	$1 · Now: $2
+^입장 (\\d+) BP \\(보유 (\\d+)\\) · 한 번에 (\\d+)번 배틀 · 이로치 확률 1/(\\d+) · 레어 부적 Lv\\.(\\d+)$	Entry $1 BP (have $2) · $3 battles · Shiny 1/$4 · Rare Charm Lv.$5
+^입장 (\\d+) BP \\(보유 (\\d+)\\) · 한 번에 (\\d+)번 배틀 · 이로치 확률 1/(\\d+)$	Entry $1 BP (have $2) · $3 battles · Shiny 1/$4
+^볼\\((.+) 소지품\\+거점\\): 몬스터 (\\d+) · 슈퍼 (\\d+) · 하이퍼 (\\d+) · 마스터 (\\d+)$	Balls ($1 + base): Poké $2 · Great $3 · Ultra $4 · Master $5
+^볼\\(림켓링크 없음\\): 몬스터 (\\d+) · 슈퍼 (\\d+) · 하이퍼 (\\d+) · 마스터 (\\d+)$	Balls (no RimketLink): Poké $1 · Great $2 · Ultra $3 · Master $4
+^(.+) — 남은 배틀 (\\d+)번(\\n[\\s\\S]*)$	$1 — $2 battles left$3
+^(.+)에 들어갈까\\? \\((\\d+) BP\\)$	Enter $1? ($2 BP)
+^1, 2, 그리고… 짠! (.+)은\\(는\\) (.+)을\\(를\\) 깨끗이 잊었다! 그리고 (.+)을\\(를\\) 배웠다!$	1, 2, and… Poof! $1 forgot $2! And it learned $3!
+^(.+)은\\(는\\) (.+)을\\(를\\) 배우지 않았다\\.$	$1 did not learn $2.
+^우선도 ([+-]?\\d+)$	Priority $1
+^낮에 친밀도 160 이상으로 레벨업$	Level up with high friendship (day)
+^밤에 친밀도 160 이상으로 레벨업$	Level up with high friendship (night)
+^친밀도 160 이상으로 레벨업 \\((.+) 기술을 알 때\\)$	Level up with high friendship (knowing a $1 move)
+^(.+)을\\(를\\) 알고 레벨업$	Level up knowing $1
+^낮에 (.+)을\\(를\\) 지니고 레벨업$	Level up holding $1 (day)
+^밤에 (.+)을\\(를\\) 지니고 레벨업$	Level up holding $1 (night)
+^(.+)을\\(를\\) 지니고 레벨업$	Level up holding $1
+^수컷이 (.+) 사용$	Use $1 (male)
+^암컷이 (.+) 사용$	Use $1 (female)
+^Lv\\.(\\d+) 이상, 공격 > 방어$	Lv.$1+, Atk > Def
+^Lv\\.(\\d+) 이상, 방어 > 공격$	Lv.$1+, Def > Atk
+^Lv\\.(\\d+) 이상, 공격 = 방어$	Lv.$1+, Atk = Def
+^파티에 (.+)이\\(가\\) 있을 때 레벨업$	Level up with $1 in the party
+^Lv\\.(\\d+) 이상, 파티에 (.+) 타입이 있을 때$	Lv.$1+ with a $2-type in the party
+^배지를 얻어 야생 림켓몬 (\\d+)마리의 레벨대와 티어가 바뀌었다\\.$	New badge: $1 wild Rimketmon changed level and tier.
+^(.+)풀숲$	$1 tall grass
+^수집 (\\d+)판, 결정 (\\d+)$	Collected $1 games, $2 decisions
+^어라…\\? (.+)의 모습이…!$	Huh…? $1 is evolving…!
+^어라…\\? (.+)의 변화가 멈췄다!$	Huh…? $1 stopped evolving!
+^(.+)을\\(를\\) 원래 모습으로 되돌릴까요\\?\\n낸 BP는 돌려받지 못합니다\\.$	Return $1 to its original form?\nThe BP will not be refunded.
+^BP가 모자라는군\\. (\\d+) BP를 모아 오게나\\.$	Not enough BP. Come back with $1 BP.
+^(.+)에게 (.+)을\\(를\\) 할까요\\? \\(-(\\d+) BP\\)\\n영구로 바뀝니다\\. 되돌릴 수 있지만 BP는 돌려받지 못합니다\\.$	Use $2 on $1? (-$3 BP)\nThis is permanent. You can undo it, but the BP is not refunded.
+^이제 사냥에서 드묾 ×([\\d.]+) · 아주 드묾 ×([\\d.]+) · 극히 드묾 ×([\\d.]+)\\(이\\)라네\\.$	Now in hunts: Rare ×$1 · Very rare ×$2 · Ultra rare ×$3.
+^리롤 \\(남은 (\\d+)번\\)$	Reroll ($1 left)
+^재조합할 쐐기 (\\d+)/(\\d+)$	Wedges to combine $1/$2
+^  · 순위 (\\d+)위$	  · Rank #$1
+^(.+) 옆에 놓았습니다\\.$	Placed next to $1.
+^(\\d+)개 구매 완료 \\(은 (\\d+)\\)$	Bought $1 (silver $2)
+^선택 (\\d+)/(\\d+)   (\\d+)초$	Picked $1/$2   $3s
+^이미 (.+)에게 림켓링크가 설치되어 있습니다\\.\\n\\n(.+)에게 새로 설치하면 원래 설치된 림켓링크는 사라집니다\\.\\n정말 설치하시겠습니까\\?$	$1 already has a RimketLink.\n\nInstalling it in $2 will destroy the old one.\nInstall anyway?
+^(.+)을\\(를\\) 꺾은 날의 파티$	The team that beat $1
+^(.+)에게 일이 생겼다$	Something happened to $1

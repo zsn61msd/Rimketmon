@@ -338,14 +338,23 @@ namespace Rimketmon
             if (!RankedRules.ValidSelection(rMine, rPick)) return;
             var picks = rPick.ToList();
             int oppRating = rOpp.Rating; rOldRating = pc.rating;
-            BattleFlow.StartRanked(rOpp, rMine, picks, won =>
-            {
-                int d, bp; bool up;
-                pc.RecordRanked(won, oppRating, out d, out bp, out up);
-                if (rOpp.BoardMember) pc.Board.RecordVsPlayer(rOpp.Name, rOldRating, won);
-                rWon = won; rDelta = d; rBp = bp; rRankUp = up;
-                RankedSet(RS.Result);
-            });
+            BattleSave.SetArgs("oppName", rOpp.Name, "oppCountry", rOpp.Country, "oppRating", oppRating.ToString(), "oldRating", rOldRating.ToString(), "board", rOpp.BoardMember ? "1" : "0");
+            BattleFlow.StartRanked(rOpp, rMine, picks, won => FinishRanked(rOpp.Name, rOpp.Country, rOpp.BoardMember, oppRating, rOldRating, won));
+        }
+
+        /// <summary>랭크전 결과 반영 + 결과 화면(열린 림켓몬 창이 있으면 거기에, 없으면 새로 연다). 세이브에서 이어 한 배틀도 이것으로 끝낸다.</summary>
+        internal static void FinishRanked(string oppName, string country, bool boardMember, int oppRating, int oldRating, bool won)
+        {
+            var pc = PartyComponent.Instance; if (pc == null) return;
+            int d, bp; bool up;
+            pc.RecordRanked(won, oppRating, out d, out bp, out up);
+            if (boardMember) pc.Board.RecordVsPlayer(oppName, oldRating, won);
+            var w = Find.WindowStack.WindowOfType<Window_RimketMenu>();
+            if (w == null) { w = new Window_RimketMenu(); Find.WindowStack.Add(w); }
+            w.view = View.Ranked;
+            if (w.rOpp == null || w.rOpp.Name != oppName) w.rOpp = new RankedOpponent { Name = oppName, Country = country, Rating = oppRating, BoardMember = boardMember };
+            w.rOldRating = oldRating; w.rWon = won; w.rDelta = d; w.rBp = bp; w.rRankUp = up;
+            w.RankedSet(RS.Result);
         }
 
         // ---- 순위표: 상위 50명(나 포함). 10줄씩 넘겨 본다

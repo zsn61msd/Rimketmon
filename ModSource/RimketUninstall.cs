@@ -32,12 +32,12 @@ namespace Rimketmon
         public static void Ask()
         {
             if (Current.Game == null) return;
-            if (Removed) { Messages.Message(Lang.Tr("이미 제거된 상태입니다. 우하단 몬스터볼 아이콘으로 다시 설치할 수 있습니다."), MessageTypeDefOf.RejectInput, false); return; }
+            if (Removed) { Messages.Message(Lang.Tr("이미 제거됨. 몬스터볼 아이콘으로 다시 설치할 수 있다."), MessageTypeDefOf.RejectInput, false); return; }
             var node = new DiaNode(Lang.Tr("림켓몬을 이 세이브에서 제거합니다.\n\n" +
-                "· 모드가 만든 물건(볼·림켓링크 등), 건강 상태, 생각, 능력, 퀘스트, 연구 진행, 이벤트를 모두 정리합니다.\n" +
+                "· 모드가 만든 물건·상태·퀘스트·연구를 모두 지웁니다.\n" +
                 "· 진짜 포켓몬(림월드 몸이 없는 림켓몬)은 사라집니다.\n" +
                 "· 볼에 든 림월드 동물·메카·사람은 아래에서 고르세요.\n" +
-                "· 제거한 뒤에도 우하단 몬스터볼 아이콘은 남고, 누르면 처음 상태로 다시 설치할 수 있습니다.\n\n되돌릴 수 없습니다. 먼저 세이브를 다른 이름으로 저장해 두세요.\n모드를 아예 빼려면: 제거 → 저장 → 게임 종료 → 모드 끄기 순서로 하세요."));
+                "· 몬스터볼 아이콘으로 다시 설치할 수 있습니다.\n\n되돌릴 수 없으니 먼저 세이브를 따로 저장하세요.\n모드를 끄려면: 제거 → 저장 → 종료 → 모드 끄기."));
             node.options.Add(new DiaOption(Lang.Tr("동물·메카·사람은 지도로 돌려보내고 제거")) { action = () => Execute(true), resolveTree = true });
             node.options.Add(new DiaOption(Lang.Tr("전부 없애고 제거")) { action = () => Execute(false), resolveTree = true });
             node.options.Add(new DiaOption(Lang.Tr("취소")) { resolveTree = true });

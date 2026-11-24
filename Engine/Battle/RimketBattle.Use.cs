@@ -91,6 +91,7 @@ namespace Rimketmon.Engine
             }
             if (a.Has("GULPMISSILE") && a.C.Species == "CRAMORANT" && a.GulpState == 0 && (m.Id == "SURF" || m.Id == "DIVE"))
             { a.GulpState = a.HpFraction > 0.5 ? 1 : 2; AnnounceAbility(aSide, a); Add(an + "은(는) 먹이를 물었다!"); }
+            if (FormChange.IsDynamaxed(d.C) && d != a && m.Fn == "PowerHigherWithTargetWeight") { Fail(c, "다이맥스한 포켓몬에게는 통하지 않는다!"); return; }
             if (fn == null && !m.Implemented) { Fail(c, "이 기술은 아직 구현되지 않았다!"); return; }
 
             if (a.Has("PROTEAN") || a.Has("LIBERO"))

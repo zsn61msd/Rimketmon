@@ -33,7 +33,9 @@ namespace Rimketmon
                 var l = new List<string> { "파티", "도감", "센터", "체육관", "랭크전", "배틀타워" };
                 if (pc != null && pc.huntUnlocked) l.Add("사냥");
                 if (pc != null && pc.hallOfFame.Count > 0) l.Add("전당");
-                l.AddRange(new[] { "패러독스 배틀", "카드", "온라인 배틀", "설정" });
+                l.Add("패러독스 배틀");
+                if (pc != null && pc.huntUnlocked) l.Add("카드");      // 카드는 사냥이 열린 뒤에
+                l.AddRange(new[] { "온라인 배틀", "설정" });
                 if (RimketBuild.Dev) l.Add("개발자");
                 l.Add("닫기");
                 return l.ToArray();
@@ -430,7 +432,7 @@ namespace Rimketmon
                     PartyComponent.Instance.Remove(e);
                     if (selected == e) selected = null;
                     if (e.C.MechFoe) Messages.Message(Lang.Tr(e.C.Name + "을(를) 볼에서 풀어주었다. 적 메카가 풀려나 공격해 온다!"), mech, MessageTypeDefOf.ThreatBig, false);
-                    else Messages.Message(Lang.Tr(e.C.Name + "을(를) 볼에서 풀어주었다. 연결이 끊긴 메카가 되었다(메카나이터가 다시 연결할 수 있다)."), mech, MessageTypeDefOf.NeutralEvent, false);
+                    else Messages.Message(Lang.Tr(e.C.Name + "을(를) 풀어주었다. 연결이 끊긴 메카가 되었다."), mech, MessageTypeDefOf.NeutralEvent, false);
                 }
                 catch (Exception ex) { Log.Warning("[림켓몬] 메카 방생 중 오류: " + ex); Messages.Message(Lang.Tr("방생에 실패했다. (로그 확인)"), MessageTypeDefOf.RejectInput, false); }
                 return;

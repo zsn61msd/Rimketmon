@@ -30,7 +30,8 @@ namespace Rimketmon.Engine
         }
 
         /// <summary>가방의 소비 아이템을 쓴다. 쓰면 이번 턴 행동을 쓴 것으로 치고 상대가 움직인다. 성공하면 true(가방에서 하나 빼는 건 호출한 쪽).</summary>
-        public bool UseItem(string itemId, int partyIndex)
+        public bool UseItem(string itemId, int partyIndex) { bool ok = UseItemCore(itemId, partyIndex); if (ok) Note("I|" + partyIndex + "|" + itemId); return ok; }
+        private bool UseItemCore(string itemId, int partyIndex)
         {
             Unreplayable?.Invoke();      // 미리 계산 AI는 전투 중 아이템을 재생하지 못한다
             if (IsDouble || !CanUseItem(itemId, partyIndex)) return false;

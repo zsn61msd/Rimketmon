@@ -22,5 +22,6 @@ namespace Rimketmon.Engine
         public bool StatDropImmune; public int StatDropImmuneTurns;                              // 흰안개 대신 신비의부적류
         public int Rainbow, SeaOfFire, Swamp;                                                    // (예약: 불의 서약 등)
         public int Pledge;
+        public int GmaxRes, GmaxResType;                                                         // 거다이맥스 지속 피해(남은 턴, 면역 타입)
     }
 }

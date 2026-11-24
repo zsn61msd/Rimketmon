@@ -37,7 +37,8 @@ namespace Rimketmon
                 c.Npcs.Add(new CNpc { Name = "nurse", Kind = "nurse", Sheet = "center/nurse", X = 7, Y = 2, Dir = 2 });
                 c.Npcs.Add(new CNpc { Name = "coach", Kind = "coach", Sheet = "center/coach", X = 13, Y = 4, Dir = 4 });
                 c.Npcs.Add(new CNpc { Name = "namerater", Kind = "namerater", Sheet = "center/namerater", X = 1, Y = 7, Dir = 6 });     // 이름 짓기 아저씨
-                c.Npcs.Add(new CNpc { Name = "shinyman", Kind = "shinyman", Sheet = "center/shinyman", X = 1, Y = 4, Dir = 6 });      // 이로치 아저씨(사냥이 열린 뒤에만 보인다)
+                c.Npcs.Add(new CNpc { Name = "shinyman", Kind = "shinyman", Sheet = "center/shinyman", X = 1, Y = 4, Dir = 6 });
+                c.Npcs.Add(new CNpc { Name = "formman", Kind = "formman", Sheet = "center/formman", X = 10, Y = 7, Dir = 4 });      // 폼체인지 연구원(메가진화·원시회귀·거다이맥스·다이맥스)      // 이로치 아저씨(사냥이 열린 뒤에만 보인다)
                 var m = new CMap { Name = "mart", Bgm = "town", W = CenterData.martW, H = CenterData.martH, Pass = CenterData.martPass, Counter = CenterData.martCounter, Pc = CenterData.martPc, Below = "center/mart_below", Above = "center/mart_above" };
                 m.Npcs.Add(new CNpc { Name = "clerk", Kind = "clerk", Sheet = "center/clerk", X = 2, Y = 3, Dir = 6 });
                 // 온라인 대기실: 유니온룸(센터와 다른 방). 접수원(대전 준비·다시 하기), 훈련 아저씨와 그 옆 PC
@@ -122,6 +123,65 @@ namespace Rimketmon
         private void CenterSet(CS st) { cenState = st; cenT0 = Now; }
 
         private void Say(Action after, params string[] lines) { cenLines = lines; cenLine = 0; cenAfter = after; CenterSet(CS.Msg); }
+        // ------------------------------------------------------------------ 폼체인지 연구원
+        /// <summary>파티에서 바꿀 수 있는(또는 되돌릴 수 있는) 포켓몬을 고르고 → 폼을 고르고 → BP를 내고 영구로 바꾼다. 되돌려도 BP는 돌려주지 않는다.</summary>
+        private void TalkFormMan()
+        {
+            var pc = PartyComponent.Instance; if (pc == null) { ToWalk(); return; }
+            var cand = pc.All.Where(e => e != null && e.C != null && (FormChange.Options(e.C).Count > 0 || FormChange.CanDynamax(e.C) || e.C.FormBase != null || e.C.Dynamax)).ToList();
+            if (cand.Count == 0)
+            {
+                Say(ToWalk, "나는 포켓몬의 숨은 모습을 끌어내는 연구를 하고 있지.", "모습을 바꿀 수 있는 포켓몬을 파티에 넣고 오게나.");
+                return;
+            }
+            var names = cand.Select(e => e.C.Name + " Lv." + e.C.Level).Concat(new[] { "그만두기" }).ToArray();
+            Say(() => Ask(names, i =>
+            {
+                if (i >= cand.Count) { Say(ToWalk, "언제든 다시 오게나."); return; }
+                FormMenu(pc, cand[i]);
+            }), "BP를 넉넉히 주면 포켓몬의 숨은 모습을 영원히 끌어내 주지.", "어느 포켓몬을 볼까?");
+        }
+
+        private void FormMenu(PartyComponent pc, ExposableCreature e)
+        {
+            var c = e.C;
+            var labels = new List<string>(); var acts = new List<Action>();
+            foreach (var f in FormChange.Options(c))
+            {
+                var form = f; int cost = FormChange.CostOf(form);
+                labels.Add(FormChange.KindName(form.FormKind) + " → " + form.Name + " (" + cost + " BP)");
+                acts.Add(() => ConfirmForm(pc, c, FormChange.KindName(form.FormKind), cost, () => FormChange.Apply(c, form), c.Name + "은(는) " + form.Name + "(으)로 모습이 바뀌었다!"));
+            }
+            if (FormChange.CanDynamax(c))
+                acts.Add(() => ConfirmForm(pc, c, "다이맥스", FormChange.DynamaxCost, () => { c.Dynamax = true; double fr = c.MaxHp > 0 ? c.Hp / (double)c.MaxHp : 1; c.RecalculateStats(); if (c.Hp > 0) c.Hp = Math.Max(1, (int)Math.Round(c.MaxHp * fr)); }, c.Name + "은(는) 다이맥스의 힘을 얻었다! (배틀 내내 HP 2배·다이맥스 기술)"));
+            if (FormChange.CanDynamax(c)) labels.Add("다이맥스 (" + FormChange.DynamaxCost + " BP)");
+            if (c.FormBase != null || c.Dynamax)
+            {
+                labels.Add("원래대로 되돌리기 (BP는 돌려받지 못함)");
+                acts.Add(() => AskConfirm(c.Name + "을(를) 원래 모습으로 되돌릴까요?\n낸 BP는 돌려받지 못합니다.", () =>
+                {
+                    if (c.FormBase != null) FormChange.Revert(c);
+                    if (c.Dynamax) { c.Dynamax = false; double fr = c.MaxHp > 0 ? c.Hp / (double)c.MaxHp : 1; c.RecalculateStats(); if (c.Hp > 0) c.Hp = Math.Max(1, (int)Math.Round(c.MaxHp * fr)); }
+                    RimketAudio.PlaySe("gui_sel_decision");
+                    Say(ToWalk, c.Name + "은(는) 원래 모습으로 돌아왔다.");
+                }, "되돌린다"));
+            }
+            labels.Add("그만두기"); acts.Add(() => Say(ToWalk, "언제든 다시 오게나."));
+            Ask(labels.ToArray(), i => acts[i]());
+        }
+
+        private void ConfirmForm(PartyComponent pc, RimketCreature c, string kind, int cost, Action apply, string done)
+        {
+            if (pc.bp < cost) { RimketAudio.PlaySe("gui_sel_buzzer"); Say(ToWalk, "BP가 모자라는군. (필요 " + cost + " BP, 보유 " + pc.bp + " BP)"); return; }
+            AskConfirm(c.Name + "에게 " + kind + "을(를) 할까요? (-" + cost + " BP)\n영구로 바뀝니다. 되돌릴 수 있지만 BP는 돌려받지 못합니다.", () =>
+            {
+                if (!pc.SpendBp(cost)) { RimketAudio.PlaySe("gui_sel_buzzer"); return; }
+                apply();
+                RimketAudio.PlayBgm("evolution_fanfare");
+                Say(ToWalk, done);
+            }, kind);
+        }
+
         private void Ask(string[] choices, Action<int> on) { cenChoices = choices; cenCursor = 0; cenOnChoice = on; CenterSet(CS.Choice); }
         private void ToWalk() { CenterSet(CS.Walk); }
 
@@ -129,7 +189,7 @@ namespace Rimketmon
         private static bool Blocked(CMap m, int x, int y) { return x < 0 || y < 0 || x >= m.W || y >= m.H || m.Pass[y][x] == '1'; }
 
         private CNpc NpcAt(int x, int y) { return CenMaps[cenMap].Npcs.FirstOrDefault(n => n.X == x && n.Y == y && NpcShown(n)); }
-        private static bool NpcShown(CNpc n) { return n.Kind != "shinyman" || (PartyComponent.Instance != null && PartyComponent.Instance.huntUnlocked); }
+        private static bool NpcShown(CNpc n) { return (n.Kind != "shinyman" && n.Kind != "formman") || (PartyComponent.Instance != null && PartyComponent.Instance.huntUnlocked); }      // 이로치 아저씨·폼체인지 연구원은 사냥이 열린 뒤에만
 
         private bool CenCanMove(int dir)
         {
@@ -255,9 +315,12 @@ namespace Rimketmon
                             if (shiny) Say(ToWalk, "자, 이로치 부적을 갈고닦아 주었네!", "이제 사냥에서 이로치를 만날 확률이 ×" + pc.ShinyMultiplier + "(이)라네.");
                             else Say(ToWalk, "자, 레어 부적을 갈고닦아 주었네!", "이제 사냥에서 드묾 ×" + pc.RareTierMult[0] + " · 아주 드묾 ×" + pc.RareTierMult[1] + " · 극히 드묾 ×" + pc.RareTierMult[2] + "(이)라네.");
                         }), "허허, 나는 이로치 아저씨일세.", "색이 다른 포켓몬… 이로치를 본 적 있나? 보통은 2048마리 중 한 마리 꼴이지.",
-                            "BP를 넉넉히 주면 부적을 갈고닦아 주겠네. 이로치 부적은 이로치를, 레어 부적은 드문 포켓몬을 더 자주 만나게 해 주지.");
+                            "BP를 주면 부적을 강화해 주지. 이로치 부적은 이로치를, 레어 부적은 드문 포켓몬을 더 자주 만나게 해 준다네.");
                         break;
                     }
+                case "formman":
+                    TalkFormMan();
+                    break;
                 case "namerater":
                     {
                         var pc = PartyComponent.Instance;

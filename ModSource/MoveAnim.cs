@@ -207,6 +207,8 @@ namespace Rimketmon
         public bool Flip;
         public float Pad;
         public Color Tint;
+        /// <summary>그릴 때 덧붙일 몸 움직임(SQUISHY 연동): 위치(Dx, Dy)·가로/세로 배율·각도. 없으면 그대로.</summary>
+        public Func<SquishyLink.Pose> Pose;
     }
 
     internal sealed class MoveAnimPlayer
@@ -335,13 +337,25 @@ namespace Rimketmon
         {
             if (a.Tex == null) return;
             if (isUser && selfTarget) return;
+            if (SquishyLink.Active && a.Pose != null) return;      // SQUISHY 연동: 사본을 그리지 않는다(진짜 스프라이트가 그대로 보이고 SQUISHY 모션만 받는다)
             float sc = a.Scale;
+            // SQUISHY 연동 중엔 기술 연출이 몸을 옮기거나(대각선 돌진·점프) 돌리거나 늘리지 않는다: 몸은 제자리, 움직임은 SQUISHY 수평 눌림만
+            bool sqOnly = SquishyLink.Active && a.Pose != null;
+            if (sqOnly) { p = new Vector2(a.X, a.Y - HalfH); scaleX = scaleX < 0f ? -1f : 1f; }
+            var po = a.Pose != null ? a.Pose() : SquishyLink.Pose.Rest;      // SQUISHY 연동: 연출 사본도 진짜 스프라이트와 같이 눌리고 기운다
+            p = new Vector2(p.x + po.Dx, p.y + po.Dy);
             // 기본 위치(몸 중심 = 바닥 - 32)에서 원래 스프라이트와 정확히 겹치도록 바닥을 잡는다
-            float w = a.Tex.width * sc * Mathf.Abs(scaleX), h = a.Tex.height * sc * c.ZY / 100f;
-            float bottom = p.y + HalfH * c.ZY / 100f + a.Pad;
+            float zy = sqOnly ? 1f : c.ZY / 100f;
+            float w = a.Tex.width * sc * Mathf.Abs(scaleX) * po.Kx, h = a.Tex.height * sc * zy * po.Ky;
+            float bottom = p.y + HalfH * zy + a.Pad;
+            // 눌림 기준 = 그림 속 실제 발끝(투명 여백 아래가 아니라). 여백을 기준으로 하면 눌릴 때 몸이 아래로 꺼진다
+            var bnd = RimSprite.Bounds(a.Tex); float footFrac = Mathf.Clamp01((bnd[1] + bnd[3]) / (float)Mathf.Max(1, a.Tex.height));
+            float h0 = a.Tex.height * sc * zy, foot = bottom - h0 + footFrac * h0;
+            bottom = foot + (1f - footFrac) * h;
             var r = g.R(p.x - w / 2f, bottom - h, w, h);
             var old = GUI.matrix;
-            if (Mathf.Abs(c.Angle) > 0.01f) GUIUtility.RotateAroundPivot(-c.Angle, new Vector2(g.Area.x + p.x * g.S, g.Area.y + (bottom - h / 2f) * g.S));
+            float ang = (sqOnly ? 0f : -c.Angle) + po.Rot;
+            if (Mathf.Abs(ang) > 0.01f) GUIUtility.RotateAroundPivot(ang, new Vector2(g.Area.x + p.x * g.S, g.Area.y + (foot - footFrac * h / 2f) * g.S));      // 기울기는 몸 가운데 축
             var tc = a.Tint.a > 0f ? a.Tint : Color.white;
             GUI.color = new Color(tc.r, tc.g, tc.b, c.Opacity / 255f);
             if (scaleX < 0f != a.Flip) GUI.DrawTextureWithTexCoords(r, PR.Hi(a.Tex), new Rect(1f, 0f, -1f, 1f)); else GUI.DrawTexture(r, PR.Hi(a.Tex));

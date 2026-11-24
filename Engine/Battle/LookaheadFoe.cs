@@ -85,6 +85,9 @@ namespace Rimketmon.Engine
             }
         }
 
+        /// <summary>세이브에서 이어 할 때: 기록 재생 동안 쓰인 상대 결정을 넣어 둔다(플레이어 행동은 재생 중 ActRecorder로 이미 쌓였다).</summary>
+        public void PrimeFoe(IEnumerable<BattleAction?> xs) { lock (lk) foeLog.AddRange(xs); }
+
         /// <summary>FoeBrain: 미리 계산한 답을 쓴다(아직이면 조금 기다리고, 그래도 없으면 정책).</summary>
         public BattleAction? Decide(RimketBattle real)
         {
@@ -114,7 +117,7 @@ namespace Rimketmon.Engine
                 // 지금 상태: 플레이어의 다음 행동은 모르므로, 지금 상태의 후보는 '다음 FoeBrain 호출'에서 낼 행동이다
                 var now = Replay(pl, fl, out sr0, null);
                 if (now.IsOver) return null;
-                var me = new AiEncoder(s, true) { Window = true };
+                var me = new AiEncoder(s, true) { Window = true, FormObs = LearnedFoe.IsFormPolicy(pol) };
                 me.SetPreview(now.Foe.Party, now.Player.Party); me.SetPicks(Enumerable.Range(0, Math.Min(now.Foe.Party.Count, AiEncoder.MaxMons)).ToList());
                 var mask = me.Mask(now);
                 var cands = new List<int>(); for (int i = 0; i < mask.Length; i++) if (mask[i]) cands.Add(i);
@@ -132,8 +135,8 @@ namespace Rimketmon.Engine
                         double pick = (k + 0.5) / Sims * tot; int mode = Mix.Length - 1; double acc = 0;
                         for (int i = 0; i < Mix.Length; i++) { acc += Mix[i]; if (pick < acc) { mode = i; break; } }
                         var simRng = new SystemRng(r.Next());
-                        var foeEnc = new AiEncoder(s, true) { Window = true };
-                        var plEnc = new AiEncoder(s, false) { Window = true };
+                        var foeEnc = new AiEncoder(s, true) { Window = true, FormObs = LearnedFoe.IsFormPolicy(pol) };
+                        var plEnc = new AiEncoder(s, false) { Window = true, FormObs = LearnedFoe.IsFormPolicy(pol) };
                         bool firstFoe = true, firstPl = true;
                         SwitchRng sr; RimketBattle sim;
                         try

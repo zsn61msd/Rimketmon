@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,14 +28,19 @@ namespace Rimketmon.Engine
         {
             if (c == null || m == null || c.Moves.Count >= slots || c.Moves.Any(s => s.Move != null && s.Move.Id == m.Id)) return false;
             c.Moves.Add(new MoveSlot(m));
+            if (OnLearned != null) OnLearned(c, -1, m);
             return true;
         }
+
+        /// <summary>기술을 배웠을 때(칸 번호, -1 = 빈칸에 추가). 배틀 진행 기록이 배틀 중 기술 배우기를 남기는 데 쓴다.</summary>
+        public static Action<RimketCreature, int, Move> OnLearned;
 
         /// <summary>slot 칸의 기술을 잊고 m을 배운다.</summary>
         public static bool Replace(RimketCreature c, int slot, Move m)
         {
             if (c == null || m == null || slot < 0 || slot >= c.Moves.Count || c.Moves.Any(s => s.Move != null && s.Move.Id == m.Id)) return false;
             c.Moves[slot] = new MoveSlot(m);
+            if (OnLearned != null) OnLearned(c, slot, m);
             return true;
         }
     }

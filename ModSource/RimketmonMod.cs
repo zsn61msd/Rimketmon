@@ -55,6 +55,7 @@ namespace Rimketmon
         public bool manualMessageClear = true;      // 메시지를 클릭해야 다음으로 넘어간다(기본: 자동으로 넘어가지 않음)
         private bool defaultsV2;
         public bool damageNumbers = true;           // 맞은 쪽에 피해 숫자를 띄운다
+        public bool squishyLink = true; public float squishyScale = 1f;      // SQUISHY Ranged가 있을 때 배틀 스프라이트 반동·흔들림(SquishyLink)
         public bool moveAnimations = true;          // 피격 흔들림/번쩍임
         public bool typeHints = true;               // 기술 버튼에 상성(▲▼) 표시
         public bool moveInfo = true;                // 기술 버튼에 위력/명중/PP 표시
@@ -139,6 +140,7 @@ namespace Rimketmon
             Scribe_Values.Look(ref defaultsV2, "defaultsV2", false);
             if (Scribe.mode == LoadSaveMode.LoadingVars && !defaultsV2) { gameSpeed = 1; hpBarSpeed = 0; manualMessageClear = true; defaultsV2 = true; }   // 기본값 변경(11/12): 속도 둘 다 보통, 메시지 자동 넘김 끔
             Scribe_Values.Look(ref damageNumbers, "damageNumbers", true);
+            Scribe_Values.Look(ref squishyLink, "squishyLink", true); Scribe_Values.Look(ref squishyScale, "squishyScale", 1f);
             Scribe_Values.Look(ref moveAnimations, "moveAnimations", true);
             Scribe_Values.Look(ref typeHints, "typeHints", true);
             Scribe_Values.Look(ref moveInfo, "moveInfo", true);
@@ -308,18 +310,18 @@ namespace Rimketmon
 
             l.Label(Lang.Tr("■ 규칙"));
             l.CheckboxLabeled(Lang.Tr("배틀 후 정착민 신경 손상 (끄면 뇌 손상·혼수가 전혀 없음)"), ref s.neuralDamage);
-            if (s.neuralDamage) l.CheckboxLabeled(Lang.Tr("패배 시 정착민 사망 (야생·어둠의 배틀. 체육관·랭크는 해당 없음)"), ref s.lethalDefeat);
+            if (s.neuralDamage) l.CheckboxLabeled(Lang.Tr("패배 시 정착민 사망 (야생·어둠의 배틀)"), ref s.lethalDefeat);
             l.CheckboxLabeled(Lang.Tr("승리 후 포획 항상 성공"), ref s.captureGuaranteed);
-            l.CheckboxLabeled(Lang.Tr("볼에 넣었다 꺼내도 동물의 훈련·장비·보철물 유지"), ref s.keepPawnOnCapture, Lang.Tr("끄면 예전처럼 볼에 넣을 때 동물을 지우고, 꺼낼 때 새로 만든다(훈련·장비·보철물이 사라진다). 우리 정착지 동물에만 적용된다."));
+            l.CheckboxLabeled(Lang.Tr("볼에 넣었다 꺼내도 동물의 훈련·장비·보철물 유지"), ref s.keepPawnOnCapture, Lang.Tr("끄면 볼에 넣었다 꺼낼 때 훈련·장비·보철물이 사라진다."));
             l.Label(Lang.Tr("전투에 데려가는 림켓몬 수: ") + s.partyLimit);
             s.partyLimit = (int)l.Slider(s.partyLimit, 1, 6);
             l.GapLine();
 
             l.Label(Lang.Tr("■ 이벤트"));
-            Pct(l, "방문자가 승부를 걸어올 확률 (방문 무리 하나당)", ref s.visitorChallengeChance, 1f, "0%면 걸어오지 않는다. 림켓링크 착용자가 다쳤거나 아프거나 의식이 없으면 확률과 상관없이 걸어오지 않는다.");
+            Pct(l, "방문자가 승부를 걸어올 확률 (방문 무리 하나당)", ref s.visitorChallengeChance, 1f, "림켓링크 착용자가 다쳤거나 아프면 걸어오지 않는다.");
             l.Label(Lang.Tr("방문자가 데려오는 림켓몬 수: ") + s.visitorFoeCount);
             s.visitorFoeCount = (int)l.Slider(s.visitorFoeCount, 1, 6);
-            l.CheckboxLabeled(Lang.Tr("방문자가 포켓몬도 데려온다"), ref s.visitorPokemon, Lang.Tr("꺼져 있으면 방문자는 림월드 동물만 데려온다. 켜면 아래 비율만큼 포켓몬이, 나머지는 림켓몬(림월드 동물)이 섞여 나온다(나와의 승부, 방문자끼리의 승부 모두). 2마리 이상이면 둘이 반드시 섞인다."));
+            l.CheckboxLabeled(Lang.Tr("방문자가 포켓몬도 데려온다"), ref s.visitorPokemon, Lang.Tr("끄면 방문자는 림월드 동물만 데려온다."));
             if (s.visitorPokemon)
             {
                 l.Label(Lang.Tr("방문자 파티 중 포켓몬 비율") + ": " + Mathf.RoundToInt(s.visitorPokemonShare * 100f) + "%");
@@ -327,12 +329,12 @@ namespace Rimketmon
             }
             l.Label(Lang.Tr("방문자 승부 상금(은): ") + s.visitorSilver + Lang.Tr(" + 0~60 + 배지당 40"));
             s.visitorSilver = (int)(l.Slider(s.visitorSilver, 0, 1000) / 10f) * 10;
-            Pct(l, "방문자끼리 승부를 벌일 확률 (방문 중 약 40분마다)", ref s.visitorFightChance, 0.5f, "방문자 두 명이 지도 위에서 림켓몬을 꺼내 승부한다(구경용). 0%면 일어나지 않는다.");
+            Pct(l, "방문자끼리 승부를 벌일 확률 (방문 중 약 40분마다)", ref s.visitorFightChance, 0.5f, "방문자끼리 지도 위에서 승부한다(구경용).");
             l.CheckboxLabeled(Lang.Tr("어둠의 림켓몬 배틀 이벤트"), ref s.darkChallengeEnabled, Lang.Tr("끄면 새로 찾아오지 않는다. 이미 와 있는 트레이너는 그대로다."));
             l.GapLine();
 
             l.Label(Lang.Tr("■ 랭크 상대의 성향"));
-            Pct(l, "실수 빈도", ref s.foeMistakeScale, 2f, "100%가 기본(1000점 이하 30% → 1500점 이상 3%). 0%면 실수하지 않는다.");
+            Pct(l, "실수 빈도", ref s.foeMistakeScale, 2f, "0%면 실수하지 않는다.");
             l.CheckboxLabeled(Lang.Tr("상대가 항복하기도 한다"), ref s.foeSurrender);
             l.CheckboxLabeled(Lang.Tr("싸우는 자리의 날씨·지형이 전투 날씨/필드가 된다"), ref s.envField);
             l.Label(Lang.Tr("포켓몬 사냥 입장 비용") + ": " + s.huntCostBp + " BP");
@@ -341,11 +343,11 @@ namespace Rimketmon
             s.darkTauntBp = Mathf.RoundToInt(l.Slider(s.darkTauntBp, 0f, 3000f) / 10f) * 10;
             l.Label(Lang.Tr("랭크 상대 중 림월드 사람 비율") + ": " + Mathf.RoundToInt(s.rankedRimworldShare * 100f) + "%");
             s.rankedRimworldShare = Mathf.Round(l.Slider(s.rankedRimworldShare, 0f, 1f) * 20f) / 20f;
-            l.CheckboxLabeled(Lang.Tr("어둠의 배틀·관장·사천왕·챔피언·랭크 상위권(1800점 이상)은 학습된 AI 사용") + (LearnedAi.Available ? "" : Lang.Tr(" (AI 파일 없음 — 기존 AI 사용)")), ref s.learnedAi);
+            l.CheckboxLabeled(Lang.Tr("강한 상대(어둠의 배틀·관장·리그·랭크 상위)는 학습된 AI 사용") + (LearnedAi.Available ? "" : Lang.Tr(" (AI 파일 없음 — 기존 AI 사용)")), ref s.learnedAi);
             Pct(l, "감정적인 항복 빈도 (실수 뒤 민망함·급소)", ref s.foeTiltScale, 3f, "0%면 가망이 없을 때만 항복한다.");
             l.CheckboxLabeled(Lang.Tr("상대의 생각 시간"), ref s.humanTiming);
             Pct(l, "생각 시간 길이", ref s.thinkTimeScale, 3f, "상대가 기술·선출·다음 림켓몬을 고르는 데 쓰는 시간의 배율.");
-            l.CheckboxLabeled(Lang.Tr("림켓몬 창이 열려 있어도 림월드 시간·월드 조작"), ref s.liveWorldTime, Lang.Tr("켜면 창이 조금 작아지고 림월드 시간이 흐른다. 창 밖(월드)을 누르면 월드를, 창 안을 누르면 림켓몬을 조작한다. 야생동물·방문자·어둠의 배틀·???·온라인 배틀 중에는 시간이 멈추고 조작할 수 없다. 끄면 예전처럼 전체 화면에서 시간이 항상 멈춘다."));
+            l.CheckboxLabeled(Lang.Tr("림켓몬 창이 열려 있어도 림월드 시간·월드 조작"), ref s.liveWorldTime, Lang.Tr("켜면 메뉴가 열려 있어도 시간이 흐르고 월드를 조작할 수 있다. 배틀 중에는 멈춘다."));
             l.GapLine();
 
             l.Label(Lang.Tr("■ 배틀 연출"));
@@ -360,6 +362,11 @@ namespace Rimketmon
             l.CheckboxLabeled(Lang.Tr("기술 상성 힌트 표시"), ref s.typeHints);
             l.CheckboxLabeled(Lang.Tr("기술 위력/명중/PP 표시"), ref s.moveInfo);
             l.CheckboxLabeled(Lang.Tr("배틀 진입 연출"), ref s.transitionEffect);
+            if (SquishyLink.Present)
+            {
+                l.CheckboxLabeled(Lang.Tr("SQUISHY 연동: 배틀 스프라이트 반동·피격 흔들림"), ref s.squishyLink, Lang.Tr("SQUISHY 설정을 배틀 연출에 반영한다."));
+                if (s.squishyLink) Pct(l, "SQUISHY 연동 세기", ref s.squishyScale, 2f);
+            }
             l.GapLine();
 
             l.Label(Lang.Tr("■ 소리"));
@@ -374,7 +381,7 @@ namespace Rimketmon
             {
                 l.GapLine();
                 l.Label(Lang.Tr("■ 모드 제거"));
-                if (RimketUninstall.Removed) l.Label(Lang.Tr("이 세이브에서는 제거된 상태입니다. 우하단 몬스터볼 아이콘을 누르면 다시 설치할 수 있습니다."));
+                if (RimketUninstall.Removed) l.Label(Lang.Tr("이 세이브에서 제거됨. 우하단 몬스터볼 아이콘으로 다시 설치할 수 있다."));
                 else if (l.ButtonText(Lang.Tr("이 세이브에서 림켓몬 제거…"))) RimketUninstall.Ask();
             }
             l.End();

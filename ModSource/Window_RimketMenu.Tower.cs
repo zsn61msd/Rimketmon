@@ -60,15 +60,19 @@ namespace Rimketmon
             g.Label("승리 " + TowerRules.PerWin(start) + "~" + TowerRules.PerWin(last) + " BP · " + last + "층까지 이기면 +" + TowerRules.TierBonus(tier) + " BP", 108f, 55f, 9f, new Color(1f, 0.85f, 0.4f), Canvas.WhiteShadow);
             g.Label("5층마다 회복 · 가방 아이템 사용 금지", 108f, 72f, 8.5f, dim, Canvas.WhiteShadow);
             g.Label("지면 도전 끝 · 경험치는 전투가 끝난 뒤 받는다", 108f, 85f, 8.5f, dim, Canvas.WhiteShadow);
-            g.Label("최고 기록 " + pc.towerBest + "층", 108f, 108f, 9f, Canvas.White, Canvas.WhiteShadow);
+            int feeR = TowerRules.EntryFee(start); var payMap = SilverBank.PayMap(); int silver = payMap != null ? SilverBank.Count(payMap) : 0;
+            bool feeOk = feeR == 0 || silver >= feeR;
+            g.Label(feeR == 0 ? "입장료 무료 (1~10층 시작)" : "입장료 은 " + feeR + (feeOk ? "" : " · 은 부족"), 108f, 96f, 9f, feeR == 0 ? new Color(0.55f, 0.95f, 0.6f) : feeOk ? new Color(1f, 0.85f, 0.4f) : new Color(1f, 0.4f, 0.35f), Canvas.WhiteShadow);
+            g.Label("최고 기록 " + pc.towerBest + "층", 108f, 110f, 9f, Canvas.White, Canvas.WhiteShadow);
 
             // ---- 아래: 도전
             g.Window(win, 0f, 132f, 320f, 48f);
             var party = pc.ActiveParty(); party.RemoveAll(c => c.IsFainted);
             bool can = party.Count > 0;
+            int feeNow = TowerRules.EntryFee(start); var pm0 = SilverBank.PayMap(); bool silverOk = feeNow == 0 || (pm0 != null && SilverBank.Count(pm0) >= feeNow);
             g.Label("파티 " + party.Count + "마리 · 선두 " + (can ? party[0].Name + " Lv." + party[0].Level : "없음"), 10f, 137f, 9f, Canvas.White, Canvas.WhiteShadow);
             int fee = TowerRules.EntryFee(start);
-            g.Label(can ? "입장료 은 " + fee + " (창고 " + (SilverBank.PayMap() != null ? SilverBank.Count(SilverBank.PayMap()) : 0) + ")" : "싸울 수 있는 림켓몬이 없다. 센터에서 회복하자.", 10f, 150f, 8f, dim, Canvas.WhiteShadow);
+            g.Label(!can ? "싸울 수 있는 림켓몬이 없다. 센터에서 회복하자." : fee == 0 ? "입장료 무료 · 11층부터 은 150, 10층마다 +50" : "입장료 은 " + fee + " (창고 " + (pm0 != null ? SilverBank.Count(pm0) : 0) + ") · 10층마다 +50", 10f, 150f, 8f, can && !silverOk ? new Color(1f, 0.45f, 0.4f) : dim, Canvas.WhiteShadow);
             // 오토모드: 100층을 처음 정복하면 열린다
             bool autoOpen = pc.towerBest >= TowerRules.Floors;
             if (autoOpen)
@@ -79,15 +83,15 @@ namespace Rimketmon
             }
             else TowerRun.Auto = false;
             float bx = 262f, by = 154f;
-            g.Label("도전", bx, by, 13f, can ? Canvas.White : new Color(0.5f, 0.5f, 0.55f), Canvas.WhiteShadow);
+            g.Label("도전", bx, by, 13f, can && silverOk ? Canvas.White : new Color(0.5f, 0.5f, 0.55f), Canvas.WhiteShadow);
             if (can) g.Cursor(bx - 6f, by + 8f, 0.5f, 0.5f);
             if (can && (Clicked(bx - 10f, by - 3f, 50f, 18f) || AcceptKey()))
             {
                 int startFloor = start;
-                AskConfirm(Lang.Tr(startFloor + "층부터 도전할까? (입장료 은 " + fee + ")") + (TowerRun.Auto ? "\n" + Lang.Tr("오토: 기본 AI가 대신 싸우고 멈추지 않고 올라간다.") : ""), () =>
+                AskConfirm(Lang.Tr(fee == 0 ? startFloor + "층부터 도전할까?" : startFloor + "층부터 도전할까? (입장료 은 " + fee + ")") + (TowerRun.Auto ? "\n" + Lang.Tr("오토: 기본 AI가 대신 싸우고 멈추지 않고 올라간다.") : ""), () =>
                 {
                     var map = SilverBank.PayMap();
-                    if (map == null || !SilverBank.TryPay(map, fee)) { Messages.Message(Lang.Tr("은이 부족합니다 (" + fee + " 필요)."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
+                    if (fee > 0 && (map == null || !SilverBank.TryPay(map, fee))) { Messages.Message(Lang.Tr("은이 부족합니다 (" + fee + " 필요)."), MessageTypeDefOf.RejectInput, false); RimketAudio.PlaySe("gui_sel_buzzer"); return; }
                     pc.towerRuns++;
                     Close();
                     TowerRun.Start(startFloor, RimketLink.FindLinkPawn() ?? PawnsFinder.AllMaps_FreeColonistsSpawned.FirstOrDefault());
@@ -176,6 +180,33 @@ namespace Rimketmon
         internal static void Quit() { Panel = null; End(); }
         private static readonly HashSet<string> metBosses = new HashSet<string>();      // 이번 도전에서 만난 강적(겹치지 않게)
 
+        // ---- 세이브 중 이어 하기(도전 중 층·적립 BP·만난 강적·오토·결과 화면)
+        internal static Pawn RunPawn { get { return pawn; } }
+        internal static string SaveState()
+        {
+            if (floor <= 0 && Panel == null) return null;
+            var p = Panel;
+            return floor + "|" + earned + "|" + (Auto ? 1 : 0) + "|" + string.Join(",", metBosses.ToArray()) + "|" +
+                   (p == null ? "" : (p.CanContinue ? 1 : 0) + "\u0005" + p.NextFloor + "\u0005" + (p.Title ?? "") + "\u0005" + string.Join("\u0006", p.Lines.ToArray()));
+        }
+        internal static void LoadState(string s, Pawn p)
+        {
+            Reset(); if (string.IsNullOrEmpty(s)) return;
+            var f = s.Split(new[] { '|' }, 5);
+            pawn = p; floor = int.Parse(f[0]); earned = int.Parse(f[1]); Auto = f[2] == "1";
+            foreach (var id in f[3].Split(',')) if (id.Length > 0) metBosses.Add(id);
+            if (f.Length > 4 && f[4].Length > 0)
+            {
+                var q = f[4].Split('\u0005');
+                Panel = new ResultPanel { CanContinue = q[0] == "1", NextFloor = int.Parse(q[1]), Title = q[2] };
+                if (q.Length > 3 && q[3].Length > 0) Panel.Lines.AddRange(q[3].Split('\u0006'));
+            }
+        }
+        internal static void Reset() { pawn = null; floor = 0; earned = 0; Auto = false; Panel = null; metBosses.Clear(); }
+        /// <summary>이어 한 배틀의 끝 처리.</summary>
+        internal static void ResolvePublic(RimketBattle b, int f) { Resolve(b, f); }
+        internal static int CurrentFloor { get { return floor; } }
+
         public static void Start(int startAt, Pawn p)
         {
             pawn = p; floor = TowerRules.Clamp(startAt); earned = 0; metBosses.Clear();
@@ -214,7 +245,7 @@ namespace Rimketmon
             Window_RimketBattle.TrainerSpriteOverride[name] = sprite;
             var colonist = new ColonistCombatant { Name = pawn != null ? pawn.LabelShortCap : "나" };      // 정착민은 싸우지 않는다
             var mine0 = party.Select(c => c.Clone()).ToList(); var foe0 = foeParty.Select(c => c.Clone()).ToList();
-            var battle = RimketBattle.Trainer(rng, settings, party, colonist, name, foeParty, null);
+            var battle = RimketBattle.Trainer(BattleSave.Rng(rng), settings, party, colonist, name, foeParty, null);
             battle.GymBattle = true;        // 항복 가능(나도 항복할 수 있다)
             battle.LeagueBattle = true;     // 타워 안에서 싸운다(지도 날씨 없음)
             battle.DeferExp = true;         // 경험치는 전투가 끝난 뒤 몰아서(승패 무관). 전투 중 레벨업이 없어 미리 예측 AI가 끝까지 맞는다
@@ -231,6 +262,7 @@ namespace Rimketmon
             if (lookahead) LearnedAi.AttachLookahead(battle, settings, seed, mine0, foe0, configure);
             else LearnedAi.Attach(battle, settings);      // 일반 층·강적 모두 학습된 AI(파일이 있을 때)
             int f = floor;
+            BattleSave.Begin("tower", null, pawn, "floor", f.ToString());
             BattleFlow.StartTowerBattle(battle, pawn, b => Resolve(b, f), boss);      // 일반 트레이너는 등장 장면 없이
         }
 

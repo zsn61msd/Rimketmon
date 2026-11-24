@@ -19,10 +19,12 @@ namespace Rimketmon.Engine
         public LearnedFoe(NeuralPolicy policy, EngineSettings s, IRng rng)
         {
             this.policy = policy; this.rng = rng;
-            enc = new AiEncoder(s, true) { Window = true };
+            enc = new AiEncoder(s, true) { Window = true, FormObs = IsFormPolicy(policy) };
         }
 
-        public static bool Fits(NeuralPolicy p) { return p != null && p.InputSize == AiEncoder.Size && p.OutputSize == AiEncoder.Actions; }
+        public static bool Fits(NeuralPolicy p) { return p != null && (p.InputSize == AiEncoder.Size || IsFormPolicy(p)) && p.OutputSize == AiEncoder.Actions; }
+        /// <summary>폼 전용 AI(관측 끝에 폼 입력이 붙은 모델)인가.</summary>
+        public static bool IsFormPolicy(NeuralPolicy p) { return p != null && p.InputSize == AiEncoder.SizeFor(true); }
 
         public BattleAction? Decide(RimketBattle b)
         {

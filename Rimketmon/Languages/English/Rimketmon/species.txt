@@ -1083,3 +1083,127 @@ hisuidecidueye	Decidueye
 paldeatauros	Tauros
 paldeawooper	Wooper
 bloodmoonursaluna	Ursaluna
+megavenusaur	Mega Venusaur
+gmaxvenusaur	Gigantamax Venusaur
+megacharizardx	Mega Charizard X
+megacharizardy	Mega Charizard Y
+gmaxcharizard	Gigantamax Charizard
+megablastoise	Mega Blastoise
+gmaxblastoise	Gigantamax Blastoise
+gmaxbutterfree	Gigantamax Butterfree
+megabeedrill	Mega Beedrill
+megapidgeot	Mega Pidgeot
+gmaxpikachu	Gigantamax Pikachu
+megaraichux	Mega Raichu X
+megaraichuy	Mega Raichu Y
+megaclefable	Mega Clefable
+gmaxmeowth	Gigantamax Meowth
+megaalakazam	Mega Alakazam
+gmaxmachamp	Gigantamax Machamp
+megavictreebel	Mega Victreebel
+megaslowbro	Mega Slowbro
+megagengar	Mega Gengar
+gmaxgengar	Gigantamax Gengar
+gmaxkingler	Gigantamax Kingler
+megakangaskhan	Mega Kangaskhan
+megastarmie	Mega Starmie
+megapinsir	Mega Pinsir
+megagyarados	Mega Gyarados
+gmaxlapras	Gigantamax Lapras
+gmaxeevee	Gigantamax Eevee
+megaaerodactyl	Mega Aerodactyl
+gmaxsnorlax	Gigantamax Snorlax
+megadragonite	Mega Dragonite
+megamewtwox	Mega Mewtwo X
+megamewtwoy	Mega Mewtwo Y
+megameganium	Mega Meganium
+megaferaligatr	Mega Feraligatr
+megaampharos	Mega Ampharos
+megasteelix	Mega Steelix
+megascizor	Mega Scizor
+megaheracross	Mega Heracross
+megaskarmory	Mega Skarmory
+megahoundoom	Mega Houndoom
+megatyranitar	Mega Tyranitar
+megasceptile	Mega Sceptile
+megablaziken	Mega Blaziken
+megaswampert	Mega Swampert
+megagardevoir	Mega Gardevoir
+megasableye	Mega Sableye
+megamawile	Mega Mawile
+megaaggron	Mega Aggron
+megamedicham	Mega Medicham
+megamanectric	Mega Manectric
+megasharpedo	Mega Sharpedo
+megacamerupt	Mega Camerupt
+megaaltaria	Mega Altaria
+megabanette	Mega Banette
+megachimecho	Mega Chimecho
+megaabsol	Mega Absol
+megaabsolz	Mega Absol Z
+megaglalie	Mega Glalie
+megasalamence	Mega Salamence
+megametagross	Mega Metagross
+megalatias	Mega Latias
+megalatios	Mega Latios
+primalkyogre	Primal Kyogre
+primalgroudon	Primal Groudon
+megarayquaza	Mega Rayquaza
+megastaraptor	Mega Staraptor
+megalopunny	Mega Lopunny
+megagarchomp	Mega Garchomp
+megagarchompz	Mega Garchomp Z
+megalucario	Mega Lucario
+megalucarioz	Mega Lucario Z
+megaabomasnow	Mega Abomasnow
+megagallade	Mega Gallade
+megafroslass	Mega Froslass
+megaheatran	Mega Heatran
+megadarkrai	Mega Darkrai
+megaemboar	Mega Emboar
+megaexcadrill	Mega Excadrill
+megaaudino	Mega Audino
+megascolipede	Mega Scolipede
+megascrafty	Mega Scrafty
+gmaxgarbodor	Gigantamax Garbodor
+megaeelektross	Mega Eelektross
+megachandelure	Mega Chandelure
+megagolurk	Mega Golurk
+megachesnaught	Mega Chesnaught
+megadelphox	Mega Delphox
+megagreninja	Mega Greninja
+megapyroar	Mega Pyroar
+megamalamar	Mega Malamar
+megabarbaracle	Mega Barbaracle
+megadragalge	Mega Dragalge
+megahawlucha	Mega Hawlucha
+megazygarde	Mega Zygarde
+megadiancie	Mega Diancie
+megacrabominable	Mega Crabominable
+megagolisopod	Mega Golisopod
+megadrampa	Mega Drampa
+megamagearna	Mega Magearna
+megazeraora	Mega Zeraora
+gmaxmelmetal	Gigantamax Melmetal
+gmaxrillaboom	Gigantamax Rillaboom
+gmaxcinderace	Gigantamax Cinderace
+gmaxinteleon	Gigantamax Inteleon
+gmaxcorviknight	Gigantamax Corviknight
+gmaxorbeetle	Gigantamax Orbeetle
+gmaxdrednaw	Gigantamax Drednaw
+gmaxcoalossal	Gigantamax Coalossal
+gmaxflapple	Gigantamax Flapple
+gmaxappletun	Gigantamax Appletun
+gmaxsandaconda	Gigantamax Sandaconda
+gmaxtoxtricity	Gigantamax Toxtricity
+gmaxcentiskorch	Gigantamax Centiskorch
+gmaxhatterene	Gigantamax Hatterene
+gmaxgrimmsnarl	Gigantamax Grimmsnarl
+gmaxalcremie	Gigantamax Alcremie
+megafalinks	Mega Falinks
+gmaxcopperajah	Gigantamax Copperajah
+gmaxduraludon	Gigantamax Duraludon
+gmaxurshifu	Gigantamax Urshifu
+megascovillain	Mega Scovillain
+megaglimmora	Mega Glimmora
+megabaxcalibur	Mega Baxcalibur

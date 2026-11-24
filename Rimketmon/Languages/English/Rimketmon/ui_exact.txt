@@ -140,3 +140,63 @@
 도전	Climb
 올라간다	Go up
 내려간다	Go down
+흔함	Common
+드묾	Rare
+아주 드묾	Very rare
+극히 드묾	Ultra rare
+새벽	Dawn
+낮	Day
+저녁	Evening
+밤	Night
+이로치	Shiny
+플레이어	Player
+타이난 실베스터	Tynan Sylvester
+림월드	RimWorld
+도전한다	Challenge
+포기한다	Give up
+재조합	Combine
+재조합 완료	Combined
+재조합하기	Combine
+도구 없음	No item
+없음(어두운 바탕)	None (dark background)
+한국어	한국어
+민준	Minjun
+서연	Seoyeon
+지호	Jiho
+하윤	Hayun
+도윤	Doyun
+서준	Seojun
+예린	Yerin
+태양	Taeyang
+대한민국	South Korea
+일본	Japan
+미국	USA
+브라질	Brazil
+프랑스	France
+독일	Germany
+스페인	Spain
+이탈리아	Italy
+영국	UK
+중국	China
+인도	India
+멕시코	Mexico
+러시아	Russia
+캐나다	Canada
+호주	Australia
+태국	Thailand
+인도네시아	Indonesia
+필리핀	Philippines
+터키	Türkiye
+폴란드	Poland
+스웨덴	Sweden
+아르헨티나	Argentina
+베트남	Vietnam
+이집트	Egypt
+나이지리아	Nigeria
+남아프리카공화국	South Africa
+네덜란드	Netherlands
+칠레	Chile
+대만	Taiwan
+사우디아라비아	Saudi Arabia
+취소	Cancel
+볼	Ball

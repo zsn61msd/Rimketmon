@@ -37,26 +37,41 @@ def make_env(rank, seed, shape, pool=None, self_frac=0.7):
     return _f
 
 
-def play(model, opp, games, seed):
-    """학습된 정책을 결정적으로(argmax) 돌려 opp 상대 승률을 잰다."""
-    env = RimketEnv(opp=opp, shape=0.0, seed=seed)
-    wins = 0
-    for g in range(games):
-        o, _ = env.reset(seed=seed + g)
-        done = False
-        while not done:
-            a, _ = model.predict(o, action_masks=env.action_masks(), deterministic=True)
-            o, r, done, _, info = env.step(int(a))
-        wins += info["win"]
-    env.close()
+def play(model, opp, games, seed, par=None):
+    """학습된 정책을 결정적으로(argmax) 돌려 opp 상대 승률을 잰다.
+    환경 par개(각각 C# 프로세스)를 동시에 돌리고 신경망은 한 번에 묶어 부른다. 판 g는 항상 seed+g로 시작하므로
+    결과(승수)는 한 판씩 돌릴 때와 같다(판을 고르는 순서만 다름)."""
+    par = max(1, min(par or int(os.environ.get("RIMKET_EVAL_PAR", "16")), games))
+    envs = [RimketEnv(opp=opp, shape=0.0, seed=seed) for _ in range(par)]
+    obs, nxt, wins, left = [None] * par, 0, 0, games
+    try:
+        for i in range(par):
+            obs[i], _ = envs[i].reset(seed=seed + nxt); nxt += 1
+        live = list(range(par))
+        while live:
+            o = np.stack([obs[i] for i in live]); m = np.stack([envs[i].action_masks() for i in live])
+            acts, _ = model.predict(o, action_masks=m, deterministic=True)
+            still = []
+            for k, i in enumerate(live):
+                obs[i], r, done, _, info = envs[i].step(int(acts[k]))
+                if not done:
+                    still.append(i); continue
+                wins += info["win"]; left -= 1
+                if nxt < games:
+                    obs[i], _ = envs[i].reset(seed=seed + nxt); nxt += 1; still.append(i)
+            live = still
+    finally:
+        for e in envs:
+            e.close()
     return wins / games
 
 
 class EvalCallback(BaseCallback):
     """주기적으로 승률을 재고 저장한다. 자기학습이면 pool 폴더에 현재 정책을 상대용으로 내보낸다(최근 keep개만 남김)."""
 
-    def __init__(self, every, games, outdir, pool=None, snap_every=500_000, keep=10):
+    def __init__(self, every, games, outdir, pool=None, snap_every=500_000, keep=10, patience=0):
         super().__init__()
+        self.patience = patience
         self.every, self.games, self.outdir, self.next, self.best = every, games, outdir, every, -1.0
         self.pool, self.snap_every, self.next_snap, self.keep, self.round = pool, snap_every, snap_every, keep, 0
 
@@ -97,7 +112,14 @@ class EvalCallback(BaseCallback):
         self.model.save(os.path.join(self.outdir, "latest"))
         if score > self.best:
             self.best = score
+            self.stale = 0
             self.model.save(os.path.join(self.outdir, "best"))
+        else:
+            self.stale = getattr(self, "stale", 0) + 1
+            if self.patience and self.stale >= self.patience:
+                print("[조기 종료] 랭크AI 승률이 %d번 연속 최고 기록(%.0f%%)을 넘지 못해 멈춥니다." % (self.stale, self.best * 100), flush=True)
+                self._t_last = time.time()
+                return False
         self._t_last = time.time()      # 평가 시간은 시간 배분 계산에서 뺀다
         return True
 
@@ -160,10 +182,15 @@ if __name__ == "__main__":
     ap.add_argument("--subproc", action="store_true", help="예전 방식(환경마다 프로세스). 느리다. 문제 생겼을 때만")
     ap.add_argument("--lr", type=float, default=None, help="시작 학습률(기본: 새 학습 3e-4, 이어서 학습 1e-4)")
     ap.add_argument("--slow-buffer", action="store_true", help="학습 데이터를 GPU에 한 번에 올리지 않는 예전 방식(문제 생겼을 때만)")
+    ap.add_argument("--form", action="store_true", help="폼 전용 AI 학습: 상대 팀에 메가·원시·거다이맥스·다이맥스(1~6마리)를 넣고 관측 끝에 폼 입력을 붙인다. --widen으로 기존 모델 이어받기")
+    ap.add_argument("--patience", type=int, default=0, help="평가 점수(랭크AI 승률)가 이 횟수 연속으로 최고 기록을 넘지 못하면 학습을 멈춘다(0=끄기)")
     ap.add_argument("--full-info", action="store_true", help="상대의 능력치·기술·특성·도구를 전부 보는 모델(랭크AI와 같은 조건). 학습과 평가에 똑같이 붙여야 한다")
     a = ap.parse_args()
     if a.full_info:
         os.environ["RIMKET_FULLINFO"] = "1"
+    if a.form:
+        os.environ["RIMKET_FORMFOE"] = "1"
+        os.environ["RIMKET_FORMOBS"] = "1"
     os.makedirs(a.out, exist_ok=True)
     pool = None
     if a.selfplay:
@@ -228,7 +255,7 @@ if __name__ == "__main__":
         pstats.Stats(pr).sort_stats("tottime").print_stats(28)
         vec.close()
         raise SystemExit(0)
-    cb = EvalCallback(a.eval_every, a.eval_games, a.out, pool, a.snap_every)
+    cb = EvalCallback(a.eval_every, a.eval_games, a.out, pool, a.snap_every, patience=a.patience)
     if pool and not any(f.endswith(".bin") for f in os.listdir(pool)):
         cb.model = model
         cb.snapshot(0)
